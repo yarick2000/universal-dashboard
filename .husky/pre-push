@@ -1,0 +1,41 @@
+pids=""
+echo "Running lint, test and build processes in parallel..."
+
+npm run lint >lint.out 2>&1
+pids+=" $!"
+npm run build >build.out 2>&1
+pids+=" $!"
+npm run test >test.out 2>&1
+pids+=" $!"
+
+echo "Waiting for processes to finish: $pids"
+
+hook_failed=false
+for pid in $pids; do
+  if ! wait $pid; then
+    # show the output of the failed process
+    echo "Output of process $pid:"
+    if [ -f lint.out ]; then
+      cat lint.out
+    fi
+    if [ -f build.out ]; then
+      cat build.out
+    fi
+    if [ -f test.out ]; then
+      cat test.out
+    fi
+    echo "Process $pid failed."
+    hook_failed=true
+  else
+    echo "Process $pid completed successfully."
+  fi
+done
+
+rimraf lint.out build.out test.out
+if $hook_failed; then
+  echo "Pre-push hook failed. Please fix the issues and try again."
+  exit 1
+else
+  echo "Pre-push hook completed successfully."
+fi
+exit 0
