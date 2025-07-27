@@ -1,0 +1,10 @@
+  commit_message=$(cat "$1")
+  echo "Checking commit message: $commit_message"
+  if ! echo "$commit_message" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore)(\([a-z0-9-]+\))?: .+'; then
+    echo "Commit message does not follow the conventional commit format."
+    echo "Please use the format: <type>(<scope>): <description>"
+    echo "Example: feat(auth): add login functionality"
+    exit 1
+  fi
+  echo "Commit message is valid."
+  exit 0

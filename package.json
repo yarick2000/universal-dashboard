@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky"
+    "husky:init": "husky init"
   },
   "dependencies": {
     "next": "15.4.4",
