@@ -1,0 +1,28 @@
+pids=""
+
+npm run lint >lint.out 2>&1
+pids+=" $!"
+npm run build >build.out 2>&1
+pids+=" $!"
+
+echo "Waiting for processes to finish: $pids"
+
+hook_failed=false
+for pid in $pids; do
+  if ! wait $pid; then
+    tail -q -f lint.out build.out --pid=$pid | sed "s/^/Process $pid: /"
+    echo "Process $pid failed."
+    hook_failed=true
+  else
+    echo "Process $pid completed successfully."
+  fi
+done
+
+rimraf lint.out build.out
+if $hook_failed; then
+  echo "Pre-push hook failed. Please fix the issues and try again."
+  exit 1
+else
+  echo "Pre-push hook completed successfully."
+fi
+exit 0

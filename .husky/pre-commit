@@ -1,0 +1,15 @@
+  branch="$(git rev-parse --abbrev-ref HEAD)"
+
+  if [ "$branch" = "master" ]; then
+    echo "You cannot commit to the master branch directly."
+    exit 1
+  fi
+
+  # add logic that check if the commit message matches the conventional commit format
+  commit_message="$(cat "$1")"
+  if ! echo "$commit_message" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|chore)(\([a-z0-9-]+\))?: .+'; then
+    echo "Commit message does not follow the conventional commit format."
+    echo "Please use the format: <type>(<scope>): <description>"
+    echo "Example: feat(auth): add login functionality"
+    exit 1
+  fi

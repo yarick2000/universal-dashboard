@@ -1,0 +1,24 @@
+isMajorBranch() {
+  local branch="$1"
+  local major_branches=("development" "master")
+
+  for major_branch in "${major_branches[@]}"; do
+    if [ "$branch" = "$major_branch" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+if [ -f .git/MERGE_HEAD ]; then
+  target_branch="$(git rev-parse --abbrev-ref HEAD)"
+  source_branch="$(git name-rev --name-only $(git rev-parse MERGE_HEAD))"
+
+  if isMajorBranch "$source_branch" && isMajorBranch "$target_branch"; then
+    echo "You cannot merge from a major branch ($source_branch) into another major branch ($target_branch)."
+    exit 1
+  fi
+else
+  echo "Succefully merged from $source_branch to $target_branch."
+fi
