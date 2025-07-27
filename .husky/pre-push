@@ -1,4 +1,5 @@
 pids=""
+echo "Running lint and build processes in parallel..."
 
 npm run lint >lint.out 2>&1
 pids+=" $!"
@@ -10,7 +11,7 @@ echo "Waiting for processes to finish: $pids"
 hook_failed=false
 for pid in $pids; do
   if ! wait $pid; then
-    tail -q -f lint.out build.out --pid=$pid | sed "s/^/Process $pid: /"
+    tail -q -f lint.out build.out --pid=$pid
     echo "Process $pid failed."
     hook_failed=true
   else
@@ -25,4 +26,4 @@ if $hook_failed; then
 else
   echo "Pre-push hook completed successfully."
 fi
-exit 0
+exit 1
