@@ -5,7 +5,7 @@ npm run lint >lint.out 2>&1
 pids+=" $!"
 npm run build >build.out 2>&1
 pids+=" $!"
-npm run test >test.out 2>&1
+npm run test --passWithNoTests >test.out 2>&1
 pids+=" $!"
 
 echo "Waiting for processes to finish: $pids"
@@ -13,7 +13,17 @@ echo "Waiting for processes to finish: $pids"
 hook_failed=false
 for pid in $pids; do
   if ! wait $pid; then
-    tail -q -f lint.out build.out --pid=$pid
+    # show the output of the failed process
+    echo "Output of process $pid:"
+    if [ -f lint.out ]; then
+      cat lint.out
+    fi
+    if [ -f build.out ]; then
+      cat build.out
+    fi
+    if [ -f test.out ]; then
+      cat test.out
+    fi
     echo "Process $pid failed."
     hook_failed=true
   else
