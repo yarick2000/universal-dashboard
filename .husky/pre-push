@@ -26,4 +26,4 @@ if $hook_failed; then
 else
   echo "Pre-push hook completed successfully."
 fi
-exit 1
+exit 0
