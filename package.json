@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "husky:init": "husky init",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "dependencies": {
