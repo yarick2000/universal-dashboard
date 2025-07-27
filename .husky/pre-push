@@ -1,9 +1,11 @@
 pids=""
-echo "Running lint and build processes in parallel..."
+echo "Running lint, test and build processes in parallel..."
 
 npm run lint >lint.out 2>&1
 pids+=" $!"
 npm run build >build.out 2>&1
+pids+=" $!"
+npm run test >test.out 2>&1
 pids+=" $!"
 
 echo "Waiting for processes to finish: $pids"
@@ -19,7 +21,7 @@ for pid in $pids; do
   fi
 done
 
-rimraf lint.out build.out
+rimraf lint.out build.out test.out
 if $hook_failed; then
   echo "Pre-push hook failed. Please fix the issues and try again."
   exit 1
