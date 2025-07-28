@@ -3,14 +3,14 @@ import Home from './page';
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  return function MockImage({ 
-    src, 
-    alt, 
-    width, 
-    height, 
-    priority, 
-    className, 
-    ...props 
+  return function MockImage({
+    src,
+    alt,
+    width,
+    height,
+    priority,
+    className,
+    ...props
   }: {
     src: string;
     alt: string;
@@ -49,7 +49,7 @@ describe('Home Page', () => {
         'grid-rows-[20px_1fr_20px]',
         'items-center',
         'justify-items-center',
-        'min-h-screen'
+        'min-h-screen',
       );
     });
 
@@ -62,7 +62,7 @@ describe('Home Page', () => {
         'gap-[32px]',
         'row-start-2',
         'items-center',
-        'sm:items-start'
+        'sm:items-start',
       );
     });
 
@@ -75,7 +75,7 @@ describe('Home Page', () => {
         'gap-[24px]',
         'flex-wrap',
         'items-center',
-        'justify-center'
+        'justify-center',
       );
     });
   });
@@ -102,14 +102,14 @@ describe('Home Page', () => {
         'list-decimal',
         'text-sm/6',
         'text-center',
-        'sm:text-left'
+        'sm:text-left',
       );
     });
 
     it('should display the first instruction about editing the file', () => {
       const firstInstruction = screen.getByText(/Get started by editing/);
       expect(firstInstruction).toBeInTheDocument();
-      
+
       const codeElement = screen.getByText('src/app/page.tsx');
       expect(codeElement).toBeInTheDocument();
       expect(codeElement).toHaveClass(
@@ -119,7 +119,7 @@ describe('Home Page', () => {
         'font-semibold',
         'px-1',
         'py-0.5',
-        'rounded'
+        'rounded',
       );
     });
 
@@ -136,7 +136,7 @@ describe('Home Page', () => {
       expect(deployButton).toHaveAttribute('href', 'https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
       expect(deployButton).toHaveAttribute('target', '_blank');
       expect(deployButton).toHaveAttribute('rel', 'noopener noreferrer');
-      
+
       // Check if Vercel logo is present
       const vercelLogo = screen.getByAltText('Vercel logomark');
       expect(vercelLogo).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe('Home Page', () => {
         'border-solid',
         'border-transparent',
         'bg-foreground',
-        'text-background'
+        'text-background',
       );
 
       const docsButton = screen.getByRole('link', { name: /read our docs/i });
@@ -170,7 +170,7 @@ describe('Home Page', () => {
         'border',
         'border-solid',
         'border-black/[.08]',
-        'dark:border-white/[.145]'
+        'dark:border-white/[.145]',
       );
     });
   });
@@ -182,7 +182,7 @@ describe('Home Page', () => {
       expect(learnLink).toHaveAttribute('href', 'https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
       expect(learnLink).toHaveAttribute('target', '_blank');
       expect(learnLink).toHaveAttribute('rel', 'noopener noreferrer');
-      
+
       const fileIcon = screen.getByAltText('File icon');
       expect(fileIcon).toBeInTheDocument();
       expect(fileIcon).toHaveAttribute('src', '/file.svg');
@@ -194,7 +194,7 @@ describe('Home Page', () => {
       expect(examplesLink).toHaveAttribute('href', 'https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
       expect(examplesLink).toHaveAttribute('target', '_blank');
       expect(examplesLink).toHaveAttribute('rel', 'noopener noreferrer');
-      
+
       const windowIcon = screen.getByAltText('Window icon');
       expect(windowIcon).toBeInTheDocument();
       expect(windowIcon).toHaveAttribute('src', '/window.svg');
@@ -206,26 +206,26 @@ describe('Home Page', () => {
       expect(nextjsLink).toHaveAttribute('href', 'https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
       expect(nextjsLink).toHaveAttribute('target', '_blank');
       expect(nextjsLink).toHaveAttribute('rel', 'noopener noreferrer');
-      
+
       const globeIcon = screen.getByAltText('Globe icon');
       expect(globeIcon).toBeInTheDocument();
       expect(globeIcon).toHaveAttribute('src', '/globe.svg');
     });
 
     it('should have proper footer link styling', () => {
-      const links = screen.getAllByRole('link').filter(link => 
-        link.textContent?.includes('Learn') || 
-        link.textContent?.includes('Examples') || 
-        link.textContent?.includes('Go to nextjs.org')
+      const links = screen.getAllByRole('link').filter(link =>
+        link.textContent?.includes('Learn') ||
+        link.textContent?.includes('Examples') ||
+        link.textContent?.includes('Go to nextjs.org'),
       );
-      
+
       links.forEach(link => {
         expect(link).toHaveClass(
           'flex',
           'items-center',
           'gap-2',
           'hover:underline',
-          'hover:underline-offset-4'
+          'hover:underline-offset-4',
         );
       });
     });
@@ -238,7 +238,7 @@ describe('Home Page', () => {
         { alt: 'Vercel logomark', src: '/vercel.svg', width: '20', height: '20' },
         { alt: 'File icon', src: '/file.svg', width: '16', height: '16' },
         { alt: 'Window icon', src: '/window.svg', width: '16', height: '16' },
-        { alt: 'Globe icon', src: '/globe.svg', width: '16', height: '16' }
+        { alt: 'Globe icon', src: '/globe.svg', width: '16', height: '16' },
       ];
 
       images.forEach(({ alt, src, width, height }) => {
@@ -254,7 +254,7 @@ describe('Home Page', () => {
       const decorativeIcons = [
         screen.getByAltText('File icon'),
         screen.getByAltText('Window icon'),
-        screen.getByAltText('Globe icon')
+        screen.getByAltText('Globe icon'),
       ];
 
       decorativeIcons.forEach(icon => {
@@ -272,7 +272,7 @@ describe('Home Page', () => {
 
     it('should have proper link accessibility attributes', () => {
       const externalLinks = screen.getAllByRole('link');
-      
+
       externalLinks.forEach(link => {
         expect(link).toHaveAttribute('target', '_blank');
         expect(link).toHaveAttribute('rel', 'noopener noreferrer');
@@ -285,7 +285,7 @@ describe('Home Page', () => {
         'Vercel logomark',
         'File icon',
         'Window icon',
-        'Globe icon'
+        'Globe icon',
       ];
 
       meaningfulAltTexts.forEach(altText => {
