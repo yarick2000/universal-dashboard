@@ -48,8 +48,7 @@ describe('Home Page', () => {
         'font-sans',
         'grid',
         'grid-rows-[20px_1fr_20px]',
-        'items-center',
-        'justify-items-center',
+        'place-items-center',
         'min-h-screen',
       );
     });
@@ -161,8 +160,8 @@ describe('Home Page', () => {
         'border',
         'border-solid',
         'border-transparent',
-        'bg-foreground',
-        'text-background',
+        'bg-black',
+        'text-white',
       );
 
       const docsButton = screen.getByRole('link', { name: /read our docs/i });
