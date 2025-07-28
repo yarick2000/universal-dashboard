@@ -1,7 +1,7 @@
+import {Config as JestConfig} from '@jest/types';
 import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
-import {Config as JestConfig} from '@jest/types';
- 
+
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
   dir: './',
@@ -13,7 +13,7 @@ const clientConfig: Config = {
   preset: 'ts-jest',
   transform: {
     '^.+\\.(ts|tsx)$': [
-      'ts-jest', { 
+      'ts-jest', {
         tsconfig: '<rootDir>/tsconfig.test.json',
         useESM: true,
       },
@@ -47,7 +47,7 @@ const serverConfig: Config = {
   preset: 'ts-jest',
   transform: {
     '^.+\\.(ts|tsx)$': [
-      'ts-jest', { 
+      'ts-jest', {
         tsconfig: '<rootDir>/tsconfig.test.json',
         useESM: true,
       },
@@ -81,6 +81,6 @@ const config = (configs: Config[]) => {
     projects: configs,
   } as JestConfig.InitialOptions;
 };
- 
+
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 export default createJestConfig(config([clientConfig, serverConfig]));
