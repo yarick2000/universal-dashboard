@@ -54,7 +54,7 @@ export default tseslint.config(
 
   // JavaScript files configuration
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
