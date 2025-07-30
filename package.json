@@ -21,6 +21,8 @@
     "next": "15.4.4",
     "react": "19.1.1",
     "react-dom": "19.1.1",
+    "ts-deepmerge": "7.0.3",
+    "typed-inject": "5.0.0",
     "typescript-eslint": "8.38.0"
   },
   "devDependencies": {
