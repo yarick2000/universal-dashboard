@@ -6,7 +6,7 @@ export interface ConfigService {
   test(key: string): boolean;
   testSome(keys: string[]): boolean;
   testAll(keys: string[]): boolean;
-  partial(prefix: string): ConfigService;
+  createChildService(prefix: string): ConfigService;
   hasOwn(key: string): boolean;
   has(key: string): boolean;
   hasAll(keys: string[]): boolean;

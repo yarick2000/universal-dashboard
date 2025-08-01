@@ -5,5 +5,24 @@
   },
   "editor.quickSuggestions": {
     "strings": "on"
+  },
+  "jest.jestCommandLine": "npm test",
+  "jest.runMode": "on-demand",
+  "jest.debugMode": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/coverage": true,
+    "**/.next": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/.next": true
   }
 }
