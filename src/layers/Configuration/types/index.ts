@@ -9,9 +9,9 @@ type Feature<N extends FeatureName, T extends FeatureBase> = {
 };
 
 export type ServerConfig = {
-  features: OpenTelemetryFeature;
+  features: Feature<'openTelemetry', OpenTelemetryFeature>;
 };
 
 export type Config = ServerConfig;
 
-export type OpenTelemetryFeature = Feature<'openTelemetry', FeatureBase & { serviceName: string }>;
+export type OpenTelemetryFeature = FeatureBase & { serviceName: string }

@@ -184,7 +184,7 @@ describe('DefaultConfigService', () => {
       service.set('other.key2', 'value2');
 
       const obj = service.toObject('prefix');
-      expect(obj).toEqual({ 'prefix.key1': 'value1' });
+      expect(obj).toEqual({ 'prefix': { key1: 'value1' } });
     });
 
     it('should include parent values', () => {
@@ -194,7 +194,12 @@ describe('DefaultConfigService', () => {
       child.set('childKey', 'childValue');
 
       const obj = child.toObject();
-      expect(obj).toEqual({ childKey: 'childValue', 'parent.key': 'parentValue' });
+      expect(obj).toEqual({
+        childKey: 'childValue',
+        parent: {
+          key: 'parentValue',
+        },
+      });
     });
   });
 
