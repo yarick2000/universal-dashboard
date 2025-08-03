@@ -256,4 +256,6 @@ export class DefaultConfigService implements ConfigService {
     }
     return defaultValue as T;
   }
+
+  static inject = [] as const;
 }
