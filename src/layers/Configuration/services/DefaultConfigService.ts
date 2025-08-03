@@ -179,8 +179,23 @@ export class DefaultConfigService implements ConfigService {
       const parentObject = this.parent.toObject(this.getParentKey(prefix || ''));
       Object.assign(result, parentObject);
     }
+    // Convert flattened keys back to nested object structure
+    const nested: Record<string, unknown> = {};
+    const items = Object.entries(result);
+    for (const [key, value] of items) {
+      const parts = key.split('.');
+      let current = nested;
+      for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (!(part in current)) {
+          current[part] = {};
+        }
+        current = current[part] as Record<string, unknown>;
+      }
+      current[parts[parts.length - 1]] = value;
+    }
 
-    return result as T;
+    return nested as T;
   }
 
   /**

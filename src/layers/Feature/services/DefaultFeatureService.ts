@@ -18,11 +18,16 @@ export class DefaultFeatureService implements FeatureService {
    * @returns The feature configuration object of type T, or a default disabled feature if not found.
    */
   getFeature<T extends FeatureBase>(featureName: FeatureName): T {
-    const featureConfig = this.configService.toObject(`features.${featureName}`);
-    if (featureConfig && typeof featureConfig === 'object' && 'enabled' in featureConfig) {
-      return featureConfig as T;
+    const featureConfig : {
+      features: {
+        [featureName]: boolean | T;
+      }
+    } = this.configService.toObject(`features.${featureName}`);
+    const featureObject = featureConfig.features[featureName];
+    if (typeof featureObject !== 'boolean') {
+      return featureObject;
     }
-    return { enabled: false } as T; // Return a default value if the feature is not found
+    return { enabled: featureObject } as T; // Return a default value if the feature is not found
   }
 
   static inject = [DI.ConfigService] as const;
