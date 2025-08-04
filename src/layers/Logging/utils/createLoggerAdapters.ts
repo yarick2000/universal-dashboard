@@ -13,7 +13,7 @@ export function createLoggerAdapters(featureService: FeatureService): Logger[] {
   if (isClient() && clientLoggingFeature.enabled) {
     if (clientLoggingFeature.logToConsole) {
       const console = window.console;
-      const consoleAdapter: Logger = new ClientConsoleLoggerAdapter(console);
+      const consoleAdapter: Logger = new ClientConsoleLoggerAdapter(console, featureService);
       adapters.push(consoleAdapter);
     }
   }

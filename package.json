@@ -6,6 +6,8 @@
     "analyze": "cross-env ANALYZE=true next build",
     "dev": "npm run tools:apply-config -- -s local -t development && next dev --turbopack",
     "build": "npm run tools:apply-config -- -s local -t production && next build",
+    "build:workers": "tsc -p tsconfig.worker.json",
+    "watch:workers": "tsc -p tsconfig.worker.json --watch",
     "start": "next start",
     "lint": "next lint",
     "husky:init": "husky init",

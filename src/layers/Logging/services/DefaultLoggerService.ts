@@ -8,8 +8,8 @@ import { format } from '../utils/format';
 export class DefaultLoggerService implements Logger {
 
   private readonly formatters: LoggerFormatter[] = [
-    new TimeStampFormatter(),
     new LogSourceFormatter(),
+    new TimeStampFormatter(),
   ];
 
   constructor(private readonly adapters: Logger[]) {}

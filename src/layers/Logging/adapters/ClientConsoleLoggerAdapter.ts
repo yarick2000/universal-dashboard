@@ -1,12 +1,19 @@
 
+import { ClientLoggingFeature } from '@/layers/Configuration';
+import { FeatureService } from '@/layers/Feature';
+
 import { Logger } from '../interfaces';
+import { LogLevel } from '../types';
 
 export class ClientConsoleLoggerAdapter implements Logger {
 
   private readonly console: Console;
+  private readonly logLevels: LogLevel[];
 
-  constructor (_console: Console) {
+  constructor (_console: Console, featureService: FeatureService) {
     this.console = _console;
+    const feature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
+    this.logLevels = (feature?.logLevels as LogLevel[]) || [];
   }
 
   assert(condition: boolean, fn: () => void): void {
@@ -26,26 +33,38 @@ export class ClientConsoleLoggerAdapter implements Logger {
   }
 
   log(message: string, ...args: unknown[]): void {
-    this.console.log(message, ...args);
+    if (this.logLevels.includes('log')) {
+      this.console.log(message, ...args);
+    }
   }
 
   info(message: string, ...args: unknown[]): void {
-    this.console.info(message, ...args);
+    if (this.logLevels.includes('info')) {
+      this.console.info(message, ...args);
+    }
   }
 
   warn(message: string, ...args: unknown[]): void {
-    this.console.warn(message, ...args);
+    if (this.logLevels.includes('warn')) {
+      this.console.warn(message, ...args);
+    }
   }
 
   error(message: string, ...args: unknown[]): void {
-    this.console.error(message, ...args);
+    if (this.logLevels.includes('error')) {
+      this.console.error(message, ...args);
+    }
   }
 
   debug(message: string, ...args: unknown[]): void {
-    this.console.debug(message, ...args);
+    if (this.logLevels.includes('debug')) {
+      this.console.debug(message, ...args);
+    }
   }
 
   trace(message: string, ...args: unknown[]): void {
-    this.console.trace(message, ...args);
+    if (this.logLevels.includes('trace')) {
+      this.console.trace(message, ...args);
+    }
   }
 }

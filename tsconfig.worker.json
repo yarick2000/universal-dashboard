@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "WebWorker"],
+    "noEmit": false,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src/workers",
+    "outDir": "./public/workers",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@root/*": ["./*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "public",
+    "dist",
+    "coverage",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/app/**/*"
+  ],
+  "include": [
+    "src/workers/**/*.ts"
+  ]
+}
