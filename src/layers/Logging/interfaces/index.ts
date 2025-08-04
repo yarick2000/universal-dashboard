@@ -8,3 +8,10 @@ export interface Logger {
   group(label: string, fn: () => void, collapsed: boolean): void;
   assert(condition: boolean, fn: () => void): void;
 };
+
+export interface LoggerFormatter {
+  format(message: string, ...args: unknown[]): {
+    message: string;
+    args: unknown[];
+  };
+};
