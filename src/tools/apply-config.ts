@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { parse } from 'ts-command-line-args';
 
-import { ServerConfig } from '@/layers/Configuration';
+import { ClientConfig, ServerConfig } from '@/layers/Configuration';
 
 interface CommandLineOptions {
   source: string;
@@ -43,24 +43,34 @@ async function main() {
   const target = options.target;
 
   let serverConfig: ServerConfig | null = null;
+  let clientConfig: ClientConfig | null = null;
 
   switch (env) {
-  case 'local': {
-    const localModule = await import('@/config/server.local');
-    serverConfig = localModule.default;
-    break;
+    case 'local': {
+      const localServerModule = await import('@/config/server.local');
+      const localClientModule = await import('@/config/client.local');
+      clientConfig = localClientModule.default;
+      serverConfig = localServerModule.default;
+      break;
+    }
+    case 'production': {
+      const productionServerModule = await import('@/config/server.production');
+      const productionClientModule = await import('@/config/client.production');
+      clientConfig = productionClientModule.default;
+      serverConfig = productionServerModule.default;
+      break;
+    }
+    default:
+      console.error(`Unsupported environment: ${env}`);
+      process.exit(1);
   }
-  case 'production': {
-    const productionModule = await import('@/config/server.production');
-    serverConfig = productionModule.default;
-    break;
+  let finalConfig: string = '';
+  if (serverConfig) {
+    finalConfig = `SERVER_CONFIG=${JSON.stringify(serverConfig)}`;
   }
-  default:
-    console.error(`Unsupported environment: ${env}`);
-    process.exit(1);
+  if (clientConfig) {
+    finalConfig += `\nNEXT_PUBLIC_CONFIG=${JSON.stringify(clientConfig)}`;
   }
-
-  const finalConfig = `SERVER_CONFIG=${JSON.stringify(serverConfig)}`;
 
   try {
     // Write the final configuration to the target file

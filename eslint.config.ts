@@ -6,6 +6,7 @@ import eslint from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
+import stylistic from '@stylistic/eslint-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,17 +31,17 @@ const sharedRules = {
   'import/newline-after-import': 'error',
 
   // Code style rules
-  'semi': ['error', 'always'], // Require semicolons
-  'quotes': ['error', 'single'], // Require single quotes
+  '@stylistic/semi': ['error', 'always'], // Require semicolons
+  '@stylistic/quotes': ['error', 'single'], // Require single quotes
   'no-console': 'warn',
   // JSX-specific rules
-  'jsx-quotes': ['error', 'prefer-double'], // Use double quotes in JSX
+  '@stylistic/jsx-quotes': ['error', 'prefer-double'], // Use double quotes in JSX
 
   // Additional useful rules
-  'comma-dangle': ['error', 'always-multiline'], // Trailing commas
-  'indent': ['error', 2], // 2-space indentation
-  'no-trailing-spaces': 'error', // No trailing whitespace
-  'eol-last': 'error', // Require newline at end of file
+  '@stylistic/comma-dangle': ['error', 'always-multiline'], // Trailing commas
+  '@stylistic/indent': ['error', 2], // 2-space indentation
+  '@stylistic/no-trailing-spaces': 'error', // No trailing whitespace
+  '@stylistic/eol-last': 'error', // Require newline at end of file
 };
 
 export default tseslint.config(
@@ -83,6 +84,7 @@ export default tseslint.config(
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
+      '@stylistic': stylistic,
       'import': importPlugin,
       'tailwindcss': tailwindcssPlugin,
     },
@@ -104,6 +106,7 @@ export default tseslint.config(
     },
     plugins: {
       'import': importPlugin,
+      '@stylistic': stylistic,
       'tailwindcss': tailwindcssPlugin,
     },
     rules: {
