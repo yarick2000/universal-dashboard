@@ -1,0 +1,17 @@
+'use client';
+
+
+export function TestErrorButton() {
+  const handleClick = () => {
+    throw new Error('This link is intentionally broken to test error handling.');
+  };
+
+  return (
+    <button
+      className="flex h-10 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm font-medium transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:w-auto sm:px-5 sm:text-base md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+      onClick={handleClick}
+    >
+      Test error
+    </button>
+  );
+}
