@@ -1,18 +1,31 @@
-import { WorkerMessageT } from '../types';
+import { serializeError } from 'serialize-error';
 
-export const dummyWorker = {
-  id: 'dummyWorker',
-  postMessage: (message: WorkerMessageT<any>) => {
-    console.log(`Message posted to ${dummyWorker.id}:`, message);
-  },
-  onmessage: (callback: (message: WorkerMessageT<any>) => void) => {
-    console.log(`onmessage callback set for ${dummyWorker.id}`);
-    // Simulate receiving a message
-    setTimeout(() => {
-      callback({ type: 'data', payload: { data: 'Dummy data' } });
-    }, 1000);
-  },
-  terminate: () => {
-    console.log(`Worker ${dummyWorker.id} terminated`);
-  },
+import { WorkerMessage } from '../types';
+
+function processArgs(args: unknown[]): unknown[] {
+  return args.map(arg => {
+    if (arg instanceof Error) {
+      return serializeError(arg);
+    }
+    return arg;
+  });
+}
+
+onmessage = async (event: MessageEvent<WorkerMessage>) => {
+  const { domain, type, message, args } = event.data;
+  if (!domain || !type || !message) {
+    postMessage(new Error('Invalid message received in LoggerWorker'));
+    return;
+  }
+  try {
+    await fetch(`${domain}/api/log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({  type, message, args: processArgs(args) }),
+    });
+  } catch (error) {
+    postMessage(error);
+  }
 };

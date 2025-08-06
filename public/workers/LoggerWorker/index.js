@@ -1,16 +1,28 @@
-export const dummyWorker = {
-    id: 'dummyWorker',
-    postMessage: (message) => {
-        console.log(`Message posted to ${dummyWorker.id}:`, message);
-    },
-    onmessage: (callback) => {
-        console.log(`onmessage callback set for ${dummyWorker.id}`);
-        // Simulate receiving a message
-        setTimeout(() => {
-            callback({ type: 'data', payload: { data: 'Dummy data' } });
-        }, 1000);
-    },
-    terminate: () => {
-        console.log(`Worker ${dummyWorker.id} terminated`);
-    },
+import { serializeError } from 'serialize-error';
+function processArgs(args) {
+    return args.map(arg => {
+        if (arg instanceof Error) {
+            return serializeError(arg);
+        }
+        return arg;
+    });
+}
+onmessage = async (event) => {
+    const { domain, type, message, args } = event.data;
+    if (!domain || !type || !message) {
+        postMessage(new Error('Invalid message received in LoggerWorker'));
+        return;
+    }
+    try {
+        await fetch(`${domain}/api/log`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type, message, args: processArgs(args) }),
+        });
+    }
+    catch (error) {
+        postMessage(error);
+    }
 };

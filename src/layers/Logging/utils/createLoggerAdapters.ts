@@ -4,7 +4,9 @@ import { FeatureService } from '@/layers/Feature';
 import { isClient } from '@/utils';
 
 import { ClientConsoleLoggerAdapter } from '../adapters/ClientConsoleLoggerAdapter';
+import { ClientWorkerLoggerAdapter } from '../adapters/ClientWorkerLoggerAdapter';
 import { Logger } from '../interfaces';
+import { LogLevel } from '../types';
 
 export function createLoggerAdapters(featureService: FeatureService): Logger[] {
   const adapters: Logger[] = [];
@@ -13,8 +15,11 @@ export function createLoggerAdapters(featureService: FeatureService): Logger[] {
   if (isClient() && clientLoggingFeature.enabled) {
     if (clientLoggingFeature.logToConsole) {
       const console = window.console;
-      const consoleAdapter: Logger = new ClientConsoleLoggerAdapter(console, featureService);
-      adapters.push(consoleAdapter);
+      const feature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
+      const logLevels = feature?.logLevels || [];
+      const consoleAdapter: Logger = new ClientConsoleLoggerAdapter(console, logLevels as LogLevel[]);
+      const workerAdapter: Logger = new ClientWorkerLoggerAdapter(logLevels as LogLevel[]);
+      adapters.push(consoleAdapter, workerAdapter);
     }
   }
 

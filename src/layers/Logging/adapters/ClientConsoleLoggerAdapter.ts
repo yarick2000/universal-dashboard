@@ -1,7 +1,4 @@
 
-import { ClientLoggingFeature } from '@/layers/Configuration';
-import { FeatureService } from '@/layers/Feature';
-
 import { Logger } from '../interfaces';
 import { LogLevel } from '../types';
 
@@ -10,10 +7,9 @@ export class ClientConsoleLoggerAdapter implements Logger {
   private readonly console: Console;
   private readonly logLevels: LogLevel[];
 
-  constructor (_console: Console, featureService: FeatureService) {
+  constructor (_console: Console, _logLevels: LogLevel[]) {
     this.console = _console;
-    const feature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
-    this.logLevels = (feature?.logLevels as LogLevel[]) || [];
+    this.logLevels = _logLevels;
   }
 
   assert(condition: boolean, fn: () => void): void {
