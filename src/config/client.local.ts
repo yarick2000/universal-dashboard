@@ -6,7 +6,9 @@ const config: ClientConfig = {
       enabled: true,
       logLevels: ['trace', 'debug','info', 'warn', 'error'],
       logToConsole: true,
-      logToServer: false,
+      logToServer: true,
+      logToServerBatchSize: 100,
+      logToServerIdleTimeSec: 10,
     },
   },
 };

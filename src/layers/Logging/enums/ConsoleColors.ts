@@ -1,0 +1,15 @@
+export enum ConsoleColors {
+  Red = '#FF0000',
+  Green = '#00FF00',
+  Blue = '#0000FF',
+  Yellow = '#FFFF00',
+  Magenta = '#FF00FF',
+  Cyan = '#00FFFF',
+  White = '#FFFFFF',
+  Black = '#000000',
+  Grey = '#808080',
+  Orange = '#FFA500',
+  Pink = '#FFC0CB',
+  Purple = '#800080',
+  Brown = '#A52A2A',
+};

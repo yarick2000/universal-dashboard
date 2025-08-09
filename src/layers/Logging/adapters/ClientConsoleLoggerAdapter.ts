@@ -1,4 +1,6 @@
 
+import { serializeError } from 'serialize-error';
+
 import { Logger } from '../interfaces';
 import { LogLevel } from '../types';
 
@@ -28,39 +30,57 @@ export class ClientConsoleLoggerAdapter implements Logger {
     this.console.groupEnd();
   }
 
-  log(message: string, ...args: unknown[]): void {
+  log<T>(message: string, args: T): void {
     if (this.logLevels.includes('log')) {
-      this.console.log(message, ...args);
+      this.groupWrapCollapsed(this.console.log, message, args);
     }
   }
 
-  info(message: string, ...args: unknown[]): void {
+  info<T>(message: string, args: T): void {
     if (this.logLevels.includes('info')) {
-      this.console.info(message, ...args);
+      this.groupWrapCollapsed(this.console.info, message, args);
     }
   }
 
-  warn(message: string, ...args: unknown[]): void {
+  warn<T>(message: string, args: T): void {
     if (this.logLevels.includes('warn')) {
-      this.console.warn(message, ...args);
+      this.groupWrapCollapsed(this.console.warn, message, args);
     }
   }
 
-  error(message: string, ...args: unknown[]): void {
+  error<T>(message: string, args: T): void {
     if (this.logLevels.includes('error')) {
-      this.console.error(message, ...args);
+      this.groupWrapCollapsed(this.console.error, message, args);
     }
   }
 
-  debug(message: string, ...args: unknown[]): void {
+  debug<T>(message: string, args: T): void {
     if (this.logLevels.includes('debug')) {
-      this.console.debug(message, ...args);
+      this.groupWrapCollapsed(this.console.debug, message, args);
     }
   }
 
-  trace(message: string, ...args: unknown[]): void {
+  trace<T>(message: string, args: T): void {
     if (this.logLevels.includes('trace')) {
-      this.console.trace(message, ...args);
+      this.groupWrapCollapsed(this.console.trace, message, args);
+    }
+  }
+
+  private processArgs(args: unknown): unknown {
+    if (args instanceof Error) {
+      return JSON.stringify(serializeError(args), null, 2);
+    }
+    return typeof args === 'object' ? JSON.stringify(args, null, 2) : args;
+  }
+
+  private groupWrapCollapsed<T>(fn: (message: string, args?: unknown) => void, message: string, args: T): void {
+    if (args) {
+      this.console.groupCollapsed(message);
+      fn('', this.processArgs(args));
+      this.console.groupEnd();
+    }
+    else {
+      fn(message);
     }
   }
 }

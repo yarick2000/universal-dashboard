@@ -13,13 +13,15 @@ export function createLoggerAdapters(featureService: FeatureService): Logger[] {
 
   const clientLoggingFeature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
   if (isClient() && clientLoggingFeature.enabled) {
+    const logLevels = clientLoggingFeature.logLevels || [];
     if (clientLoggingFeature.logToConsole) {
       const console = window.console;
-      const feature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
-      const logLevels = feature?.logLevels || [];
       const consoleAdapter: Logger = new ClientConsoleLoggerAdapter(console, logLevels as LogLevel[]);
-      const workerAdapter: Logger = new ClientWorkerLoggerAdapter(logLevels as LogLevel[]);
-      adapters.push(consoleAdapter, workerAdapter);
+      adapters.push(consoleAdapter);
+    }
+    if (clientLoggingFeature.logToServer) {
+      const workerAdapter: Logger = new ClientWorkerLoggerAdapter(logLevels as LogLevel[], clientLoggingFeature.logToServerBatchSize, clientLoggingFeature.logToServerIdleTimeSec);
+      adapters.push(workerAdapter);
     }
   }
 

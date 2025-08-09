@@ -23,4 +23,6 @@ export type ClientLoggingFeature = FeatureBase & {
   logLevels: string[];
   logToConsole: boolean;
   logToServer: boolean;
+  logToServerBatchSize: number;
+  logToServerIdleTimeSec: number;
 };

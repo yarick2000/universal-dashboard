@@ -9,10 +9,9 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./src/workers",
     "outDir": "./public/workers",
+    "rootDir": "./src/workers",
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@root/*": ["./*"]
+      "@/*": ["../../src/*"],
     }
   },
   "exclude": [

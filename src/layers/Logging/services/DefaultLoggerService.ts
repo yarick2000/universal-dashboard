@@ -1,54 +1,33 @@
 import { DI } from '@/enums';
 import { withTryCatch } from '@/utils';
 
-import { LogSourceFormatter, TimeStampFormatter } from '../formatters';
-import { Logger, LoggerFormatter } from '../interfaces';
-import { format } from '../utils/format';
+import { Logger } from '../interfaces';
 
 export class DefaultLoggerService implements Logger {
-
-  private readonly formatters: LoggerFormatter[] = [
-    new LogSourceFormatter(),
-    new TimeStampFormatter(),
-  ];
-
   constructor(private readonly adapters: Logger[]) {}
 
-  assert(condition: boolean, fn: () => void): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.assert(condition, fn)));
-  }
-  group(name: string, fn: () => void, collapsed: boolean = true): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.group(name, fn, collapsed)));
+  log<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.log(message, args)));
   }
 
-  log(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.log(formattedMessage, ...formattedArgs)));
+  error<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.error(message, args)));
   }
 
-  error(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.error(formattedMessage, ...formattedArgs)));
+  warn<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.warn(message, args)));
   }
 
-  warn(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.warn(formattedMessage, ...formattedArgs)));
+  info<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.info(message, args)));
   }
 
-  info(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.info(formattedMessage, ...formattedArgs)));
+  debug<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.debug(message, args)));
   }
 
-  debug(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.debug(formattedMessage, ...formattedArgs)));
-  }
-
-  trace(message: string, ...args: unknown[]): void {
-    const { message: formattedMessage, args: formattedArgs } = format(this.formatters, message, ...args);
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.trace(formattedMessage, ...formattedArgs)));
+  trace<T>(message: string, args: T): void {
+    this.adapters.forEach(adapter => withTryCatch(() => adapter.trace(message, args)));
   }
 
   getAdapters(): Logger[] {

@@ -1,17 +1,8 @@
 export interface Logger {
-  log(message: string, ...args: unknown[]): void;
-  info(message: string, ...args: unknown[]): void;
-  warn(message: string, ...args: unknown[]): void;
-  error(message: string, ...args: unknown[]): void;
-  debug(message: string, ...args: unknown[]): void;
-  trace(message: string, ...args: unknown[]): void;
-  group(label: string, fn: () => void, collapsed: boolean): void;
-  assert(condition: boolean, fn: () => void): void;
-};
-
-export interface LoggerFormatter {
-  format(message: string, ...args: unknown[]): {
-    message: string;
-    args: unknown[];
-  };
+  log<T>(message: string, args: T): void;
+  info<T>(message: string, args: T): void;
+  warn<T>(message: string, args: T): void;
+  error<T>(message: string, args: T): void;
+  debug<T>(message: string, args: T): void;
+  trace<T>(message: string, args: T): void;
 };
