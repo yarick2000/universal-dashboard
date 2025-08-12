@@ -1,4 +1,8 @@
-export function *getFlattenedObjectEntries(obj: object, prefix: string = '', storeObjects: boolean = false): IterableIterator<[string, unknown]> {
+export function *getFlattenedObjectEntries(
+  obj: object,
+  prefix: string = '',
+  storeObjects: boolean = false,
+): IterableIterator<[string, unknown]> {
   if (storeObjects && typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
     yield [prefix, obj]; // Yield the object itself if not storing nested objects
     return;

@@ -1,33 +1,72 @@
 import { DI } from '@/enums';
 import { withTryCatch } from '@/utils';
 
-import { Logger } from '../interfaces';
+import { Logger, LoggerService } from '../interfaces';
+import { LogMessage } from '../types';
 
-export class DefaultLoggerService implements Logger {
-  constructor(private readonly adapters: Logger[]) {}
+export class DefaultLoggerService implements LoggerService {
+  private isInitialized = false;
+  private adapters: Logger[] = [];
+  constructor(private readonly adaptersFactory: () => Promise<Logger[]>) {}
 
-  log<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.log(message, args)));
+  async initialize(): Promise<void> {
+    if (!this.isInitialized) {
+      try {
+        this.adapters = await this.adaptersFactory();
+        this.isInitialized = true;
+      } catch {
+        this.isInitialized = false;
+      }
+    }
   }
 
-  error<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.error(message, args)));
+  async log<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.log(message, args)));
+    }
   }
 
-  warn<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.warn(message, args)));
+  async error<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.error(message, args)));
+    }
   }
 
-  info<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.info(message, args)));
+  async warn<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.warn(message, args)));
+    }
   }
 
-  debug<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.debug(message, args)));
+  async info<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.info(message, args)));
+    }
   }
 
-  trace<T>(message: string, args: T): void {
-    this.adapters.forEach(adapter => withTryCatch(() => adapter.trace(message, args)));
+  async debug<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.debug(message, args)));
+    }
+  }
+
+  async trace<T>(message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      this.adapters.forEach(adapter => withTryCatch(() => adapter.trace(message, args)));
+    }
+  }
+
+  async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      await Promise.allSettled(this.adapters.map(adapter => withTryCatch(() => adapter.bulk(logMessages))));
+    }
   }
 
   getAdapters(): Logger[] {

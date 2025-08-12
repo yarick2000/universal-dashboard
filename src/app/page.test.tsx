@@ -133,7 +133,9 @@ describe('Home Page', () => {
     it('should render the Deploy now button with correct attributes', () => {
       const deployButton = screen.getByRole('link', { name: /deploy now/i });
       expect(deployButton).toBeInTheDocument();
-      expect(deployButton).toHaveAttribute('href', 'https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
+      expect(deployButton).toHaveAttribute('href',
+        'https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&' +
+        'utm_campaign=create-next-app');
       expect(deployButton).toHaveAttribute('target', '_blank');
       expect(deployButton).toHaveAttribute('rel', 'noopener noreferrer');
 
@@ -148,7 +150,9 @@ describe('Home Page', () => {
     it('should render the Read our docs button with correct attributes', () => {
       const docsButton = screen.getByRole('link', { name: /read our docs/i });
       expect(docsButton).toBeInTheDocument();
-      expect(docsButton).toHaveAttribute('href', 'https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
+      expect(docsButton).toHaveAttribute('href',
+        'https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&' +
+        'utm_campaign=create-next-app');
       expect(docsButton).toHaveAttribute('target', '_blank');
       expect(docsButton).toHaveAttribute('rel', 'noopener noreferrer');
     });
@@ -179,7 +183,11 @@ describe('Home Page', () => {
     it('should render Learn link with correct attributes', () => {
       const learnLink = screen.getByRole('link', { name: /learn/i });
       expect(learnLink).toBeInTheDocument();
-      expect(learnLink).toHaveAttribute('href', 'https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
+      expect(learnLink).toHaveAttribute(
+        'href',
+        'https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&' +
+        'utm_campaign=create-next-app',
+      );
       expect(learnLink).toHaveAttribute('target', '_blank');
       expect(learnLink).toHaveAttribute('rel', 'noopener noreferrer');
 
@@ -191,7 +199,11 @@ describe('Home Page', () => {
     it('should render Examples link with correct attributes', () => {
       const examplesLink = screen.getByRole('link', { name: /examples/i });
       expect(examplesLink).toBeInTheDocument();
-      expect(examplesLink).toHaveAttribute('href', 'https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
+      expect(examplesLink).toHaveAttribute(
+        'href',
+        'https://vercel.com/templates?framework=next.js&utm_source=create-next-app&' +
+        'utm_medium=appdir-template-tw&utm_campaign=create-next-app',
+      );
       expect(examplesLink).toHaveAttribute('target', '_blank');
       expect(examplesLink).toHaveAttribute('rel', 'noopener noreferrer');
 
@@ -203,7 +215,9 @@ describe('Home Page', () => {
     it('should render Go to nextjs.org link with correct attributes', () => {
       const nextjsLink = screen.getByRole('link', { name: /go to nextjs\.org/i });
       expect(nextjsLink).toBeInTheDocument();
-      expect(nextjsLink).toHaveAttribute('href', 'https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app');
+      expect(nextjsLink).toHaveAttribute('href',
+        'https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&' +
+        'utm_campaign=create-next-app');
       expect(nextjsLink).toHaveAttribute('target', '_blank');
       expect(nextjsLink).toHaveAttribute('rel', 'noopener noreferrer');
 

@@ -1,9 +1,18 @@
 export type LogLevel = 'trace' | 'debug' | 'log' | 'info' | 'warn' | 'error';
 
-export type ClientSideLogMessage = {
-  source: 'client';
-  type: 'log' | 'info' | 'warn' | 'error' | 'debug' | 'trace';
+export type LogMessage<T> = {
+  level: LogLevel;
   message: string;
-  args: unknown;
+  timestamp: number;
+  args?: T;
+};
+
+export type ClientSideLogMessage<T> = LogMessage<T> & {
+  source: 'client';
   browserInfo: unknown;
+};
+
+export type ServerSideLogMessage<T> = LogMessage<T> & {
+  source: 'server';
+  requestId: string;
 };

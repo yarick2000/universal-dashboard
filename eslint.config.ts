@@ -3,10 +3,10 @@ import { fileURLToPath } from 'url';
 
 import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 import importPlugin from 'eslint-plugin-import';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
-import stylistic from '@stylistic/eslint-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +42,7 @@ const sharedRules = {
   '@stylistic/indent': ['error', 2], // 2-space indentation
   '@stylistic/no-trailing-spaces': 'error', // No trailing whitespace
   '@stylistic/eol-last': 'error', // Require newline at end of file
+  '@stylistic/max-len': ['error', { 'code': 110, 'tabWidth': 2, 'ignoreComments': true }],
 };
 
 export default tseslint.config(
@@ -103,6 +104,12 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parserOptions: {
+        project: './jsconfig.json',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
     plugins: {
       'import': importPlugin,

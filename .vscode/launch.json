@@ -39,26 +39,26 @@
       "name": "Next.js: debug full stack",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
-      "args": ["dev"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "cwd": "${workspaceFolder}",
       "env": {
-        "NODE_OPTIONS": "--inspect"
+      "NODE_OPTIONS": "--inspect"
       },
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "skipFiles": [
-        "<node_internals>/**",
-        "node_modules/**"
+      "<node_internals>/**",
+      "node_modules/**"
       ],
       "resolveSourceMapLocations": [
-        "${workspaceFolder}/**",
-        "!**/node_modules/**"
+      "${workspaceFolder}/**",
+      "!**/node_modules/**"
       ],
       "serverReadyAction": {
-        "pattern": "- Local:\\s+(https?://.+)",
-        "uriFormat": "%s",
-        "action": "debugWithChrome"
+      "pattern": "- Local:\\s+(https?://.+)",
+      "uriFormat": "%s",
+      "action": "debugWithChrome"
       }
     },
     {

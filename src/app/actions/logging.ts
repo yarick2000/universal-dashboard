@@ -1,7 +1,8 @@
 'use server';
 
+import { loggerService } from '@/index';
 import { ClientSideLogMessage } from '@/layers/Logging';
 
-export function recordClientSideLogs(logMessages: ClientSideLogMessage[]) {
-  // Implementation for recording client-side logs
+export async function recordClientSideLogs(logMessages: ClientSideLogMessage<unknown>[]) {
+  await loggerService.bulk(logMessages);
 }

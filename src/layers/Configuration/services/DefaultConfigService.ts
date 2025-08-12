@@ -169,7 +169,9 @@ export class DefaultConfigService implements ConfigService {
    */
   toObject<T>(prefix?: string): T {
     const result: Record<string, unknown> = {};
-    const keys = prefix ? Array.from(this.configMap.keys()).filter(k => k.startsWith(prefix)) : Array.from(this.configMap.keys());
+    const keys = prefix
+      ? Array.from(this.configMap.keys()).filter(k => k.startsWith(prefix))
+      : Array.from(this.configMap.keys());
 
     for (const key of keys) {
       result[key] = this.getInternal(key);

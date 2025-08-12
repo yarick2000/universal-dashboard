@@ -1,4 +1,4 @@
-import { WorkerInitMessage, WorkerMessage } from '../types';
+import { LoggerWorkerInitMessage, LoggerWorkerMessage } from './types';
 
 let logBatch: unknown[] = [];
 let idleTimer: NodeJS.Timeout | null = null;
@@ -32,32 +32,33 @@ const addLogToBatch = (logData: unknown) => {
   idleTimer = setTimeout(sendBatch, logToServerIdleTimeSec * 1000);
 };
 
-onmessage = (event: MessageEvent<WorkerMessage | WorkerInitMessage>) => {
+onmessage = (event: MessageEvent<LoggerWorkerMessage<unknown> | LoggerWorkerInitMessage>) => {
   const { type } = event.data;
   if (!type) {
     addLogToBatch({
       source: 'client',
-      type: 'error',
+      level: 'error',
       message: 'Logger worker missing type parameter',
+      timestamp: Date.now().valueOf(),
+      browserInfo: collectBrowserInfo(),
     });
     return;
   }
   if (type === 'init') {
-    const { batchSize, idleTime }: WorkerInitMessage = event.data;
+    const { batchSize, idleTime }: LoggerWorkerInitMessage = event.data;
     logToServerBatchSize = batchSize;
     logToServerIdleTimeSec = idleTime;
     return;
   }
-  const { message, args }: WorkerMessage = event.data;
-  const browserInfo = collectBrowserInfo();
-  const logData = {
+  const { message, args }: LoggerWorkerMessage<unknown> = event.data;
+  addLogToBatch({
     source: 'client',
-    type,
+    level: type,
     message,
     args,
-    browserInfo,
-  };
-  addLogToBatch(logData);
+    browserInfo: collectBrowserInfo(),
+    timestamp: Date.now().valueOf(),
+  });
 };
 
 function collectBrowserInfo() {

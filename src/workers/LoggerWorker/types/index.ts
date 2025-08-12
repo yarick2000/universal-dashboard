@@ -1,10 +1,10 @@
-export type WorkerMessage = {
+export type LoggerWorkerMessage<T> = {
   type: 'log' | 'info' | 'warn' | 'error' | 'debug' | 'trace';
   message: string;
-  args: unknown;
+  args: T;
 };
 
-export type WorkerInitMessage = {
+export type LoggerWorkerInitMessage = {
   type: 'init';
   batchSize: number;
   idleTime: number;

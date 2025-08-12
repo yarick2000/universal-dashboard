@@ -1,34 +1,14 @@
-
 import { serializeError } from 'serialize-error';
 
 import { Logger } from '../interfaces';
-import { LogLevel } from '../types';
+import { LogLevel, LogMessage } from '../types';
 
-export class ClientConsoleLoggerAdapter implements Logger {
-
-  private readonly console: Console;
-  private readonly logLevels: LogLevel[];
-
-  constructor (_console: Console, _logLevels: LogLevel[]) {
-    this.console = _console;
-    this.logLevels = _logLevels;
-  }
-
-  assert(condition: boolean, fn: () => void): void {
-    if (!condition) {
-      fn();
-    }
-  }
-
-  group(name: string, fn: () => void, collapsed: boolean = true): void {
-    if (collapsed) {
-      this.console.groupCollapsed(name);
-    } else {
-      this.console.group(name);
-    }
-    fn();
-    this.console.groupEnd();
-  }
+export class ConsoleLoggerAdapter implements Logger {
+  constructor(
+    private readonly console: Console,
+    private readonly logLevels: LogLevel[],
+    private readonly formatMessage: (message: string, args: unknown) => string,
+  ) {}
 
   log<T>(message: string, args: T): void {
     if (this.logLevels.includes('log')) {
@@ -66,6 +46,14 @@ export class ClientConsoleLoggerAdapter implements Logger {
     }
   }
 
+  bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
+    logMessages.forEach((logMessage) => {
+      const { level, message} = logMessage;
+      this[level](message, logMessage);
+    });
+    return Promise.resolve();
+  }
+
   private processArgs(args: unknown): unknown {
     if (args instanceof Error) {
       return JSON.stringify(serializeError(args), null, 2);
@@ -73,7 +61,11 @@ export class ClientConsoleLoggerAdapter implements Logger {
     return typeof args === 'object' ? JSON.stringify(args, null, 2) : args;
   }
 
-  private groupWrapCollapsed<T>(fn: (message: string, args?: unknown) => void, message: string, args: T): void {
+  private groupWrapCollapsed<T>(
+    fn: (message: string, args?: unknown) => void,
+    message: string,
+    args: T,
+  ): void {
     if (args) {
       this.console.groupCollapsed(message);
       fn('', this.processArgs(args));
