@@ -14,8 +14,9 @@ export class DefaultLoggerService implements LoggerService {
       try {
         this.adapters = await this.adaptersFactory();
         this.isInitialized = true;
-      } catch {
+      } catch (error) {
         this.isInitialized = false;
+        throw new Error('Logger initialization failed', { cause: error });
       }
     }
   }
@@ -67,6 +68,13 @@ export class DefaultLoggerService implements LoggerService {
     if (this.isInitialized) {
       await Promise.allSettled(this.adapters.map(adapter => withTryCatch(() => adapter.bulk(logMessages))));
     }
+  }
+
+  async dispose(): Promise<void> {
+    await Promise.allSettled(
+      this.adapters
+        .filter(adapter => typeof adapter.dispose === 'function')
+        .map(adapter => withTryCatch(() => adapter.dispose?.())));
   }
 
   getAdapters(): Logger[] {

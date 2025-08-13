@@ -66,13 +66,14 @@ export class ConsoleLoggerAdapter implements Logger {
     message: string,
     args: T,
   ): void {
+    const formattedMessage = this.formatMessage(message, args);
     if (args) {
-      this.console.groupCollapsed(message);
+      this.console.groupCollapsed(formattedMessage);
       fn('', this.processArgs(args));
       this.console.groupEnd();
     }
     else {
-      fn(message);
+      fn(formattedMessage);
     }
   }
 }

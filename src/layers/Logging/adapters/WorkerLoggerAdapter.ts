@@ -9,15 +9,27 @@ export class WorkerLoggerAdapter implements Logger {
   private readonly worker: Worker;
   private readonly logLevels: LogLevel[];
   private readonly currentDomain: string = window.location.origin;
+  private readonly console: Console = window.console;
 
   constructor(_logLevels: LogLevel[], batchSize: number, idleTime: number) {
-    this.worker = new Worker(
-      new URL('../../../../public/workers/LoggerWorker.js', import.meta.url),
-      { type: 'module' },
-    );
-    this.worker.onmessage = this.handleWorkerMessage.bind(this);
-    this.worker.postMessage({ type: 'init', batchSize, idleTime });
-    this.logLevels = _logLevels;
+    try {
+      this.worker = new Worker(
+        new URL('../../../../public/workers/LoggerWorker.js', import.meta.url),
+        { type: 'module' },
+      );
+      this.worker.onmessage = this.handleWorkerMessage.bind(this);
+      this.worker.postMessage({ type: 'init', batchSize, idleTime });
+      this.logLevels = _logLevels;
+    } catch (error) {
+      this.console.error('Failed to initialize WorkerLoggerAdapter:', error);
+      throw new Error('Worker initialization failed', { cause: error });
+    }
+  }
+
+  dispose(): void {
+    if (this.worker) {
+      this.worker.terminate();
+    }
   }
 
   log<T>(message: string, args: T): void {
@@ -32,7 +44,7 @@ export class WorkerLoggerAdapter implements Logger {
         domain: this.currentDomain,
         type: 'error',
         message,
-        args: (args instanceof Error) ? serializeError(args) : args,
+        args: this.serializeError(args),
       });
     }
   }
@@ -68,4 +80,16 @@ export class WorkerLoggerAdapter implements Logger {
   private async handleWorkerMessage(event: MessageEvent<ClientSideLogMessage<unknown>[]>): Promise<void> {
     await this.bulk(event.data);
   }
+
+  private serializeError(error: unknown): unknown {
+    if (error instanceof Error) {
+      return serializeError(error);
+    }
+    if (typeof error === 'object' && error !== null) {
+      // Handle other error-like objects
+      return JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    }
+    return error;
+  }
+
 }

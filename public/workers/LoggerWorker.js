@@ -1,1 +1,97 @@
-"use strict";(()=>{var n=[],r=null,g=10,s=5,a=()=>{n.length>0&&(postMessage(n),n=[]),r&&(clearTimeout(r),r=null)},i=e=>{if(n.push(e),n.length>=g){a();return}r&&clearTimeout(r),r=setTimeout(a,s*1e3)};onmessage=e=>{let{type:o}=e.data;if(!o){i({source:"client",level:"error",message:"Logger worker missing type parameter",timestamp:Date.now().valueOf(),browserInfo:t()});return}if(o==="init"){let{batchSize:u,idleTime:d}=e.data;g=u,s=d;return}let{message:l,args:c}=e.data;i({source:"client",level:o,message:l,args:c,browserInfo:t(),timestamp:Date.now().valueOf()})};function t(){let e={userAgent:navigator.userAgent,language:navigator.language};"languages"in navigator&&(e.languages=navigator.languages),"hardwareConcurrency"in navigator&&(e.hardwareConcurrency=navigator.hardwareConcurrency),"deviceMemory"in navigator&&(e.deviceMemory=navigator.deviceMemory),"cookieEnabled"in navigator&&(e.cookieEnabled=navigator.cookieEnabled),"onLine"in navigator&&(e.onLine=navigator.onLine),"webdriver"in navigator&&(e.webdriver=navigator.webdriver),typeof screen<"u"&&(e.screen={width:screen.width,height:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,pixelDepth:screen.pixelDepth});try{e.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone}catch{}return e}})();
+"use strict";
+(() => {
+  // src/workers/LoggerWorker/index.ts
+  var logBatch = [];
+  var idleTimer = null;
+  var logToServerBatchSize = 10;
+  var logToServerIdleTimeSec = 5;
+  var sendBatch = () => {
+    if (logBatch.length > 0) {
+      postMessage(logBatch);
+      logBatch = [];
+    }
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+      idleTimer = null;
+    }
+  };
+  var addLogToBatch = (logData) => {
+    logBatch.push(logData);
+    if (logBatch.length >= logToServerBatchSize) {
+      sendBatch();
+      return;
+    }
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+    }
+    idleTimer = setTimeout(sendBatch, logToServerIdleTimeSec * 1e3);
+  };
+  onmessage = (event) => {
+    const { type } = event.data;
+    if (!type) {
+      addLogToBatch({
+        source: "client",
+        level: "error",
+        message: "Logger worker missing type parameter",
+        timestamp: Date.now().valueOf(),
+        browserInfo: collectBrowserInfo()
+      });
+      return;
+    }
+    if (type === "init") {
+      const { batchSize, idleTime } = event.data;
+      logToServerBatchSize = batchSize;
+      logToServerIdleTimeSec = idleTime;
+      return;
+    }
+    const { message, args } = event.data;
+    addLogToBatch({
+      source: "client",
+      level: type,
+      message,
+      args,
+      browserInfo: collectBrowserInfo(),
+      timestamp: Date.now().valueOf()
+    });
+  };
+  function collectBrowserInfo() {
+    const browserInfo = {
+      userAgent: navigator.userAgent,
+      language: navigator.language
+    };
+    if ("languages" in navigator) {
+      browserInfo.languages = navigator.languages;
+    }
+    if ("hardwareConcurrency" in navigator) {
+      browserInfo.hardwareConcurrency = navigator.hardwareConcurrency;
+    }
+    if ("deviceMemory" in navigator) {
+      browserInfo.deviceMemory = navigator.deviceMemory;
+    }
+    if ("cookieEnabled" in navigator) {
+      browserInfo.cookieEnabled = navigator.cookieEnabled;
+    }
+    if ("onLine" in navigator) {
+      browserInfo.onLine = navigator.onLine;
+    }
+    if ("webdriver" in navigator) {
+      browserInfo.webdriver = navigator.webdriver;
+    }
+    if (typeof screen !== "undefined") {
+      browserInfo.screen = {
+        width: screen.width,
+        height: screen.height,
+        availWidth: screen.availWidth,
+        availHeight: screen.availHeight,
+        colorDepth: screen.colorDepth,
+        pixelDepth: screen.pixelDepth
+      };
+    }
+    try {
+      browserInfo.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+    }
+    return browserInfo;
+  }
+})();
+//# sourceMappingURL=LoggerWorker.js.map

@@ -8,6 +8,7 @@ export interface Logger {
   debug<T>(message: string, args: T): void;
   trace<T>(message: string, args: T): void;
   bulk(logMessages: LogMessage<unknown>[]): Promise<void>;
+  dispose?(): void;
 };
 
 export interface LoggerService {
@@ -18,5 +19,6 @@ export interface LoggerService {
   debug<T>(message: string, args: T): Promise<void>;
   trace<T>(message: string, args: T): Promise<void>;
   bulk(logMessages: LogMessage<unknown>[]): Promise<void>;
+  dispose(): Promise<void>;
   initialize(): Promise<void>;
 }
