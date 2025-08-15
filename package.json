@@ -5,7 +5,7 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "dev": "npm run tools:apply-config -- -s local -t development && npm run build:workers -- -s && next dev --turbopack",
-    "build": "npm run tools:apply-config -- -s local -t production &&  npm run build:workers -- -m && next build",
+    "build": "npm run tools:apply-config -- -s production -t production &&  npm run build:workers -- -m && next build",
     "build:workers": "npx tsx src/tools/build-workers",
     "start": "next start",
     "lint": "next lint",
