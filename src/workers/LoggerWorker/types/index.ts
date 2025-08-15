@@ -9,3 +9,7 @@ export type LoggerWorkerInitMessage = {
   batchSize: number;
   idleTime: number;
 };
+
+export type LoggerWorkerDisposeMessage = {
+  type: 'dispose';
+};

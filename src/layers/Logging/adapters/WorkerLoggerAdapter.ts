@@ -27,7 +27,7 @@ export class WorkerLoggerAdapter implements Logger {
 
   dispose(): void {
     if (this.worker) {
-      this.worker.terminate();
+      this.worker.postMessage({ type: 'dispose' });
     }
   }
 

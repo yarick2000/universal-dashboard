@@ -1,4 +1,4 @@
-import { LoggerWorkerInitMessage, LoggerWorkerMessage } from './types';
+import { LoggerWorkerDisposeMessage, LoggerWorkerInitMessage, LoggerWorkerMessage } from './types';
 
 let logBatch: unknown[] = [];
 let idleTimer: NodeJS.Timeout | null = null;
@@ -32,7 +32,9 @@ const addLogToBatch = (logData: unknown) => {
   idleTimer = setTimeout(sendBatch, logToServerIdleTimeSec * 1000);
 };
 
-onmessage = (event: MessageEvent<LoggerWorkerMessage<unknown> | LoggerWorkerInitMessage>) => {
+onmessage = (
+  event: MessageEvent<LoggerWorkerMessage<unknown> | LoggerWorkerInitMessage | LoggerWorkerDisposeMessage>,
+) => {
   const { type } = event.data;
   if (!type) {
     addLogToBatch({
@@ -44,6 +46,12 @@ onmessage = (event: MessageEvent<LoggerWorkerMessage<unknown> | LoggerWorkerInit
     });
     return;
   }
+  if (type === 'dispose') {
+    sendBatch();
+    close();
+    return;
+  }
+
   if (type === 'init') {
     const { batchSize, idleTime }: LoggerWorkerInitMessage = event.data;
     logToServerBatchSize = batchSize;
