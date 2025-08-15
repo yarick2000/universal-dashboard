@@ -55,15 +55,15 @@ async function main() {
 
   switch (env) {
     case 'local': {
-      const localServerModule = await import('@/config/server.local');
-      const localClientModule = await import('@/config/client.local');
+      const localServerModule = await import('../config/server.local');
+      const localClientModule = await import('../config/client.local');
       clientConfig = localClientModule.default;
       serverConfig = localServerModule.default;
       break;
     }
     case 'production': {
-      const productionServerModule = await import('@/config/server.production');
-      const productionClientModule = await import('@/config/client.production');
+      const productionServerModule = await import('../config/server.production');
+      const productionClientModule = await import('../config/client.production');
       clientConfig = productionClientModule.default;
       serverConfig = productionServerModule.default;
       break;
