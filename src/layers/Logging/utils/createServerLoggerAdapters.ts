@@ -4,6 +4,7 @@ import { ServerLoggingFeature } from '@/layers/Configuration';
 import { FeatureService } from '@/layers/Feature';
 
 import { ConsoleLoggerAdapter } from '../adapters/ConsoleLoggerAdapter';
+import { FileLoggerAdapter } from '../adapters/FileLoggerAdapter';
 import { Logger } from '../interfaces';
 import { LogLevel } from '../types';
 
@@ -32,6 +33,18 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
       } catch {
         // TODO: Handle error
       }
+    }
+    if (serverLoggingFeature.logToFile) {
+      const fileAdapter: Logger = new FileLoggerAdapter(
+        logLevels as LogLevel[],
+        serverLoggingFeature.logToFilePath,
+        serverLoggingFeature.logToFileNamePattern,
+        serverLoggingFeature.logToFileBatchSize,
+        serverLoggingFeature.logToFileIdleTimeSec,
+        serverLoggingFeature.logToFileMaxStoragePeriodDays,
+        serverLoggingFeature.logToFileMaxFileSize,
+      );
+      adapters.push(fileAdapter);
     }
   }
   return adapters;

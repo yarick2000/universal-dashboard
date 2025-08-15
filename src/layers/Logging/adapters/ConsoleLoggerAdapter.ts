@@ -47,7 +47,8 @@ export class ConsoleLoggerAdapter implements Logger {
   }
 
   bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    logMessages.forEach((logMessage) => {
+    const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
+    filteredMessages.forEach((logMessage) => {
       const { level, message} = logMessage;
       this[level](message, logMessage);
     });

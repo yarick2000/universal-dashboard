@@ -1,6 +1,5 @@
-import { serializeError } from 'serialize-error';
-
 import { recordClientSideLogs } from '@/app/actions';
+import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { ClientSideLogMessage, LogLevel, LogMessage } from '../types';
@@ -44,7 +43,7 @@ export class WorkerLoggerAdapter implements Logger {
         domain: this.currentDomain,
         type: 'error',
         message,
-        args: this.serializeError(args),
+        args: serializeError(args),
       });
     }
   }
@@ -74,22 +73,11 @@ export class WorkerLoggerAdapter implements Logger {
   }
 
   async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    await recordClientSideLogs(logMessages as ClientSideLogMessage<unknown>[]);
+    const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
+    await recordClientSideLogs(filteredMessages as ClientSideLogMessage<unknown>[]);
   }
 
   private async handleWorkerMessage(event: MessageEvent<ClientSideLogMessage<unknown>[]>): Promise<void> {
     await this.bulk(event.data);
   }
-
-  private serializeError(error: unknown): unknown {
-    if (error instanceof Error) {
-      return serializeError(error);
-    }
-    if (typeof error === 'object' && error !== null) {
-      // Handle other error-like objects
-      return JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
-    }
-    return error;
-  }
-
 }
