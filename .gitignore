@@ -43,3 +43,7 @@ next-env.d.ts
 
 # logs
 /log/*
+
+# local config
+/src/config/*.local.ts
+
