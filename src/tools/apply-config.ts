@@ -16,6 +16,14 @@ const console = new Console({
   stderr: process.stderr,
 });
 
+function parseEnvVariable(envVariables?: Record<string, string>): string {
+  if (!envVariables) return '';
+
+  return Object.entries(envVariables)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n');
+}
+
 async function main() {
   const argsDefinitions = {
     source: { type: String, alias: 's', description: 'Source directory to apply the configuration' },
@@ -66,10 +74,14 @@ async function main() {
   }
   let finalConfig: string = '';
   if (serverConfig) {
-    finalConfig = `SERVER_CONFIG=${JSON.stringify(serverConfig)}`;
+    const {envVariables, ...serverConfigWithoutEnv} = serverConfig;
+    finalConfig += parseEnvVariable(envVariables);
+    finalConfig += `\nSERVER_CONFIG=${JSON.stringify(serverConfigWithoutEnv)}`;
   }
   if (clientConfig) {
-    finalConfig += `\nNEXT_PUBLIC_CONFIG=${JSON.stringify(clientConfig)}`;
+    const {envVariables, ...clientConfigWithoutEnv} = clientConfig;
+    finalConfig += parseEnvVariable(envVariables);
+    finalConfig += `\nNEXT_PUBLIC_CONFIG=${JSON.stringify(clientConfigWithoutEnv)}`;
   }
 
   try {

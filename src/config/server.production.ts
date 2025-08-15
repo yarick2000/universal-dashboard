@@ -19,6 +19,9 @@ const config: ServerConfig = {
       logToFileMaxFileSize: 10485760,
     },
   },
+  envVariables: {
+    NEXT_SERVER_ACTIONS_ENCRYPTION_KEY: 'REPLACE-WITH-ENCRYPTED-VALUE',
+  },
 };
 
 export default config;

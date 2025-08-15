@@ -10,10 +10,12 @@ type Feature<N extends FeatureName, T extends FeatureBase> = {
 
 export type ClientConfig = {
   features: Feature<'clientLogging', ClientLoggingFeature>;
+  envVariables?: Record<string, string>;
 };
 
 export type ServerConfig = {
   features: Feature<'openTelemetry', OpenTelemetryFeature> & Feature<'serverLogging', ServerLoggingFeature>;
+  envVariables?: Record<string, string>;
 };
 
 export type Config = ServerConfig;
