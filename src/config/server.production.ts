@@ -9,11 +9,11 @@ const config: ServerConfig = {
     serverLogging: {
       enabled: true,
       logLevels: ['error', 'warn', 'info'],
-      logToConsole: false,
+      logToConsole: true,
       logToFile: true,
       logToFilePath: './log',
       logToFileNamePattern: 'universal-dashboard-%DATE%-%PART%.log',
-      logToFileBatchSize: 100,
+      logToFileBatchSize: 2,
       logToFileIdleTimeSec: 5,
       logToFileMaxStoragePeriodDays: 7,
       logToFileMaxFileSize: 10485760,
