@@ -16,6 +16,18 @@ const console = new Console({
   stderr: process.stderr,
 });
 
+async function safeImport<T>(path: string, fallback: T): Promise<T> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return (await import(path)).default;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (err.code === 'MODULE_NOT_FOUND') return fallback;
+    throw err;
+  }
+}
+
 function parseEnvVariable(envVariables?: Record<string, string>): string {
   if (!envVariables) return '';
 
@@ -54,11 +66,12 @@ async function main() {
   let clientConfig: ClientConfig | null = null;
 
   switch (env) {
+    // local config is not deployed to production,
+    // so we need to prevent build from failure by
+    // wrapping imports in try-catch blocks
     case 'local': {
-      const localServerModule = await import('../config/server.local');
-      const localClientModule = await import('../config/client.local');
-      clientConfig = localClientModule.default;
-      serverConfig = localServerModule.default;
+      serverConfig = await safeImport<ServerConfig | null>('../config/server.local', null);
+      clientConfig = await safeImport<ClientConfig | null>('../config/client.local', null);
       break;
     }
     case 'production': {
