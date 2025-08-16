@@ -8,6 +8,7 @@ export interface Logger {
   debug<T>(message: string, args: T): void;
   trace<T>(message: string, args: T): void;
   bulk(logMessages: LogMessage<unknown>[]): Promise<void>;
+  init?(): void;
   dispose?(): void;
 };
 
