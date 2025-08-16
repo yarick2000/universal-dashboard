@@ -34,7 +34,7 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
         // TODO: Handle error
       }
     }
-    if (serverLoggingFeature.logToFile) {
+    if (serverLoggingFeature.logToFile && process.env.NODE_ENV === 'development') {
       const fileAdapter: Logger = new FileLoggerAdapter(
         logLevels as LogLevel[],
         serverLoggingFeature.logToFilePath,

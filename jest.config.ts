@@ -77,7 +77,6 @@ const serverConfig: Config = {
 const config = (configs: Config[]) => {
   return {
     coverageProvider: 'v8',
-    testEnvironment: 'jsdom',
     projects: configs,
   } as JestConfig.InitialOptions;
 };

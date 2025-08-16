@@ -1,5 +1,5 @@
 export function isClient(): boolean {
-  return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  return typeof window !== 'undefined';
 };
 
 export function isServer(): boolean {
