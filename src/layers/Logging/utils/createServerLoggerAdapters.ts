@@ -1,6 +1,6 @@
 import { Console } from 'console';
 
-import { ServerLoggingFeature } from '@/layers/Configuration';
+import { ConsoleLoggingFeature, FileLoggingFeature, SupabaseLoggingFeature } from '@/layers/Configuration';
 import { FeatureService } from '@/layers/Feature';
 
 import { ConsoleLoggerAdapter } from '../adapters/ConsoleLoggerAdapter';
@@ -14,28 +14,30 @@ import { serverFormatMessage } from './serverFormatMessage';
 export default function createServerLoggerAdapters(featureService: FeatureService): Logger[] {
   const adapters: Logger[] = [];
 
-  const serverLoggingFeature = featureService.getFeature<ServerLoggingFeature>('serverLogging');
-  if (serverLoggingFeature.enabled) {
-    const logLevels = serverLoggingFeature.logLevels || [];
-    if (serverLoggingFeature.logToConsole) {
-      try {
-        const console = new Console({
-          stdout: process.stdout,
-          stderr: process.stderr,
-          colorMode: true,
-          groupIndentation: 0,
-        });
-        const consoleAdapter: Logger = new ConsoleLoggerAdapter(
-          console,
-          logLevels as LogLevel[],
-          serverFormatMessage,
-        );
-        adapters.push(consoleAdapter);
-      } catch {
-        // TODO: Handle error
-      }
+  const consoleLoggingFeature = featureService.getFeature<ConsoleLoggingFeature>('consoleLogging');
+  if (consoleLoggingFeature.enabled) {
+    const logLevels = consoleLoggingFeature.logLevels || [];
+    try {
+      const console = new Console({
+        stdout: process.stdout,
+        stderr: process.stderr,
+        colorMode: true,
+        groupIndentation: 0,
+      });
+      const consoleAdapter: Logger = new ConsoleLoggerAdapter(
+        console,
+        logLevels as LogLevel[],
+        serverFormatMessage,
+      );
+      adapters.push(consoleAdapter);
+    } catch {
+      // TODO: Handle error
     }
-    if (serverLoggingFeature.logToFile && process.env.NODE_ENV === 'development') {
+  }
+  const fileLoggingFeature = featureService.getFeature<FileLoggingFeature>('fileLogging');
+  if (fileLoggingFeature.enabled) {
+    const logLevels = fileLoggingFeature.logLevels || [];
+    try {
       const fallbackLogger = new ConsoleLoggerAdapter(
         console,
         ['error'],
@@ -44,16 +46,22 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
       const fileAdapter: Logger = new FileLoggerAdapter(
         fallbackLogger,
         logLevels as LogLevel[],
-        serverLoggingFeature.logToFilePath,
-        serverLoggingFeature.logToFileNamePattern,
-        serverLoggingFeature.logToFileBatchSize,
-        serverLoggingFeature.logToFileIdleTimeSec,
-        serverLoggingFeature.logToFileMaxStoragePeriodDays,
-        serverLoggingFeature.logToFileMaxFileSize,
+        fileLoggingFeature.filePath,
+        fileLoggingFeature.fileNamePattern,
+        fileLoggingFeature.batchSize,
+        fileLoggingFeature.idleTimeSec,
+        fileLoggingFeature.maxStoragePeriodDays,
+        fileLoggingFeature.maxFileSize,
       );
       adapters.push(fileAdapter);
+    } catch {
+      // TODO: Handle error
     }
-    if (serverLoggingFeature.logToSupabase) {
+  }
+  const supabaseLoggingFeature = featureService.getFeature<SupabaseLoggingFeature>('supabaseLogging');
+  if (supabaseLoggingFeature.enabled) {
+    const logLevels = supabaseLoggingFeature.logLevels || [];
+    try {
       const fallbackLogger = new ConsoleLoggerAdapter(
         console,
         ['error'],
@@ -62,13 +70,15 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
       const supabaseAdapter: Logger = new SupabaseLoggerAdapter(
         fallbackLogger,
         logLevels as LogLevel[],
-        serverLoggingFeature.logToSupabaseBatchSize,
-        serverLoggingFeature.logToSupabaseIdleTimeSec,
+        supabaseLoggingFeature.batchSize,
+        supabaseLoggingFeature.idleTimeSec,
         process.env.SUPABASE_URL as string,
         process.env.SUPABASE_KEY as string,
       );
       adapters.push(supabaseAdapter);
+    } catch {
+      // TODO: Handle error
     }
   }
   return adapters;
-}
+};

@@ -1,8 +1,8 @@
 'use server';
 
 import { loggerService } from '@/index';
-import { ClientSideLogMessage } from '@/layers/Logging';
+import { LogMessage } from '@/layers/Logging';
 
-export async function recordClientSideLogs(logMessages: ClientSideLogMessage<unknown>[]) {
+export async function recordClientSideLogs(logMessages: LogMessage<unknown>[]) {
   await loggerService.bulk(logMessages);
 }
