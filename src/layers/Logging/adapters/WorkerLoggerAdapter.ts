@@ -2,7 +2,7 @@ import { recordClientSideLogs } from '@/app/actions';
 import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
-import { ClientSideLogMessage, LogLevel, LogMessage } from '../types';
+import { LogLevel, LogMessage } from '../types';
 
 export class WorkerLoggerAdapter implements Logger {
   private readonly worker: Worker | null = null;
@@ -72,10 +72,10 @@ export class WorkerLoggerAdapter implements Logger {
 
   async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
     const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
-    await recordClientSideLogs(filteredMessages as ClientSideLogMessage<unknown>[]);
+    await recordClientSideLogs(filteredMessages);
   }
 
-  private async handleWorkerMessage(event: MessageEvent<ClientSideLogMessage<unknown>[]>): Promise<void> {
+  private async handleWorkerMessage(event: MessageEvent<LogMessage<unknown>[]>): Promise<void> {
     await this.bulk(event.data);
   }
 }

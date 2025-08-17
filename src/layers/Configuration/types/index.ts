@@ -1,4 +1,9 @@
-export type FeatureName = 'openTelemetry' | 'clientLogging' | 'serverLogging';
+export type FeatureName =
+  | 'openTelemetry'
+  | 'consoleLogging'
+  | 'workerLogging'
+  | 'fileLogging'
+  | 'supabaseLogging';
 
 export type ServerEnvironmentVariable =
   | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
@@ -14,12 +19,15 @@ type Feature<N extends FeatureName, T extends FeatureBase> = {
 };
 
 export type ClientConfig = {
-  features: Feature<'clientLogging', ClientLoggingFeature>;
+  features: Feature<'consoleLogging', ConsoleLoggingFeature> & Feature<'workerLogging', WorkerLoggingFeature>;
   envVariables?: Record<string, string>;
 };
 
 export type ServerConfig = {
-  features: Feature<'openTelemetry', OpenTelemetryFeature> & Feature<'serverLogging', ServerLoggingFeature>;
+  features: Feature<'openTelemetry', OpenTelemetryFeature> &
+    Feature<'consoleLogging', ConsoleLoggingFeature> &
+    Feature<'fileLogging', FileLoggingFeature> &
+    Feature<'supabaseLogging', SupabaseLoggingFeature>;
   envVariables?: Record<ServerEnvironmentVariable, string>;
 };
 
@@ -27,25 +35,28 @@ export type Config = ServerConfig;
 
 export type OpenTelemetryFeature = FeatureBase & { serviceName: string };
 
-export type ClientLoggingFeature = FeatureBase & {
+type BaseLoggingFeature = {
   logLevels: string[];
-  logToConsole: boolean;
-  logToServer: boolean;
-  logToServerBatchSize: number;
-  logToServerIdleTimeSec: number;
 };
 
-export type ServerLoggingFeature = FeatureBase & {
-  logLevels: string[];
-  logToConsole: boolean;
-  logToFile: boolean;
-  logToFilePath: string;
-  logToFileNamePattern: string;
-  logToFileBatchSize: number;
-  logToFileIdleTimeSec: number;
-  logToFileMaxStoragePeriodDays: number;
-  logToFileMaxFileSize: number;
-  logToSupabase: boolean;
-  logToSupabaseBatchSize: number;
-  logToSupabaseIdleTimeSec: number;
+export type ConsoleLoggingFeature = FeatureBase & BaseLoggingFeature;
+
+export type FileLoggingFeature = FeatureBase & BaseLoggingFeature & {
+  filePath: string;
+  fileNamePattern: string;
+  batchSize: number;
+  idleTimeSec: number;
+  maxStoragePeriodDays: number;
+  maxFileSize: number;
 };
+
+export type SupabaseLoggingFeature = FeatureBase & BaseLoggingFeature & {
+  batchSize: number;
+  idleTimeSec: number;
+};
+
+export type WorkerLoggingFeature = FeatureBase & BaseLoggingFeature & {
+  batchSize: number;
+  idleTimeSec: number;
+};
+

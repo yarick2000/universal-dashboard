@@ -2,13 +2,15 @@ import { ClientConfig } from '@/layers/Configuration';
 
 const config: ClientConfig = {
   features: {
-    clientLogging: {
+    consoleLogging: {
       enabled: true,
       logLevels: ['info', 'warn', 'error'],
-      logToConsole: true,
-      logToServer: true,
-      logToServerBatchSize: 2,
-      logToServerIdleTimeSec: 5,
+    },
+    workerLogging: {
+      enabled: true,
+      logLevels: ['info', 'warn', 'error'],
+      batchSize: 100,
+      idleTimeSec: 10,
     },
   },
 };

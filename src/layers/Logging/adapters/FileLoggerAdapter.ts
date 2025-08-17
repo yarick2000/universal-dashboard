@@ -95,15 +95,21 @@ export class FileLoggerAdapter implements Logger {
     if (isLogMessage(args)) {
       return args as LogMessage<T>;
     }
+    const timestamp = Date.now();
     return {
+      source: 'server',
       level,
       message,
       args: args instanceof Error ? serializeError(args) as T : args,
-      timestamp: Date.now(),
+      timestamp,
+      host: os.hostname(),
+      info: {
+        timestampFormatted: new Date(timestamp).toISOString(),
+      },
     };
   }
 
-  private addToBuffer<T>(message: LogMessage<T>): void {
+  private addToBuffer<T extends LogMessage<unknown>>(message: T): void {
     this.logBuffer.push(message);
 
     // Reset idle timer
@@ -148,7 +154,7 @@ export class FileLoggerAdapter implements Logger {
       await this.rotateFileIfNeeded(filePath);
 
       // Format and write logs
-      const logEntries = logsToWrite.map(log => this.formatLogEntry(log)).join('\n') + '\n';
+      const logEntries = logsToWrite.map(log => JSON.stringify(log)).join('\n') + '\n';
 
       await fs.appendFile(filePath, logEntries, 'utf8');
     } catch (error) {
@@ -178,19 +184,6 @@ export class FileLoggerAdapter implements Logger {
     return this.fileNamePattern
       .replace('%DATE%', dateStr)
       .replace('%PART%', this.partCounter.toString().padStart(3, '0'));
-  }
-
-  private populateWithInfo<T>(log: LogMessage<T>): object {
-    return {
-      timeStampFormatted: new Date(log.timestamp).toISOString(),
-      host: os.hostname(),
-      ...log,
-    };
-  }
-
-  private formatLogEntry(log: LogMessage<unknown>): string {
-    const populatedLog = this.populateWithInfo(log);
-    return JSON.stringify(populatedLog);
   }
 
   private async ensureLogDirectory(): Promise<void> {

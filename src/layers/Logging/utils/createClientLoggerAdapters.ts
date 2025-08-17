@@ -1,4 +1,4 @@
-import { ClientLoggingFeature } from '@/layers/Configuration';
+import { ConsoleLoggingFeature, WorkerLoggingFeature } from '@/layers/Configuration';
 import { FeatureService } from '@/layers/Feature';
 
 import { ConsoleLoggerAdapter } from '../adapters/ConsoleLoggerAdapter';
@@ -12,40 +12,40 @@ export default function createClientLoggerAdapters(featureService: FeatureServic
 
   const adapters: Logger[] = [];
 
-  const clientLoggingFeature = featureService.getFeature<ClientLoggingFeature>('clientLogging');
-  if (clientLoggingFeature.enabled) {
-    const logLevels = clientLoggingFeature.logLevels || [];
-    if (clientLoggingFeature.logToConsole) {
-      const console = window.console;
-      try {
-        const consoleAdapter = new ConsoleLoggerAdapter(
-          console,
-          logLevels as LogLevel[],
-          clientFormatMessage,
-        );
-        adapters.push(consoleAdapter);
-      } catch {
-        // TODO: Handle error
-      }
+  const consoleLoggingFeature = featureService.getFeature<ConsoleLoggingFeature>('consoleLogging');
+  if (consoleLoggingFeature.enabled) {
+    const logLevels = consoleLoggingFeature.logLevels || [];
+    const console = window.console;
+    try {
+      const consoleAdapter = new ConsoleLoggerAdapter(
+        console,
+        logLevels as LogLevel[],
+        clientFormatMessage,
+      );
+      adapters.push(consoleAdapter);
+    } catch {
+      // TODO: Handle error
     }
-    if (clientLoggingFeature.logToServer) {
-      try {
-        // Create a fallback logger for server-side logging errors
-        const fallbackLogger = new ConsoleLoggerAdapter(
-          window.console,
-          ['error'],
-          clientFormatMessage,
-        );
-        const workerAdapter = new WorkerLoggerAdapter(
-          fallbackLogger,
-          logLevels as LogLevel[],
-          clientLoggingFeature.logToServerBatchSize,
-          clientLoggingFeature.logToServerIdleTimeSec,
-        );
-        adapters.push(workerAdapter);
-      } catch {
-        // TODO: Handle error
-      }
+  }
+  const workerLoggingFeature = featureService.getFeature<WorkerLoggingFeature>('workerLogging');
+  if (workerLoggingFeature.enabled) {
+    const logLevels = workerLoggingFeature.logLevels || [];
+    try {
+      // Create a fallback logger for server-side logging errors
+      const fallbackLogger = new ConsoleLoggerAdapter(
+        window.console,
+        ['error'],
+        clientFormatMessage,
+      );
+      const workerAdapter = new WorkerLoggerAdapter(
+        fallbackLogger,
+        logLevels as LogLevel[],
+        workerLoggingFeature.batchSize,
+        workerLoggingFeature.idleTimeSec,
+      );
+      adapters.push(workerAdapter);
+    } catch {
+      // TODO: Handle error
     }
   }
   return adapters;

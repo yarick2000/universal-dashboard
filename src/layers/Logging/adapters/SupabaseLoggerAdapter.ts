@@ -6,7 +6,7 @@ import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
-import { Database } from '../types/SupabaseDatabaseTypes';
+import { Database, Json } from '../types/SupabaseDatabaseTypes';
 import { isLogMessage } from '../utils';
 
 export class SupabaseLoggerAdapter implements Logger {
@@ -29,7 +29,6 @@ export class SupabaseLoggerAdapter implements Logger {
       this.fallbackLogger.error('Failed to create Supabase client:', error);
     }
   }
-
 
   dispose(): void {
     if (this.logBuffer.length > 0) {
@@ -88,10 +87,12 @@ export class SupabaseLoggerAdapter implements Logger {
       return args as LogMessage<T>;
     }
     return {
+      source: 'server',
       level,
       message,
       args: args instanceof Error ? serializeError(args) as T : args,
       timestamp: Date.now(),
+      host: os.hostname(),
     };
   }
 
@@ -127,13 +128,14 @@ export class SupabaseLoggerAdapter implements Logger {
 
     try {
       const payload = logsToSend.map(log => ({
-        timestamp: new Date(log.timestamp).toISOString(),
-        level: log.level,
+        host: log.host,
+        args: log.args as Json,
+        source: log.source,
         message: log.message,
-        args: log.args ? JSON.stringify(log.args) : null,
-        host: os.hostname(),
+        timestamp: new Date(log.timestamp).toISOString(),
+        info: log.info as Json,
+        level: log.level,
       }));
-
       if (!this.client) {
         this.fallbackLogger.error('Supabase client is not initialized');
         return;

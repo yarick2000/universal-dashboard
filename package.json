@@ -15,7 +15,8 @@
     "test:coverage": "cross-env NODE_ENV=development && jest --coverage",
     "test:debug": "cross-env NODE_ENV=development && jest --runInBand --detectOpenHandles --forceExit",
     "cache:clear": "rimraf .next/cache",
-    "tools:apply-config": "npx tsx src/tools/apply-config"
+    "tools:apply-config": "npx tsx src/tools/apply-config",
+    "tools:supabase-types": "npx tsx src/tools/supabase-types"
   },
   "dependencies": {
     "@next/bundle-analyzer": "15.4.6",

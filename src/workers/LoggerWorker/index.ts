@@ -41,8 +41,10 @@ onmessage = (
       source: 'client',
       level: 'error',
       message: 'Logger worker missing type parameter',
-      timestamp: Date.now().valueOf(),
-      browserInfo: collectBrowserInfo(),
+      timestamp: Date.now(),
+      info: {
+        browserInfo: collectBrowserInfo(),
+      },
     });
     return;
   }
@@ -64,8 +66,10 @@ onmessage = (
     level: type,
     message,
     args,
-    browserInfo: collectBrowserInfo(),
-    timestamp: Date.now().valueOf(),
+    info: {
+      browserInfo: collectBrowserInfo(),
+    },
+    timestamp: Date.now(),
   });
 };
 
