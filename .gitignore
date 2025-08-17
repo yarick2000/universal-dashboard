@@ -48,5 +48,5 @@ next-env.d.ts
 /src/config/*.local.ts
 
 # compiled workers
-/public/workers
+/public/workers/*
 
