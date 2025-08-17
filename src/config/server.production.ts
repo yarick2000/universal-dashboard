@@ -17,10 +17,15 @@ const config: ServerConfig = {
       logToFileIdleTimeSec: 5,
       logToFileMaxStoragePeriodDays: 7,
       logToFileMaxFileSize: 10485760,
+      logToSupabase: true,
+      logToSupabaseBatchSize: 2,
+      logToSupabaseIdleTimeSec: 1,
     },
   },
   envVariables: {
     NEXT_SERVER_ACTIONS_ENCRYPTION_KEY: 'REPLACE-WITH-ENCRYPTED-VALUE',
+    SUPABASE_URL: 'https://your-supabase-url.supabase.co',
+    SUPABASE_KEY: 'REPLACE-WITH-ENCRYPTED-VALUE',
   },
 };
 

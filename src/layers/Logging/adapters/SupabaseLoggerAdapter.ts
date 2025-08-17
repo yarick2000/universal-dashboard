@@ -6,40 +6,17 @@ import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
+import { Database } from '../types/SupabaseDatabaseTypes';
 import { isLogMessage } from '../utils';
-
-interface Database {
-  public: {
-    Tables: {
-      logs: {
-        Row: {
-          id: string,
-          level: string,
-          message: string,
-          args: string | null,
-          timestamp: string,
-          host: string,
-        }
-        Insert: {
-          id?: never,
-          level: string,
-          message: string,
-          args?: string | null,
-          timestamp: string,
-          host: string,
-        }
-      }
-    }
-  }
-}
 
 export class SupabaseLoggerAdapter implements Logger {
   private logBuffer: LogMessage<unknown>[] = [];
   private idleTimer: NodeJS.Timeout | null = null;
-  private client: SupabaseClient<Database>;
+  private client: SupabaseClient<Database> | null = null;
   private isSending = false;
 
   constructor(
+    private readonly fallbackLogger: Logger,
     private readonly logLevels: LogLevel[],
     private readonly batchSize: number,
     private readonly idleTimeSec: number,
@@ -47,10 +24,9 @@ export class SupabaseLoggerAdapter implements Logger {
     supabaseKey: string,
   ) {
     try  {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       this.client = createClient<Database>(supabaseUrl, supabaseKey);
     } catch (error) {
-      throw new Error('Failed to create Supabase client', { cause: error });
+      this.fallbackLogger.error('Failed to create Supabase client:', error);
     }
   }
 
@@ -158,15 +134,19 @@ export class SupabaseLoggerAdapter implements Logger {
         host: os.hostname(),
       }));
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      if (!this.client) {
+        this.fallbackLogger.error('Supabase client is not initialized');
+        return;
+      }
+
       const { error } = await this.client.from('logs').insert(payload);
       if (error) {
         this.logBuffer.unshift(...logsToSend);
-        throw new Error('Failed to insert logs into Supabase', { cause: error });
+        this.fallbackLogger.error('Failed to send logs to Supabase:', error);
       }
     } catch (error) {
       this.logBuffer.unshift(...logsToSend);
-      throw new Error('Failed to send logs to Supabase', { cause: error });
+      this.fallbackLogger.error('Failed to send logs to Supabase:', error);
     } finally {
       this.isSending = false;
     }

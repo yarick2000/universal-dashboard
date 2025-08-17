@@ -30,7 +30,14 @@ export default function createClientLoggerAdapters(featureService: FeatureServic
     }
     if (clientLoggingFeature.logToServer) {
       try {
+        // Create a fallback logger for server-side logging errors
+        const fallbackLogger = new ConsoleLoggerAdapter(
+          window.console,
+          ['error'],
+          clientFormatMessage,
+        );
         const workerAdapter = new WorkerLoggerAdapter(
+          fallbackLogger,
           logLevels as LogLevel[],
           clientLoggingFeature.logToServerBatchSize,
           clientLoggingFeature.logToServerIdleTimeSec,

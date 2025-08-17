@@ -10,37 +10,37 @@ export class ConsoleLoggerAdapter implements Logger {
     private readonly formatMessage: (message: string, args: unknown) => string,
   ) {}
 
-  log<T>(message: string, args: T): void {
+  log<T>(message: string, args?: T): void {
     if (this.logLevels.includes('log')) {
       this.groupWrapCollapsed(this.console.log, message, args);
     }
   }
 
-  info<T>(message: string, args: T): void {
+  info<T>(message: string, args?: T): void {
     if (this.logLevels.includes('info')) {
       this.groupWrapCollapsed(this.console.info, message, args);
     }
   }
 
-  warn<T>(message: string, args: T): void {
+  warn<T>(message: string, args?: T): void {
     if (this.logLevels.includes('warn')) {
       this.groupWrapCollapsed(this.console.warn, message, args);
     }
   }
 
-  error<T>(message: string, args: T): void {
+  error<T>(message: string, args?: T): void {
     if (this.logLevels.includes('error')) {
       this.groupWrapCollapsed(this.console.error, message, args);
     }
   }
 
-  debug<T>(message: string, args: T): void {
+  debug<T>(message: string, args?: T): void {
     if (this.logLevels.includes('debug')) {
       this.groupWrapCollapsed(this.console.debug, message, args);
     }
   }
 
-  trace<T>(message: string, args: T): void {
+  trace<T>(message: string, args?: T): void {
     if (this.logLevels.includes('trace')) {
       this.groupWrapCollapsed(this.console.trace, message, args);
     }

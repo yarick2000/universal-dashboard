@@ -1,5 +1,10 @@
 export type FeatureName = 'openTelemetry' | 'clientLogging' | 'serverLogging';
 
+export type ServerEnvironmentVariable =
+  | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
+  | 'SUPABASE_URL'
+  | 'SUPABASE_KEY';
+
 export type FeatureBase = {
   enabled: boolean;
 };
@@ -15,7 +20,7 @@ export type ClientConfig = {
 
 export type ServerConfig = {
   features: Feature<'openTelemetry', OpenTelemetryFeature> & Feature<'serverLogging', ServerLoggingFeature>;
-  envVariables?: Record<string, string>;
+  envVariables?: Record<ServerEnvironmentVariable, string>;
 };
 
 export type Config = ServerConfig;
@@ -40,4 +45,7 @@ export type ServerLoggingFeature = FeatureBase & {
   logToFileIdleTimeSec: number;
   logToFileMaxStoragePeriodDays: number;
   logToFileMaxFileSize: number;
+  logToSupabase: boolean;
+  logToSupabaseBatchSize: number;
+  logToSupabaseIdleTimeSec: number;
 };

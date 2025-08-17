@@ -15,6 +15,7 @@ export class FileLoggerAdapter implements Logger {
   private partCounter = 1;
 
   constructor(
+    private readonly fallbackLogger: Logger,
     private readonly logLevels: LogLevel[],
     private readonly filePath: string,
     private readonly fileNamePattern: string,
@@ -43,37 +44,37 @@ export class FileLoggerAdapter implements Logger {
     }
   }
 
-  log<T>(message: string, args: T): void {
+  log<T>(message: string, args?: T): void {
     if (this.logLevels.includes('log')) {
       this.addToBuffer(this.processMessage('log', message, args));
     }
   }
 
-  info<T>(message: string, args: T): void {
+  info<T>(message: string, args?: T): void {
     if (this.logLevels.includes('info')) {
       this.addToBuffer(this.processMessage('info', message, args));
     }
   }
 
-  warn<T>(message: string, args: T): void {
+  warn<T>(message: string, args?: T): void {
     if (this.logLevels.includes('warn')) {
       this.addToBuffer(this.processMessage('warn', message, args));
     }
   }
 
-  error<T>(message: string, args: T): void {
+  error<T>(message: string, args?: T): void {
     if (this.logLevels.includes('error')) {
       this.addToBuffer(this.processMessage('error', message, args));
     }
   }
 
-  debug<T>(message: string, args: T): void {
+  debug<T>(message: string, args?: T): void {
     if (this.logLevels.includes('debug')) {
       this.addToBuffer(this.processMessage('debug', message, args));
     }
   }
 
-  trace<T>(message: string, args: T): void {
+  trace<T>(message: string, args?: T): void {
     if (this.logLevels.includes('trace')) {
       this.addToBuffer(this.processMessage('trace', message, args));
     }
@@ -90,7 +91,7 @@ export class FileLoggerAdapter implements Logger {
     await this.checkAndFlush();
   }
 
-  private processMessage<T>(level: LogLevel, message: string, args: T): LogMessage<T> {
+  private processMessage<T>(level: LogLevel, message: string, args?: T): LogMessage<T> {
     if (isLogMessage(args)) {
       return args as LogMessage<T>;
     }
@@ -151,10 +152,7 @@ export class FileLoggerAdapter implements Logger {
 
       await fs.appendFile(filePath, logEntries, 'utf8');
     } catch (error) {
-      // Log to console as fallback if file writing fails
-      // eslint-disable-next-line no-console
-      console.error('Failed to write logs to file:', error);
-
+      this.fallbackLogger.error('Failed to write logs to file:', error);
       // Put logs back in buffer for retry (optional)
       this.logBuffer.unshift(...logsToWrite);
     } finally {
