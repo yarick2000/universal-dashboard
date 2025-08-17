@@ -2,6 +2,7 @@ import os from 'os';
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+import { CONTAINER_ID } from '@/trace';
 import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
@@ -92,7 +93,7 @@ export class SupabaseLoggerAdapter implements Logger {
       message,
       args: args instanceof Error ? serializeError(args) as T : args,
       timestamp: Date.now(),
-      host: os.hostname(),
+      host: os.hostname() || CONTAINER_ID,
     };
   }
 

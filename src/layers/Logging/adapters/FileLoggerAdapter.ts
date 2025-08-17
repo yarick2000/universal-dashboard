@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import os from 'os';
 import { join } from 'path';
 
+import { CONTAINER_ID } from '@/trace';
 import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
@@ -82,7 +83,9 @@ export class FileLoggerAdapter implements Logger {
 
   async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
     // Filter messages by log levels
-    const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
+    const filteredMessages = logMessages
+      .filter(msg => this.logLevels.includes(msg.level))
+      .map(msg => this.processMessage(msg.level, msg.message, msg.args));
 
     // Add to buffer
     this.logBuffer.push(...filteredMessages);
@@ -93,7 +96,13 @@ export class FileLoggerAdapter implements Logger {
 
   private processMessage<T>(level: LogLevel, message: string, args?: T): LogMessage<T> {
     if (isLogMessage(args)) {
-      return args as LogMessage<T>;
+      return {
+        ...args,
+        info: {
+          ...args.info,
+          timestampFormatted: new Date(args.timestamp).toISOString(),
+        },
+      } as LogMessage<T>;
     }
     const timestamp = Date.now();
     return {
@@ -102,7 +111,7 @@ export class FileLoggerAdapter implements Logger {
       message,
       args: args instanceof Error ? serializeError(args) as T : args,
       timestamp,
-      host: os.hostname(),
+      host: os.hostname() || CONTAINER_ID,
       info: {
         timestampFormatted: new Date(timestamp).toISOString(),
       },
