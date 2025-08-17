@@ -47,3 +47,6 @@ next-env.d.ts
 # local config
 /src/config/*.local.ts
 
+# compiled workers
+/public/workers
+

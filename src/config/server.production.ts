@@ -21,7 +21,7 @@ const config: ServerConfig = {
       logLevels: ['info', 'warn', 'error'],
     },
     supabaseLogging: {
-      enabled: false,
+      enabled: true,
       logLevels: ['info', 'warn', 'error'],
       batchSize: 10,
       idleTimeSec: 10,
