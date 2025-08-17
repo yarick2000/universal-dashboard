@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
-import { TestErrorButton } from './components/TestErrorButton';
+import { ClientTestErrorButton } from './components/ClientTestErrorButton';
+import { ServerTestErrorButton } from './components/ServerTestErrorButton';
 
 export default function Home() {
   // Testing new ESLint rules
@@ -67,7 +68,8 @@ export default function Home() {
           >
             Read our docs
           </a>
-          <TestErrorButton />
+          <ClientTestErrorButton />
+          <ServerTestErrorButton />
         </div>
       </main>
       <footer className="row-start-3 flex flex-wrap items-center justify-center gap-[24px]">

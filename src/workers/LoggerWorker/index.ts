@@ -42,9 +42,6 @@ onmessage = (
       level: 'error',
       message: 'Logger worker missing type parameter',
       timestamp: Date.now(),
-      info: {
-        browserInfo: collectBrowserInfo(),
-      },
     });
     return;
   }
@@ -60,68 +57,66 @@ onmessage = (
     logToServerIdleTimeSec = idleTime;
     return;
   }
-  const { message, args }: LoggerWorkerMessage<unknown> = event.data;
-  addLogToBatch({
-    source: 'client',
-    level: type,
-    message,
-    args,
-    info: {
-      browserInfo: collectBrowserInfo(),
-    },
-    timestamp: Date.now(),
-  });
+
+  if (type === 'log') {
+    const { data } = event;
+    if (Array.isArray(data)) {
+      data.forEach((logMessage) => addLogToBatch(logMessage));
+    } else {
+      addLogToBatch(data);
+    }
+  }
 };
 
-function collectBrowserInfo() {
-  const browserInfo: Record<string, unknown> = {
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-  };
+// function collectBrowserInfo() {
+//   const browserInfo: Record<string, unknown> = {
+//     userAgent: navigator.userAgent,
+//     language: navigator.language,
+//   };
 
-  // Feature detection for additional browser capabilities
-  if ('languages' in navigator) {
-    browserInfo.languages = navigator.languages;
-  }
+//   // Feature detection for additional browser capabilities
+//   if ('languages' in navigator) {
+//     browserInfo.languages = navigator.languages;
+//   }
 
-  if ('hardwareConcurrency' in navigator) {
-    browserInfo.hardwareConcurrency = navigator.hardwareConcurrency;
-  }
+//   if ('hardwareConcurrency' in navigator) {
+//     browserInfo.hardwareConcurrency = navigator.hardwareConcurrency;
+//   }
 
-  if ('deviceMemory' in navigator) {
-    browserInfo.deviceMemory = navigator.deviceMemory;
-  }
+//   if ('deviceMemory' in navigator) {
+//     browserInfo.deviceMemory = navigator.deviceMemory;
+//   }
 
-  if ('cookieEnabled' in navigator) {
-    browserInfo.cookieEnabled = navigator.cookieEnabled;
-  }
+//   if ('cookieEnabled' in navigator) {
+//     browserInfo.cookieEnabled = navigator.cookieEnabled;
+//   }
 
-  if ('onLine' in navigator) {
-    browserInfo.onLine = navigator.onLine;
-  }
+//   if ('onLine' in navigator) {
+//     browserInfo.onLine = navigator.onLine;
+//   }
 
-  if ('webdriver' in navigator) {
-    browserInfo.webdriver = navigator.webdriver;
-  }
+//   if ('webdriver' in navigator) {
+//     browserInfo.webdriver = navigator.webdriver;
+//   }
 
-  // Screen information
-  if (typeof screen !== 'undefined') {
-    browserInfo.screen = {
-      width: screen.width,
-      height: screen.height,
-      availWidth: screen.availWidth,
-      availHeight: screen.availHeight,
-      colorDepth: screen.colorDepth,
-      pixelDepth: screen.pixelDepth,
-    };
-  }
+//   // Screen information
+//   if (typeof screen !== 'undefined') {
+//     browserInfo.screen = {
+//       width: screen.width,
+//       height: screen.height,
+//       availWidth: screen.availWidth,
+//       availHeight: screen.availHeight,
+//       colorDepth: screen.colorDepth,
+//       pixelDepth: screen.pixelDepth,
+//     };
+//   }
 
-  // Timezone
-  try {
-    browserInfo.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  } catch {
-    // Ignore if not supported
-  }
+//   // Timezone
+//   try {
+//     browserInfo.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+//   } catch {
+//     // Ignore if not supported
+//   }
 
-  return browserInfo;
-}
+//   return browserInfo;
+// }

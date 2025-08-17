@@ -32,13 +32,12 @@ export default function createClientLoggerAdapters(featureService: FeatureServic
     const logLevels = workerLoggingFeature.logLevels || [];
     try {
       // Create a fallback logger for server-side logging errors
-      const fallbackLogger = new ConsoleLoggerAdapter(
-        window.console,
-        ['error'],
-        clientFormatMessage,
-      );
+      // const fallbackLogger = new ConsoleLoggerAdapter(
+      //   window.console,
+      //   ['error'],
+      //   clientFormatMessage,
+      // );
       const workerAdapter = new WorkerLoggerAdapter(
-        fallbackLogger,
         logLevels as LogLevel[],
         workerLoggingFeature.batchSize,
         workerLoggingFeature.idleTimeSec,

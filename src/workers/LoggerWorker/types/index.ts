@@ -1,7 +1,6 @@
 export type LoggerWorkerMessage<T> = {
   type: 'log' | 'info' | 'warn' | 'error' | 'debug' | 'trace';
-  message: string;
-  args: T;
+  data: T;
 };
 
 export type LoggerWorkerInitMessage = {

@@ -1,14 +1,8 @@
-import os from 'os';
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-import { CONTAINER_ID } from '@/trace';
-import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 import { Database, Json } from '../types/SupabaseDatabaseTypes';
-import { isLogMessage } from '../utils';
 
 export class SupabaseLoggerAdapter implements Logger {
   private logBuffer: LogMessage<unknown>[] = [];
@@ -17,7 +11,6 @@ export class SupabaseLoggerAdapter implements Logger {
   private isSending = false;
 
   constructor(
-    private readonly fallbackLogger: Logger,
     private readonly logLevels: LogLevel[],
     private readonly batchSize: number,
     private readonly idleTimeSec: number,
@@ -26,14 +19,14 @@ export class SupabaseLoggerAdapter implements Logger {
   ) {
     try  {
       this.client = createClient<Database>(supabaseUrl, supabaseKey);
-    } catch (error) {
-      this.fallbackLogger.error('Failed to create Supabase client:', error);
+    } catch  {
+      // TODO: Implement fallback logging for that specific error
     }
   }
 
-  dispose(): void {
+  async dispose(): Promise<void> {
     if (this.logBuffer.length > 0) {
-      void this.flushLogs();
+      await this.flushLogs();
     }
     if (this.idleTimer) {
       clearTimeout(this.idleTimer);
@@ -41,74 +34,26 @@ export class SupabaseLoggerAdapter implements Logger {
     }
   }
 
-  log<T>(message: string, args: T): void {
-    if (this.logLevels.includes('log')) {
-      this.addToBuffer(this.processMessage('log', message, args));
+  async log<T>(data: LogMessage<T> | LogMessage<T>[]): Promise<void> {
+    if (Array.isArray(data)) {
+      const filteredMessages = data.filter(msg => this.logLevels.includes(msg.level));
+      await this.addToBuffer(filteredMessages);
+    } else {
+      if (!this.logLevels.includes(data.level)) {
+        return;
+      }
+      await this.addToBuffer(data);
     }
   }
 
-  info<T>(message: string, args: T): void {
-    if (this.logLevels.includes('info')) {
-      this.addToBuffer(this.processMessage('info', message, args));
+  private async addToBuffer<T>(message: LogMessage<T> | LogMessage<T>[]): Promise<void> {
+    if (Array.isArray(message)) {
+      this.logBuffer.push(...message);
+    } else {
+      this.logBuffer.push(message);
     }
-  }
-
-  warn<T>(message: string, args: T): void {
-    if (this.logLevels.includes('warn')) {
-      this.addToBuffer(this.processMessage('warn', message, args));
-    }
-  }
-
-  error<T>(message: string, args: T): void {
-    if (this.logLevels.includes('error')) {
-      this.addToBuffer(this.processMessage('error', message, args));
-    }
-  }
-
-  debug<T>(message: string, args: T): void {
-    if (this.logLevels.includes('debug')) {
-      this.addToBuffer(this.processMessage('debug', message, args));
-    }
-  }
-
-  trace<T>(message: string, args: T): void {
-    if (this.logLevels.includes('trace')) {
-      this.addToBuffer(this.processMessage('trace', message, args));
-    }
-  }
-
-  async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    const filteredMessages = logMessages
-      .filter(msg => this.logLevels.includes(msg.level))
-      .map(msg => this.processMessage(msg.level, msg.message, msg.args));
-    this.logBuffer.push(...filteredMessages);
-    await this.checkAndFlush();
-  }
-
-  private processMessage<T>(level: LogLevel, message: string, args: T): LogMessage<T> {
-    if (isLogMessage(args)) {
-      return {
-        ...args,
-        info: {
-          ...args.info,
-          host: os.hostname() || CONTAINER_ID,
-        },
-      } as LogMessage<T>;
-    }
-    return {
-      source: 'server',
-      level,
-      message,
-      args:  serializeError(args) as T,
-      timestamp: Date.now(),
-      host: os.hostname() || CONTAINER_ID,
-    };
-  }
-
-  private addToBuffer<T>(message: LogMessage<T>): void {
-    this.logBuffer.push(message);
     this.resetIdleTimer();
-    void this.checkAndFlush();
+    await this.checkAndFlush();
   }
 
   private async checkAndFlush(): Promise<void> {
@@ -146,18 +91,18 @@ export class SupabaseLoggerAdapter implements Logger {
         level: log.level,
       }));
       if (!this.client) {
-        this.fallbackLogger.error('Supabase client is not initialized');
+        // TODO: Implement fallback logging for that specific error
         return;
       }
 
       const { error } = await this.client.from('logs').insert(payload);
       if (error) {
         this.logBuffer.unshift(...logsToSend);
-        this.fallbackLogger.error('Failed to send logs to Supabase:', error);
+        // TODO: Implement fallback logging for that specific error
       }
-    } catch (error) {
+    } catch {
       this.logBuffer.unshift(...logsToSend);
-      this.fallbackLogger.error('Failed to send logs to Supabase:', error);
+      // TODO: Implement fallback logging for that specific error
     } finally {
       this.isSending = false;
     }

@@ -1,13 +1,9 @@
 import { promises as fs } from 'fs';
-import os from 'os';
 import { join } from 'path';
 
-import { CONTAINER_ID } from '@/trace';
-import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
-import { isLogMessage } from '../utils';
 
 export class FileLoggerAdapter implements Logger {
   private logBuffer: LogMessage<unknown>[] = [];
@@ -16,7 +12,6 @@ export class FileLoggerAdapter implements Logger {
   private partCounter = 1;
 
   constructor(
-    private readonly fallbackLogger: Logger,
     private readonly logLevels: LogLevel[],
     private readonly filePath: string,
     private readonly fileNamePattern: string,
@@ -25,17 +20,21 @@ export class FileLoggerAdapter implements Logger {
     private readonly maxStoragePeriodDays: number,
     private readonly maxFileSize: number,
   ) {
-    // Ensure the log directory exists
-    void this.ensureLogDirectory();
 
-    // Start cleanup of old log files
-    void this.cleanupOldLogFiles();
   }
 
-  dispose(): void {
+  async initialize(): Promise<void> {
+    // Ensure the log directory exists
+    await this.ensureLogDirectory();
+
+    // Start cleanup of old log files
+    await this.cleanupOldLogFiles();
+  }
+
+  async dispose(): Promise<void> {
     // Flush any remaining logs before disposal
     if (this.logBuffer.length > 0) {
-      void this.flushLogs();
+      await this.flushLogs();
     }
 
     // Clear the idle timer
@@ -45,88 +44,30 @@ export class FileLoggerAdapter implements Logger {
     }
   }
 
-  log<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('log')) {
-      this.addToBuffer(this.processMessage('log', message, args));
+  async log<T>(data: LogMessage<T> | LogMessage<T>[]): Promise<void> {
+    if (Array.isArray(data)) {
+      const filteredMessages = data.filter(msg => this.logLevels.includes(msg.level));
+      await this.addToBuffer(filteredMessages);
+    } else {
+      if (!this.logLevels.includes(data.level)) {
+        return;
+      }
+      await this.addToBuffer(data);
     }
   }
 
-  info<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('info')) {
-      this.addToBuffer(this.processMessage('info', message, args));
+  private async addToBuffer<T extends LogMessage<unknown>>(message: T | T[]): Promise<void> {
+    if (Array.isArray(message)) {
+      this.logBuffer.push(...message);
+    } else {
+      this.logBuffer.push(message);
     }
-  }
-
-  warn<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('warn')) {
-      this.addToBuffer(this.processMessage('warn', message, args));
-    }
-  }
-
-  error<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('error')) {
-      this.addToBuffer(this.processMessage('error', message, args));
-    }
-  }
-
-  debug<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('debug')) {
-      this.addToBuffer(this.processMessage('debug', message, args));
-    }
-  }
-
-  trace<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('trace')) {
-      this.addToBuffer(this.processMessage('trace', message, args));
-    }
-  }
-
-  async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    // Filter messages by log levels
-    const filteredMessages = logMessages
-      .filter(msg => this.logLevels.includes(msg.level))
-      .map(msg => this.processMessage(msg.level, msg.message, msg.args));
-
-    // Add to buffer
-    this.logBuffer.push(...filteredMessages);
-
-    // Check if we need to flush
-    await this.checkAndFlush();
-  }
-
-  private processMessage<T>(level: LogLevel, message: string, args?: T): LogMessage<T> {
-    if (isLogMessage(args)) {
-      return {
-        ...args,
-        info: {
-          ...args.info,
-          host: os.hostname() || CONTAINER_ID,
-          timestampFormatted: new Date(args.timestamp).toISOString(),
-        },
-      } as LogMessage<T>;
-    }
-    const timestamp = Date.now();
-    return {
-      source: 'server',
-      level,
-      message,
-      args:  serializeError(args) as T,
-      timestamp,
-      host: os.hostname() || CONTAINER_ID,
-      info: {
-        timestampFormatted: new Date(timestamp).toISOString(),
-      },
-    };
-  }
-
-  private addToBuffer<T extends LogMessage<unknown>>(message: T): void {
-    this.logBuffer.push(message);
 
     // Reset idle timer
     this.resetIdleTimer();
 
     // Check if we need to flush based on batch size
-    void this.checkAndFlush();
+    await this.checkAndFlush();
   }
 
   private async checkAndFlush(): Promise<void> {
@@ -167,10 +108,10 @@ export class FileLoggerAdapter implements Logger {
       const logEntries = logsToWrite.map(log => JSON.stringify(log)).join('\n') + '\n';
 
       await fs.appendFile(filePath, logEntries, 'utf8');
-    } catch (error) {
-      this.fallbackLogger.error('Failed to write logs to file:', error);
+    } catch {
       // Put logs back in buffer for retry (optional)
       this.logBuffer.unshift(...logsToWrite);
+      // TODO: Implement fallback logging for that specific error
     } finally {
       this.isWriting = false;
     }
@@ -199,8 +140,8 @@ export class FileLoggerAdapter implements Logger {
   private async ensureLogDirectory(): Promise<void> {
     try {
       await fs.mkdir(this.filePath, { recursive: true });
-    } catch (error) {
-      throw new Error('Failed to create log directory:', { cause: error });
+    } catch {
+      // TODO: Implement fallback logging for that specific error
     }
   }
 
@@ -217,8 +158,8 @@ export class FileLoggerAdapter implements Logger {
           await fs.unlink(filePath);
         }
       }
-    } catch (error) {
-      throw new Error('Failed to cleanup old log files:', { cause: error });
+    } catch {
+      // TODO: Implement fallback logging for that specific error
     }
   }
 }

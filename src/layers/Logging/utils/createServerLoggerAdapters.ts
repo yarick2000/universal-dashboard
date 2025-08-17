@@ -38,13 +38,12 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
   if (fileLoggingFeature.enabled) {
     const logLevels = fileLoggingFeature.logLevels || [];
     try {
-      const fallbackLogger = new ConsoleLoggerAdapter(
-        console,
-        ['error'],
-        serverFormatMessage,
-      );
+      // const fallbackLogger = new ConsoleLoggerAdapter(
+      //   console,
+      //   ['error'],
+      //   serverFormatMessage,
+      // );
       const fileAdapter: Logger = new FileLoggerAdapter(
-        fallbackLogger,
         logLevels as LogLevel[],
         fileLoggingFeature.filePath,
         fileLoggingFeature.fileNamePattern,
@@ -62,13 +61,12 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
   if (supabaseLoggingFeature.enabled) {
     const logLevels = supabaseLoggingFeature.logLevels || [];
     try {
-      const fallbackLogger = new ConsoleLoggerAdapter(
-        console,
-        ['error'],
-        serverFormatMessage,
-      );
+      // const fallbackLogger = new ConsoleLoggerAdapter(
+      //   console,
+      //   ['error'],
+      //   serverFormatMessage,
+      // );
       const supabaseAdapter: Logger = new SupabaseLoggerAdapter(
-        fallbackLogger,
         logLevels as LogLevel[],
         supabaseLoggingFeature.batchSize,
         supabaseLoggingFeature.idleTimeSec,

@@ -1,15 +1,9 @@
 import { LogMessage } from '../types';
 
 export interface Logger {
-  log<T>(message: string, args?: T): void;
-  info<T>(message: string, args?: T): void;
-  warn<T>(message: string, args?: T): void;
-  error<T>(message: string, args?: T): void;
-  debug<T>(message: string, args?: T): void;
-  trace<T>(message: string, args?: T): void;
-  bulk(logMessages: LogMessage<unknown>[]): Promise<void>;
-  init?(): void;
-  dispose?(): void;
+  log<T>(data: LogMessage<T> | LogMessage<T>[]): Promise<void>;
+  initialize?(): Promise<void>;
+  dispose?(): Promise<void>;
 };
 
 export interface LoggerService {

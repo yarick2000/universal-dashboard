@@ -1,81 +1,48 @@
 import { recordClientSideLogs } from '@/app/actions';
-import { serializeError } from '@/utils';
 
 import { Logger } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 
 export class WorkerLoggerAdapter implements Logger {
   private readonly worker: Worker | null = null;
-  private readonly logLevels: LogLevel[];
-  private readonly fallbackLogger: Logger;
-  private readonly currentDomain: string = window.location.origin;
 
-  constructor(_fallbackLogger: Logger, _logLevels: LogLevel[], batchSize: number, idleTime: number) {
-    this.fallbackLogger = _fallbackLogger;
-    this.logLevels = _logLevels;
-    try {
-      this.worker = new Worker(
-        new URL('../../../../public/workers/LoggerWorker.js', import.meta.url),
-        { type: 'module' },
-      );
-      this.worker.onmessage = this.handleWorkerMessage.bind(this);
-      this.worker.postMessage({ type: 'init', batchSize, idleTime });
-    } catch (error) {
-      this.fallbackLogger.error('Failed to initialize WorkerLoggerAdapter:', error);
-    }
+  constructor(
+    private readonly logLevels: LogLevel[],
+    private readonly batchSize: number,
+    private readonly idleTime: number,
+  ) {
+    this.worker = new Worker(
+      new URL('../../../../public/workers/LoggerWorker.js', import.meta.url),
+      { type: 'module' },
+    );
   }
 
-  dispose(): void {
+  async initialize(): Promise<void> {
+    this.worker?.postMessage({ type: 'init', batchSize: this.batchSize, idleTime: this.idleTime });
+    this.worker?.addEventListener('message', this.handleWorkerMessage.bind(this));
+    await Promise.resolve();
+  }
+
+  async dispose(): Promise<void> {
     this.worker?.postMessage({ type: 'dispose' });
+    await Promise.resolve();
   }
 
-  log<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('log')) {
-      this.worker?.postMessage({ type: 'log', message, args });
+  async log<T>(data: LogMessage<T> | LogMessage<T>[]): Promise<void> {
+    if (Array.isArray(data)) {
+      const filteredMessages = data.filter(msg => this.logLevels.includes(msg.level));
+      this.worker?.postMessage({ type: 'log', data: filteredMessages });
+    } else {
+      if (!this.logLevels.includes(data.level)) {
+        return;
+      }
+      this.worker?.postMessage({ type: 'log', data });
     }
+    await Promise.resolve();
   }
 
-  error<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('error')) {
-      this.worker?.postMessage({
-        domain: this.currentDomain,
-        type: 'error',
-        message,
-        args: serializeError(args),
-      });
-    }
-  }
-
-  info<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('info')) {
-      this.worker?.postMessage({ type: 'info', message, args });
-    }
-  }
-
-  debug<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('debug')) {
-      this.worker?.postMessage({ type: 'debug', message, args });
-    }
-  }
-
-  trace<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('trace')) {
-      this.worker?.postMessage({ type: 'trace', message, args });
-    }
-  }
-
-  warn<T>(message: string, args?: T): void {
-    if (this.logLevels.includes('warn')) {
-      this.worker?.postMessage({ type: 'warn', message, args });
-    }
-  }
-
-  async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
-    await recordClientSideLogs(filteredMessages);
-  }
-
-  private async handleWorkerMessage(event: MessageEvent<LogMessage<unknown>[]>): Promise<void> {
-    await this.bulk(event.data);
+  private handleWorkerMessage(event: MessageEvent<LogMessage<unknown>[]>): void {
+    const filteredMessages = event.data.filter(msg => this.logLevels.includes(msg.level));
+    void recordClientSideLogs(filteredMessages);
   }
 }
