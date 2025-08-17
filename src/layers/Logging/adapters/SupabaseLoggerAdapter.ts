@@ -78,20 +78,28 @@ export class SupabaseLoggerAdapter implements Logger {
   }
 
   async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
-    const filteredMessages = logMessages.filter(msg => this.logLevels.includes(msg.level));
+    const filteredMessages = logMessages
+      .filter(msg => this.logLevels.includes(msg.level))
+      .map(msg => this.processMessage(msg.level, msg.message, msg.args));
     this.logBuffer.push(...filteredMessages);
     await this.checkAndFlush();
   }
 
   private processMessage<T>(level: LogLevel, message: string, args: T): LogMessage<T> {
     if (isLogMessage(args)) {
-      return args as LogMessage<T>;
+      return {
+        ...args,
+        info: {
+          ...args.info,
+          host: os.hostname() || CONTAINER_ID,
+        },
+      } as LogMessage<T>;
     }
     return {
       source: 'server',
       level,
       message,
-      args: args instanceof Error ? serializeError(args) as T : args,
+      args:  serializeError(args) as T,
       timestamp: Date.now(),
       host: os.hostname() || CONTAINER_ID,
     };

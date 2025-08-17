@@ -100,6 +100,7 @@ export class FileLoggerAdapter implements Logger {
         ...args,
         info: {
           ...args.info,
+          host: os.hostname() || CONTAINER_ID,
           timestampFormatted: new Date(args.timestamp).toISOString(),
         },
       } as LogMessage<T>;
@@ -109,7 +110,7 @@ export class FileLoggerAdapter implements Logger {
       source: 'server',
       level,
       message,
-      args: args instanceof Error ? serializeError(args) as T : args,
+      args:  serializeError(args) as T,
       timestamp,
       host: os.hostname() || CONTAINER_ID,
       info: {
