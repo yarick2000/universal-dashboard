@@ -47,7 +47,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "eslint.config.ts"
-  ],
+, "babel.config.js"  ],
   "exclude": [
     "node_modules"
   ]

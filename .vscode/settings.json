@@ -14,11 +14,10 @@
     "source.fixAll.eslint": "explicit"
   },
   "files.exclude": {
-    "**/node_modules": true,
-    "**/.git": true,
     "**/.DS_Store": true,
-    "**/coverage": true,
-    "**/.next": true
+    "**/.git": true,
+    "**/.next": true,
+    "**/coverage": true
   },
   "search.exclude": {
     "**/node_modules": true,

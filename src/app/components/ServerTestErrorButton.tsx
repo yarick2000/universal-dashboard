@@ -1,6 +1,6 @@
 'use client';
 
-import { testError } from '@app/actions/test';
+import { testError } from '@/app/actions/test';
 
 export function ServerTestErrorButton() {
 
