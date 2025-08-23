@@ -131,6 +131,7 @@ export default tseslint.config(
       '**/.next/**',
       '**/.vscode/**',
       '**/public/**',
+      'next-env.d.ts',
     ],
   },
 );

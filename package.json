@@ -8,7 +8,7 @@
     "build": "cross-env NODE_ENV=production && npm run tools:apply-config -- -s production -t production &&  npm run build:workers -- -m && next build",
     "build:workers": "npx tsx src/tools/build-workers",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "husky:init": "husky init",
     "test": "cross-env NODE_ENV=test && jest --passWithNoTests",
     "test:watch": "cross-env NODE_ENV=development && jest --watch",
