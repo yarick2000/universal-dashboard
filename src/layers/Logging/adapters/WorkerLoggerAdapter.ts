@@ -42,7 +42,6 @@ export class WorkerLoggerAdapter implements Logger {
   }
 
   private handleWorkerMessage(event: MessageEvent<LogMessage<unknown>[]>): void {
-    const filteredMessages = event.data.filter(msg => this.logLevels.includes(msg.level));
-    void recordClientSideLogs(filteredMessages);
+    void recordClientSideLogs(event.data);
   }
 }

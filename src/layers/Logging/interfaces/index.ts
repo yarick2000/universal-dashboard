@@ -6,6 +6,10 @@ export interface Logger {
   dispose?(): Promise<void>;
 };
 
+export interface LoggerInfoProvider {
+  populateWithInfo<T>(message: LogMessage<T>): LogMessage<T>;
+}
+
 export interface LoggerService {
   log<T>(message: string, args?: T): Promise<void>;
   info<T>(message: string, args?: T): Promise<void>;

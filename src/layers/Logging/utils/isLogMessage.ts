@@ -8,8 +8,7 @@ export function isLogMessage(message: unknown): message is LogMessage<unknown> {
     'message' in message &&
     'timestamp' in message &&
     'source' in message &&
-    (message.source === 'server' || message.source === 'client') &&
-    'host' in message
+    (message.source === 'server' || message.source === 'client')
   );
 }
 

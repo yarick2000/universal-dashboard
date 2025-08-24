@@ -17,7 +17,6 @@ export type Database = {
       logs: {
         Row: {
           args: Json | null
-          host: string | null
           id: string
           info: Json | null
           level: string
@@ -27,7 +26,6 @@ export type Database = {
         }
         Insert: {
           args?: Json | null
-          host?: string | null
           id?: string
           info?: Json | null
           level: string
@@ -37,7 +35,6 @@ export type Database = {
         }
         Update: {
           args?: Json | null
-          host?: string | null
           id?: string
           info?: Json | null
           level?: string

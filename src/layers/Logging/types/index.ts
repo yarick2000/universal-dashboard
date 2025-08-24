@@ -5,7 +5,6 @@ export type LogMessage<T> = {
   message: string;
   timestamp: number;
   source: 'client' | 'server';
-  host: string;
   info?: object;
   args?: T;
 };

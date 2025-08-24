@@ -82,7 +82,6 @@ export class SupabaseLoggerAdapter implements Logger {
 
     try {
       const payload = logsToSend.map(log => ({
-        host: log.host,
         args: log.args as Json,
         source: log.source,
         message: log.message,

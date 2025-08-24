@@ -1,13 +1,17 @@
 import { DI } from '@/enums';
 import { isClient, withTryCatch } from '@/utils';
 
-import { Logger, LoggerService } from '../interfaces';
+import { Logger, LoggerInfoProvider, LoggerService } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 
 export class DefaultLoggerService implements LoggerService {
   private isInitialized = false;
   private adapters: Logger[] = [];
-  constructor(private readonly adaptersFactory: () => Promise<Logger[]>) {}
+  private infoProviders: LoggerInfoProvider[] = [];
+  constructor(
+    private readonly adaptersFactory: () => Promise<Logger[]>,
+    private readonly infoProvidersFactory: () => Promise<LoggerInfoProvider[]>,
+  ) {}
 
   async initialize(): Promise<void> {
     if (!this.isInitialized) {
@@ -20,7 +24,13 @@ export class DefaultLoggerService implements LoggerService {
         this.isInitialized = true;
       } catch (error) {
         this.isInitialized = false;
-        throw new Error('Logger initialization failed', { cause: error });
+        throw new Error('Logger adapters initialization failed', { cause: error });
+      }
+      try {
+        this.infoProviders = await this.infoProvidersFactory();
+      } catch (error) {
+        this.isInitialized = false;
+        throw new Error('Logger info providers initialization failed', { cause: error });
       }
     }
   }
@@ -91,16 +101,19 @@ export class DefaultLoggerService implements LoggerService {
   }
 
   private createMessage<T>(logLevel: LogLevel, message: string, args: T): LogMessage<T> {
-    return {
+    let messageObject: LogMessage<T> = {
       source: isClient() ? 'client' : 'server',
       level: logLevel,
       message,
       args,
       timestamp: Date.now(),
       info: undefined,
-      host: 'null',
     };
+    this.infoProviders.forEach(provider => {
+      messageObject = provider.populateWithInfo(messageObject);
+    });
+    return messageObject;
   }
 
-  static inject = [DI.LoggerFactory] as const;
+  static inject = [DI.LoggerFactory, DI.LoggerInfoProviderFactory] as const;
 };

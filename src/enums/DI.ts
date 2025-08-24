@@ -3,4 +3,5 @@ export enum DI {
   FeatureService = 'FeatureService',
   LoggerFactory = 'LoggerFactory',
   LoggerService = 'LoggerService',
+  LoggerInfoProviderFactory = 'LoggerInfoProviderFactory',
 };
