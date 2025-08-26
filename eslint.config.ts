@@ -43,6 +43,7 @@ const sharedRules = {
   '@stylistic/no-trailing-spaces': 'error', // No trailing whitespace
   '@stylistic/eol-last': 'error', // Require newline at end of file
   '@stylistic/max-len': ['error', { 'code': 110, 'tabWidth': 2, 'ignoreComments': true }],
+  '@stylistic/no-multi-spaces': 'error',
 };
 
 export default tseslint.config(
@@ -131,6 +132,8 @@ export default tseslint.config(
       '**/.next/**',
       '**/.vscode/**',
       '**/public/**',
+      '**/coverage/**',
+      'postcss.config.mjs',
       'next-env.d.ts',
     ],
   },
