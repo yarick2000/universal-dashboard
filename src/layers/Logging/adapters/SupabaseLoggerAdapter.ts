@@ -17,9 +17,9 @@ export class SupabaseLoggerAdapter implements Logger {
     supabaseUrl: string,
     supabaseKey: string,
   ) {
-    try  {
+    try {
       this.client = createClient<Database>(supabaseUrl, supabaseKey);
-    } catch  {
+    } catch {
       // TODO: Implement fallback logging for that specific error
     }
   }
