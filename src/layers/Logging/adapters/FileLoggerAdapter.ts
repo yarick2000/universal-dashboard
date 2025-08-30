@@ -19,6 +19,7 @@ export class FileLoggerAdapter implements Logger {
     private readonly idleTimeSec: number,
     private readonly maxStoragePeriodDays: number,
     private readonly maxFileSize: number,
+    private readonly processError: (error: unknown) => Promise<void>,
   ) {
 
   }
@@ -108,10 +109,10 @@ export class FileLoggerAdapter implements Logger {
       const logEntries = logsToWrite.map(log => JSON.stringify(log)).join('\n') + '\n';
 
       await fs.appendFile(filePath, logEntries, 'utf8');
-    } catch {
+    } catch (error) {
       // Put logs back in buffer for retry (optional)
       this.logBuffer.unshift(...logsToWrite);
-      // TODO: Implement fallback logging for that specific error
+      await this.processError(error);
     } finally {
       this.isWriting = false;
     }
@@ -140,8 +141,8 @@ export class FileLoggerAdapter implements Logger {
   private async ensureLogDirectory(): Promise<void> {
     try {
       await fs.mkdir(this.filePath, { recursive: true });
-    } catch {
-      // TODO: Implement fallback logging for that specific error
+    } catch (error) {
+      await this.processError(error);
     }
   }
 
@@ -158,8 +159,8 @@ export class FileLoggerAdapter implements Logger {
           await fs.unlink(filePath);
         }
       }
-    } catch {
-      // TODO: Implement fallback logging for that specific error
+    } catch (error) {
+      await this.processError(error);
     }
   }
 }

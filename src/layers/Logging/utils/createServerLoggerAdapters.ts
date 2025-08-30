@@ -37,12 +37,12 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
   const fileLoggingFeature = featureService.getFeature<FileLoggingFeature>('fileLogging');
   if (fileLoggingFeature.enabled) {
     const logLevels = fileLoggingFeature.logLevels || [];
+    const fallbackLogger = new ConsoleLoggerAdapter(
+      console,
+      ['error'],
+      serverFormatMessage,
+    );
     try {
-      // const fallbackLogger = new ConsoleLoggerAdapter(
-      //   console,
-      //   ['error'],
-      //   serverFormatMessage,
-      // );
       const fileAdapter: Logger = new FileLoggerAdapter(
         logLevels as LogLevel[],
         fileLoggingFeature.filePath,
@@ -51,31 +51,57 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
         fileLoggingFeature.idleTimeSec,
         fileLoggingFeature.maxStoragePeriodDays,
         fileLoggingFeature.maxFileSize,
+        (error) => fallbackLogger.log({
+          level: 'error',
+          message: 'FileLoggerAdapter initialization error',
+          timestamp: Date.now(),
+          source: 'server',
+          args: error,
+        }),
       );
       adapters.push(fileAdapter);
-    } catch {
-      // TODO: Handle error
+    } catch (error) {
+      void fallbackLogger.log({
+        level: 'error',
+        message: 'FileLoggerAdapter initialization error',
+        timestamp: Date.now(),
+        source: 'server',
+        args: error,
+      });
     }
   }
   const supabaseLoggingFeature = featureService.getFeature<SupabaseLoggingFeature>('supabaseLogging');
   if (supabaseLoggingFeature.enabled) {
     const logLevels = supabaseLoggingFeature.logLevels || [];
+    const fallbackLogger = new ConsoleLoggerAdapter(
+      console,
+      ['error'],
+      serverFormatMessage,
+    );
     try {
-      // const fallbackLogger = new ConsoleLoggerAdapter(
-      //   console,
-      //   ['error'],
-      //   serverFormatMessage,
-      // );
       const supabaseAdapter: Logger = new SupabaseLoggerAdapter(
         logLevels as LogLevel[],
         supabaseLoggingFeature.batchSize,
         supabaseLoggingFeature.idleTimeSec,
         process.env.SUPABASE_URL as string,
         process.env.SUPABASE_KEY as string,
+        (error) => fallbackLogger.log({
+          level: 'error',
+          message: 'SupabaseLoggerAdapter error',
+          timestamp: Date.now(),
+          source: 'server',
+          args: error,
+        }),
       );
       adapters.push(supabaseAdapter);
-    } catch {
-      // TODO: Handle error
+    } catch (error) {
+      void fallbackLogger.log({
+        level: 'error',
+        message: 'SupabaseLoggerAdapter initialization error',
+        timestamp: Date.now(),
+        source: 'server',
+        args: error,
+      });
     }
   }
   return adapters;

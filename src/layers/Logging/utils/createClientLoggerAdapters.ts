@@ -30,21 +30,27 @@ export default function createClientLoggerAdapters(featureService: FeatureServic
   const workerLoggingFeature = featureService.getFeature<WorkerLoggingFeature>('workerLogging');
   if (workerLoggingFeature.enabled) {
     const logLevels = workerLoggingFeature.logLevels || [];
+    // Create a fallback logger for server-side logging errors
+    const fallbackLogger = new ConsoleLoggerAdapter(
+      window.console,
+      ['error'],
+      clientFormatMessage,
+    );
     try {
-      // Create a fallback logger for server-side logging errors
-      // const fallbackLogger = new ConsoleLoggerAdapter(
-      //   window.console,
-      //   ['error'],
-      //   clientFormatMessage,
-      // );
       const workerAdapter = new WorkerLoggerAdapter(
         logLevels as LogLevel[],
         workerLoggingFeature.batchSize,
         workerLoggingFeature.idleTimeSec,
       );
       adapters.push(workerAdapter);
-    } catch {
-      // TODO: Handle error
+    } catch (error) {
+      void fallbackLogger.log({
+        level: 'error',
+        message: 'WorkerLoggerAdapter initializationerror',
+        timestamp: Date.now(),
+        source: 'client',
+        args: error,
+      });
     }
   }
   return adapters;

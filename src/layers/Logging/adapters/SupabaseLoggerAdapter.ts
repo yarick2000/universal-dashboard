@@ -16,11 +16,12 @@ export class SupabaseLoggerAdapter implements Logger {
     private readonly idleTimeSec: number,
     supabaseUrl: string,
     supabaseKey: string,
+    private readonly processError: (error: unknown) => Promise<void>,
   ) {
     try {
       this.client = createClient<Database>(supabaseUrl, supabaseKey);
-    } catch {
-      // TODO: Implement fallback logging for that specific error
+    } catch (error) {
+      void this.processError(error);
     }
   }
 
@@ -90,18 +91,18 @@ export class SupabaseLoggerAdapter implements Logger {
         level: log.level,
       }));
       if (!this.client) {
-        // TODO: Implement fallback logging for that specific error
+        await this.processError(new Error('Supabase client not initialized'));
         return;
       }
 
       const { error } = await this.client.from('logs').insert(payload);
       if (error) {
         this.logBuffer.unshift(...logsToSend);
-        // TODO: Implement fallback logging for that specific error
+        await this.processError(error);
       }
-    } catch {
+    } catch (error) {
       this.logBuffer.unshift(...logsToSend);
-      // TODO: Implement fallback logging for that specific error
+      await this.processError(error);
     } finally {
       this.isSending = false;
     }
