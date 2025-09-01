@@ -1,8 +1,13 @@
-import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import './globals.css';
+import { featureService } from '@/index';
+
 import { WithApplicationCleanup } from '../components/WithApplicationCleanup';
+
+import type { Metadata } from 'next';
+
+import './globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,6 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const analyticsFeature = featureService.getFeature('analytics');
   return (
     <html lang="en">
       <body
@@ -32,6 +38,7 @@ export default function RootLayout({
         <WithApplicationCleanup>
           {children}
         </WithApplicationCleanup>
+        {analyticsFeature.enabled && <Analytics />}
       </body>
     </html>
   );

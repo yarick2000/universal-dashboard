@@ -3,7 +3,8 @@ export type FeatureName =
   | 'consoleLogging'
   | 'workerLogging'
   | 'fileLogging'
-  | 'supabaseLogging';
+  | 'supabaseLogging'
+  | 'analytics';
 
 export type ServerEnvironmentVariable =
   | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
@@ -27,7 +28,8 @@ export type ServerConfig = {
   features: Feature<'openTelemetry', OpenTelemetryFeature> &
     Feature<'consoleLogging', ConsoleLoggingFeature> &
     Feature<'fileLogging', FileLoggingFeature> &
-    Feature<'supabaseLogging', SupabaseLoggingFeature>;
+    Feature<'supabaseLogging', SupabaseLoggingFeature> &
+    Feature<'analytics', FeatureBase>;
   envVariables?: Record<ServerEnvironmentVariable, string>;
 };
 

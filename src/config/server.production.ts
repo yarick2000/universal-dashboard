@@ -2,6 +2,7 @@ import { ServerConfig } from '@/layers/Configuration';
 
 const config: ServerConfig = {
   features: {
+    analytics: true,
     openTelemetry: {
       enabled: true,
       serviceName: 'universal-dashboard',

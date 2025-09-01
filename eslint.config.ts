@@ -19,7 +19,15 @@ const compat = new FlatCompat({
 const sharedRules = {
   // Import/Export rules
   'import/order': ['error', {
-    'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+    'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+    'pathGroups': [
+      {
+        'pattern': '*.css',
+        'group': 'index',
+        'position': 'after',
+      },
+    ],
+    'pathGroupsExcludedImportTypes': ['builtin'], // avoids conflicts
     'newlines-between': 'always',
     'alphabetize': {
       'order': 'asc',
