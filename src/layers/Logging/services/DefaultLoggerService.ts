@@ -1,0 +1,119 @@
+import { DI } from '@/enums';
+import { isClient, withTryCatch } from '@/utils';
+
+import { Logger, LoggerInfoProvider, LoggerService } from '../interfaces';
+import { LogLevel, LogMessage } from '../types';
+
+export class DefaultLoggerService implements LoggerService {
+  private isInitialized = false;
+  private adapters: Logger[] = [];
+  private infoProviders: LoggerInfoProvider[] = [];
+  constructor(
+    private readonly adaptersFactory: () => Promise<Logger[]>,
+    private readonly infoProvidersFactory: () => Promise<LoggerInfoProvider[]>,
+  ) {}
+
+  async initialize(): Promise<void> {
+    if (!this.isInitialized) {
+      try {
+        this.adapters = await this.adaptersFactory();
+        await Promise.allSettled(
+          this.adapters
+            .filter(adapter => typeof adapter.initialize === 'function')
+            .map(adapter => withTryCatch(() => adapter.initialize?.())));
+        this.isInitialized = true;
+      } catch (error) {
+        this.isInitialized = false;
+        throw new Error('Logger adapters initialization failed', { cause: error });
+      }
+      try {
+        this.infoProviders = await this.infoProvidersFactory();
+      } catch (error) {
+        this.isInitialized = false;
+        throw new Error('Logger info providers initialization failed', { cause: error });
+      }
+    }
+  }
+
+  async log<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('log', message, args);
+  }
+
+  async error<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('error', message, args);
+  }
+
+  async warn<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('warn', message, args);
+  }
+
+
+  async info<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('info', message, args);
+  }
+
+  async debug<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('debug', message, args);
+  }
+
+
+  async trace<T>(message: string, args: T): Promise<void> {
+    await this.processLogCall('trace', message, args);
+  }
+
+  async bulk(logMessages: LogMessage<unknown>[]): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      await Promise.allSettled(
+        this.adapters.map(adapter =>
+          withTryCatch(() =>
+            adapter.log(logMessages),
+          ),
+        ),
+      );
+    }
+  }
+
+  async dispose(): Promise<void> {
+    await Promise.allSettled(
+      this.adapters
+        .filter(adapter => typeof adapter.dispose === 'function')
+        .map(adapter => withTryCatch(() => adapter.dispose?.())));
+  }
+
+  getAdapters(): Logger[] {
+    return this.adapters;
+  }
+
+  private async processLogCall<T>(logLevel: LogLevel, message: string, args: T): Promise<void> {
+    await this.initialize();
+    if (this.isInitialized) {
+      await Promise.allSettled(
+        this.adapters.map(adapter =>
+          withTryCatch(() =>
+            adapter.log(
+              this.createMessage(logLevel, message, args),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  private createMessage<T>(logLevel: LogLevel, message: string, args: T): LogMessage<T> {
+    let messageObject: LogMessage<T> = {
+      source: isClient() ? 'client' : 'server',
+      level: logLevel,
+      message,
+      args,
+      timestamp: Date.now(),
+      info: undefined,
+    };
+    this.infoProviders.forEach(provider => {
+      messageObject = provider.populateWithInfo(messageObject);
+    });
+    return messageObject;
+  }
+
+  static inject = [DI.LoggerFactory, DI.LoggerInfoProviderFactory] as const;
+};

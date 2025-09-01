@@ -1,0 +1,114 @@
+import { Console } from 'console';
+import fs from 'fs';
+
+import { parse } from 'ts-command-line-args';
+
+import { ClientConfig, ServerConfig } from '@/layers/Configuration';
+
+interface CommandLineOptions {
+  source: string;
+  target: string;
+  help?: boolean;
+};
+
+const console = new Console({
+  stdout: process.stdout,
+  stderr: process.stderr,
+});
+
+async function safeImport<T>(path: string, fallback: T): Promise<T> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return (await import(path)).default;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (err.code === 'MODULE_NOT_FOUND') return fallback;
+    throw err;
+  }
+}
+
+function parseEnvVariable(envVariables?: Record<string, string>): string {
+  if (!envVariables) return '';
+
+  return Object.entries(envVariables)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n');
+}
+
+async function main() {
+  const argsDefinitions = {
+    source: { type: String, alias: 's', description: 'Source directory to apply the configuration' },
+    target: { type: String, alias: 't', description: 'Target directory for the configuration' },
+    help: { type: Boolean, alias: 'h', description: 'Display this help message', optional: true },
+  } as const;
+
+
+  let options: CommandLineOptions;
+  try {
+    // parse command line arguments
+    options = parse<CommandLineOptions>(argsDefinitions, {
+      stopAtFirstUnknown: true,
+      partial: true,
+      helpArg: 'help',
+    });
+    if (options.help) {
+      process.exit(0);
+    }
+  } catch (error) {
+    console.error('Error parsing command line arguments:', error);
+    process.exit(1);
+  }
+  const env = options.source;
+  const target = options.target;
+
+  let serverConfig: ServerConfig | null = null;
+  let clientConfig: ClientConfig | null = null;
+
+  switch (env) {
+    // local config is not deployed to production,
+    // so we need to prevent build from failure by
+    // wrapping imports in try-catch blocks
+    case 'local': {
+      serverConfig = await safeImport<ServerConfig | null>('../config/server.local', null);
+      clientConfig = await safeImport<ClientConfig | null>('../config/client.local', null);
+      break;
+    }
+    case 'production': {
+      const productionServerModule = await import('../config/server.production');
+      const productionClientModule = await import('../config/client.production');
+      clientConfig = productionClientModule.default;
+      serverConfig = productionServerModule.default;
+      break;
+    }
+    default:
+      console.error(`Unsupported environment: ${env}`);
+      process.exit(1);
+  }
+  let finalConfig: string = '';
+  if (serverConfig) {
+    const {envVariables, ...serverConfigWithoutEnv} = serverConfig;
+    finalConfig += parseEnvVariable(envVariables);
+    finalConfig += `\nSERVER_CONFIG=${JSON.stringify(serverConfigWithoutEnv)}`;
+  }
+  if (clientConfig) {
+    const {envVariables, ...clientConfigWithoutEnv} = clientConfig;
+    finalConfig += parseEnvVariable(envVariables);
+    finalConfig += `\nNEXT_PUBLIC_CONFIG=${JSON.stringify(clientConfigWithoutEnv)}`;
+  }
+
+  try {
+    // Write the final configuration to the target file
+    fs.writeFileSync(`.env.${target}.local`, finalConfig);
+  } catch (error) {
+    console.error('Error writing final configuration:', error);
+    process.exit(1);
+  }
+}
+
+// Execute the main function
+main().catch((error) => {
+  console.error('Unhandled error:', error);
+  process.exit(1);
+});
+
