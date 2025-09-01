@@ -25,7 +25,7 @@ export class ConsoleLoggerAdapter implements Logger {
 
   private logSingle<T>(data: LogMessage<T>): void {
     if (this.logLevels.includes(data.level)) {
-      this.groupWrapCollapsed(this.console[data.level], data.message, data.args);
+      this.groupWrapCollapsed(this.console[data.level], data.message, data);
     }
   }
 
