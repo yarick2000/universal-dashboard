@@ -2,6 +2,7 @@ import { ServerConfig } from '@/layers/Configuration';
 
 const config: ServerConfig = {
   features: {
+    speedInsights: true,
     analytics: true,
     openTelemetry: {
       enabled: true,

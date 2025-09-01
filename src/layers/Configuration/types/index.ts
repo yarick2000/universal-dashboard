@@ -4,7 +4,8 @@ export type FeatureName =
   | 'workerLogging'
   | 'fileLogging'
   | 'supabaseLogging'
-  | 'analytics';
+  | 'analytics'
+  | 'speedInsights';
 
 export type ServerEnvironmentVariable =
   | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
@@ -29,7 +30,8 @@ export type ServerConfig = {
     Feature<'consoleLogging', ConsoleLoggingFeature> &
     Feature<'fileLogging', FileLoggingFeature> &
     Feature<'supabaseLogging', SupabaseLoggingFeature> &
-    Feature<'analytics', FeatureBase>;
+    Feature<'analytics', FeatureBase> &
+    Feature<'speedInsights', FeatureBase>;
   envVariables?: Record<ServerEnvironmentVariable, string>;
 };
 
