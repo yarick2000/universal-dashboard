@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import { featureService } from '@/index';
@@ -30,6 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const analyticsFeature = featureService.getFeature('analytics');
+  const speedInsightsFeature = featureService.getFeature('speedInsights');
   return (
     <html lang="en">
       <body
@@ -39,6 +41,7 @@ export default function RootLayout({
           {children}
         </WithApplicationCleanup>
         {analyticsFeature.enabled && <Analytics />}
+        {speedInsightsFeature.enabled && <SpeedInsights />}
       </body>
     </html>
   );
