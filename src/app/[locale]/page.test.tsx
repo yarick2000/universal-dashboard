@@ -36,9 +36,21 @@ jest.mock('next/image', () => {
   };
 });
 
+// mock getTranslations and setRequestLocale
+jest.mock('next-intl/server', () => ({
+  getTranslations: jest.fn().mockResolvedValue((key: string) => {
+    const translations: Record<string, string> = {
+      'application.title': 'My Application',
+      'application.description': 'This is my application.',
+    };
+    return translations[key] || key;
+  }),
+  setRequestLocale: jest.fn(),
+}));
+
 describe('Home Page', () => {
-  beforeEach(() => {
-    render(<Home />);
+  beforeEach(async () => {
+    render(await Home({ params: Promise.resolve({ locale: 'en' }) }));
   });
 
   describe('Layout and Structure', () => {

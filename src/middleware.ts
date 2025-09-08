@@ -5,7 +5,9 @@ import { i18nService } from '@/index';
 import { replaceFirst } from '@/utils';
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|robots.txt|favicon.ico).*)'],
+  matcher: [
+    '/((?!api|_next|_vercel|robots.txt|favicon.ico|images|.*\\.png$|.*\\.svg$).*)',
+  ],
   runtime: 'nodejs',
 };
 
