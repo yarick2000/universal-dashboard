@@ -1,18 +1,22 @@
 import { Console } from 'console';
 
 import { ConsoleLoggingFeature, FileLoggingFeature, SupabaseLoggingFeature } from '@/layers/Configuration';
+import { SupabaseDataClient } from '@/layers/Data';
 import { FeatureService } from '@/layers/Feature';
 
 import { ConsoleLoggerAdapter } from '../adapters/ConsoleLoggerAdapter';
 import { FileLoggerAdapter } from '../adapters/FileLoggerAdapter';
 import { SupabaseLoggerAdapter } from '../adapters/SupabaseLoggerAdapter';
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 import { LogLevel } from '../types';
 
 import { serverFormatMessage } from './serverFormatMessage';
 
-export default function createServerLoggerAdapters(featureService: FeatureService): Logger[] {
-  const adapters: Logger[] = [];
+export default function createServerLoggerAdapters(
+  supabaseClient: SupabaseDataClient,
+  featureService: FeatureService,
+): LoggerAdapter[] {
+  const adapters: LoggerAdapter[] = [];
 
   const consoleLoggingFeature = featureService.getFeature<ConsoleLoggingFeature>('consoleLogging');
   if (consoleLoggingFeature.enabled) {
@@ -24,7 +28,7 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
         colorMode: true,
         groupIndentation: 0,
       });
-      const consoleAdapter: Logger = new ConsoleLoggerAdapter(
+      const consoleAdapter: LoggerAdapter = new ConsoleLoggerAdapter(
         console,
         logLevels as LogLevel[],
         serverFormatMessage,
@@ -43,7 +47,7 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
       serverFormatMessage,
     );
     try {
-      const fileAdapter: Logger = new FileLoggerAdapter(
+      const fileAdapter: LoggerAdapter = new FileLoggerAdapter(
         logLevels as LogLevel[],
         fileLoggingFeature.filePath,
         fileLoggingFeature.fileNamePattern,
@@ -79,12 +83,11 @@ export default function createServerLoggerAdapters(featureService: FeatureServic
       serverFormatMessage,
     );
     try {
-      const supabaseAdapter: Logger = new SupabaseLoggerAdapter(
+      const supabaseAdapter: LoggerAdapter = new SupabaseLoggerAdapter(
+        supabaseClient,
         logLevels as LogLevel[],
         supabaseLoggingFeature.batchSize,
         supabaseLoggingFeature.idleTimeSec,
-        process.env.SUPABASE_URL as string,
-        process.env.SUPABASE_KEY as string,
         (error) => fallbackLogger.log({
           level: 'error',
           message: 'SupabaseLoggerAdapter error',

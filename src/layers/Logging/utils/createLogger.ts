@@ -1,8 +1,8 @@
 import { baseName, fileURLToPath } from '@/utils';
 
-import { LoggerService } from '..';
+import { Logger, LoggerService } from '../interfaces';
 
-export function createLogger(loggerService: LoggerService, metaUrl: string) {
+export function createLogger(loggerService: LoggerService, metaUrl: string): Logger {
   let baseFile: string;
 
   try {

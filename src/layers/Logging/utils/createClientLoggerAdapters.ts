@@ -3,14 +3,14 @@ import { FeatureService } from '@/layers/Feature';
 
 import { ConsoleLoggerAdapter } from '../adapters/ConsoleLoggerAdapter';
 import { WorkerLoggerAdapter } from '../adapters/WorkerLoggerAdapter';
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 import { LogLevel } from '../types';
 
 import { clientFormatMessage } from './clientFormatMessage';
 
-export default function createClientLoggerAdapters(featureService: FeatureService): Logger[] {
+export default function createClientLoggerAdapters(featureService: FeatureService): LoggerAdapter[] {
 
-  const adapters: Logger[] = [];
+  const adapters: LoggerAdapter[] = [];
 
   const consoleLoggingFeature = featureService.getFeature<ConsoleLoggingFeature>('consoleLogging');
   if (consoleLoggingFeature.enabled) {

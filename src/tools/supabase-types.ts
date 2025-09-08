@@ -4,6 +4,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as readline from 'readline';
 
+const OUTPUT_PATH = './src/layers/Data/types/SupabaseDatabaseTypes.ts';
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -46,7 +48,7 @@ async function main() {
     // Step 3: Generate types
     console.log('\n3. Generating TypeScript types...');
 
-    const outputDir = path.dirname('./src/layers/Logging/types/SupabaseDatabaseTypes.ts');
+    const outputDir = path.dirname(OUTPUT_PATH);
 
     // Ensure output directory exists
     if (!fs.existsSync(outputDir)) {
@@ -54,12 +56,12 @@ async function main() {
     }
 
     const command = `npx supabase gen types typescript --project-id "${projectId.trim()}" > ` +
-      './src/layers/Logging/types/SupabaseDatabaseTypes.ts';
+      OUTPUT_PATH;
 
     try {
       execSync(command, { stdio: 'pipe' });
       console.log('✅ TypeScript types generated successfully!');
-      console.log('📁 Output: ./src/layers/Logging/types/SupabaseDatabaseTypes.ts');
+      console.log(`📁 Output: ${OUTPUT_PATH}`);
     } catch (error) {
       console.error('❌ Failed to generate types');
       console.error(error);

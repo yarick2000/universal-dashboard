@@ -1,15 +1,15 @@
 import { DI } from '@/enums';
 import { isClient, withTryCatch } from '@/utils';
 
-import { Logger, LoggerInfoProvider, LoggerService } from '../interfaces';
+import { LoggerAdapter, LoggerInfoProvider, LoggerService } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 
 export class DefaultLoggerService implements LoggerService {
   private isInitialized = false;
-  private adapters: Logger[] = [];
+  private adapters: LoggerAdapter[] = [];
   private infoProviders: LoggerInfoProvider[] = [];
   constructor(
-    private readonly adaptersFactory: () => Promise<Logger[]>,
+    private readonly adaptersFactory: () => Promise<LoggerAdapter[]>,
     private readonly infoProvidersFactory: () => Promise<LoggerInfoProvider[]>,
   ) {}
 
@@ -81,7 +81,7 @@ export class DefaultLoggerService implements LoggerService {
         .map(adapter => withTryCatch(() => adapter.dispose?.())));
   }
 
-  getAdapters(): Logger[] {
+  getAdapters(): LoggerAdapter[] {
     return this.adapters;
   }
 

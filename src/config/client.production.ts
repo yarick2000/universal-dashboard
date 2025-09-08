@@ -1,6 +1,10 @@
 import { ClientConfig } from '@/layers/Configuration';
 
 const config: ClientConfig = {
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr'],
+  },
   features: {
     consoleLogging: {
       enabled: true,

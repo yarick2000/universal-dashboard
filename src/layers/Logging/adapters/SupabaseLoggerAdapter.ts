@@ -1,27 +1,23 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseDataClient } from '@/layers/Data';
+import { Json } from '@/layers/Data/types/SupabaseDatabaseTypes';
 
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
-import { Database, Json } from '../types/SupabaseDatabaseTypes';
 
-export class SupabaseLoggerAdapter implements Logger {
+export class SupabaseLoggerAdapter implements LoggerAdapter {
   private logBuffer: LogMessage<unknown>[] = [];
   private idleTimer: NodeJS.Timeout | null = null;
-  private client: SupabaseClient<Database> | null = null;
   private isSending = false;
 
   constructor(
+    private readonly subabaseClient: SupabaseDataClient,
     private readonly logLevels: LogLevel[],
     private readonly batchSize: number,
     private readonly idleTimeSec: number,
-    supabaseUrl: string,
-    supabaseKey: string,
     private readonly processError: (error: unknown) => Promise<void>,
   ) {
-    try {
-      this.client = createClient<Database>(supabaseUrl, supabaseKey);
-    } catch (error) {
-      void this.processError(error);
+    if (!subabaseClient) {
+      void this.processError(new Error('Supabase client not initialized'));
     }
   }
 
@@ -75,6 +71,10 @@ export class SupabaseLoggerAdapter implements Logger {
   }
 
   private async flushLogs(): Promise<void> {
+    if (!this.subabaseClient) {
+      await this.processError(new Error('Supabase client not initialized'));
+      return;
+    }
     if (this.isSending || this.logBuffer.length === 0) return;
 
     this.isSending = true;
@@ -90,12 +90,8 @@ export class SupabaseLoggerAdapter implements Logger {
         info: log.info as Json,
         level: log.level,
       }));
-      if (!this.client) {
-        await this.processError(new Error('Supabase client not initialized'));
-        return;
-      }
 
-      const { error } = await this.client.from('logs').insert(payload);
+      const { error } = await this.subabaseClient.from('logs').insert(payload);
       if (error) {
         this.logBuffer.unshift(...logsToSend);
         await this.processError(error);

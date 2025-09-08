@@ -2,10 +2,10 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 
 
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 
-export class FileLoggerAdapter implements Logger {
+export class FileLoggerAdapter implements LoggerAdapter {
   private logBuffer: LogMessage<unknown>[] = [];
   private idleTimer: NodeJS.Timeout | null = null;
   private isWriting = false;

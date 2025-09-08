@@ -21,6 +21,10 @@ type Feature<N extends FeatureName, T extends FeatureBase> = {
 };
 
 export type ClientConfig = {
+  i18n: {
+    defaultLocale: string;
+    locales: string[];
+  };
   features: Feature<'consoleLogging', ConsoleLoggingFeature> & Feature<'workerLogging', WorkerLoggingFeature>;
   envVariables?: Record<string, string>;
 };

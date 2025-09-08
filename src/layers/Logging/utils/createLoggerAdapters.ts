@@ -1,21 +1,26 @@
 import { DI } from '@/enums';
+import { SupabaseDataClient } from '@/layers/Data';
 import { FeatureService } from '@/layers/Feature';
 import { isClient, isServer } from '@/utils';
 
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 
-export function createLoggerAdapters(featureService: FeatureService): () => Promise<Logger[]> {
+export function createLoggerAdapters(
+  supabaseClient: SupabaseDataClient,
+  featureService: FeatureService,
+): () => Promise<LoggerAdapter[]> {
   return async () => {
-    const adapters: Logger[] = [];
+    const adapters: LoggerAdapter[] = [];
     if (isClient()) {
       const clientAdapters = (await import('./createClientLoggerAdapters')).default(featureService);
       adapters.push(...clientAdapters);
     } else if (isServer() && process.env.NEXT_RUNTIME === 'nodejs') {
-      const serverAdapters = (await import('./createServerLoggerAdapters')).default(featureService);
+      const serverAdaptersModule = await import('./createServerLoggerAdapters');
+      const serverAdapters = serverAdaptersModule.default(supabaseClient, featureService);
       adapters.push(...serverAdapters);
     }
     return adapters;
   };
 };
 
-createLoggerAdapters.inject = [DI.FeatureService] as const;
+createLoggerAdapters.inject = [DI.SupabaseDataClient, DI.FeatureService] as const;

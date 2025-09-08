@@ -1,9 +1,9 @@
 import { recordClientSideLogs } from '@/app/actions';
 
-import { Logger } from '../interfaces';
+import { LoggerAdapter } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
 
-export class WorkerLoggerAdapter implements Logger {
+export class WorkerLoggerAdapter implements LoggerAdapter {
   private readonly worker: Worker | null = null;
 
   constructor(
