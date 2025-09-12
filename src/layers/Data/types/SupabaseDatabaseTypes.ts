@@ -71,27 +71,27 @@ export type Database = {
       users: {
         Row: {
           created_at: string
-          disabled: boolean | null
           email: string | null
-          fist_name: string | null
-          id: number
+          first_name: string | null
+          id: string
           last_name: string | null
+          password: string | null
         }
         Insert: {
           created_at?: string
-          disabled?: boolean | null
           email?: string | null
-          fist_name?: string | null
-          id?: number
+          first_name?: string | null
+          id?: string
           last_name?: string | null
+          password?: string | null
         }
         Update: {
           created_at?: string
-          disabled?: boolean | null
           email?: string | null
-          fist_name?: string | null
-          id?: number
+          first_name?: string | null
+          id?: string
           last_name?: string | null
+          password?: string | null
         }
         Relationships: []
       }

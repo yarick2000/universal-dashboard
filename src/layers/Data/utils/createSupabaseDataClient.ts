@@ -13,7 +13,12 @@ export function createSupabaseDataClient(): SupabaseDataClient {
   const supabaseUrl = process.env.SUPABASE_URL as string;
   const supabaseKey = process.env.SUPABASE_KEY as string;
   try {
-    const client = createClient<Database>(supabaseUrl, supabaseKey);
+    const client = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        // Important to prevent the service client from persisting sessions
+        persistSession: false,
+      },
+    });
     return client;
   } catch {
     return null;

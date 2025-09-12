@@ -8,6 +8,8 @@ export type FeatureName =
   | 'speedInsights';
 
 export type ServerEnvironmentVariable =
+  | 'AUTH_SECRET'
+  | 'AUTH_SALT'
   | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
   | 'SUPABASE_URL'
   | 'SUPABASE_KEY';

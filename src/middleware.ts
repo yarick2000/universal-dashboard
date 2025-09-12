@@ -6,7 +6,7 @@ import { replaceFirst } from '@/utils';
 
 export const config = {
   matcher: [
-    '/((?!api|_next|_vercel|robots.txt|favicon.ico|images|.*\\.png$|.*\\.svg$).*)',
+    '/((?!api|_next|_vercel|robots.txt|favicon.ico|.*\\.[^/]+$).*)',
   ],
   runtime: 'nodejs',
 };
@@ -40,11 +40,28 @@ function processLocale(
   }
 }
 
+// function processAuthentication(request: NextRequest, locale: string) {
+//   const authPaths = ['/auth/signin', '/auth/signout', '/auth/callback'];
+//   const isLoggedIn = !!request.headers.get('cookie')?.includes('next-auth.session-token');
+//   const isAuthPath = authPaths.some((path) =>
+//     request.nextUrl.pathname.endsWith(`/${locale}${path}`),
+//   );
+//   if (!isLoggedIn && !isAuthPath) {
+//     const redirectUrl = new URL(`/${locale}/auth/signin`, request.url);
+//     redirectUrl.searchParams.set('callbackUrl', request.url);
+
+//     return NextResponse.redirect(redirectUrl);
+//   }
+// }
+
 export default function middleware(request: NextRequest) {
   const supportedLocales = i18nService.getSupportedLocales();
   const locale = request.nextUrl.pathname.split('/')[1];
-  const response = processLocale(request, supportedLocales, locale);
-  if (response) return response;
+
+  // const authResponse = processAuthentication(request, locale);
+  // if (authResponse) return authResponse;
+  const localeResponse = processLocale(request, supportedLocales, locale);
+  if (localeResponse) return localeResponse;
 
   const handleI18nRouting = createMiddleware({
     // A list of all locales that are supported
@@ -55,3 +72,6 @@ export default function middleware(request: NextRequest) {
   });
   return handleI18nRouting(request);
 }
+
+export { auth as middleware } from '@/auth';
+

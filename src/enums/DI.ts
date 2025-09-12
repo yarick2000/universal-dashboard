@@ -8,5 +8,7 @@ export enum DI {
   SupabaseDataClient = 'SupabaseDataClient',
   LocalizationService = 'LocalizationService',
   LocalizationDataAdapter = 'LocalizationDataAdapter',
+  AuthenticationProvider = 'AuthenticationProvider',
+  AuthenticationService = 'AuthenticationService',
   // Add more identifiers as needed
 };
