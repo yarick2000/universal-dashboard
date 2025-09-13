@@ -1,10 +1,12 @@
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Suspense } from 'react';
 
+import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService } from '@/index';
+import { AppHeader } from '@/shadcn/components/AppHeader';
 
-import { WithApplicationCleanup } from '../components/WithApplicationCleanup';
 
 import type { Metadata } from 'next';
 
@@ -37,9 +39,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <WithApplicationCleanup>
-          {children}
-        </WithApplicationCleanup>
+        <Suspense fallback={<div>Loading...</div>}>
+          <WithApplicationCleanup>
+            <div className="min-h-screen">
+              <AppHeader />
+              {children}</div>
+          </WithApplicationCleanup>
+        </Suspense>
         {analyticsFeature.enabled && <Analytics />}
         {speedInsightsFeature.enabled && <SpeedInsights />}
       </body>
