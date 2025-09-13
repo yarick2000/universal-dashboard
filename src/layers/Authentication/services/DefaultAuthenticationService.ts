@@ -5,27 +5,29 @@ import { AuthenticationProvider, AuthenticationService } from '../interfaces';
 
 export class DefaultAuthenticationService implements AuthenticationService {
   constructor(
-    private readonly authenticationProvider: AuthenticationProvider | null,
+    private readonly authenticationProviderFactory: () => Promise<AuthenticationProvider | null | undefined>,
   ) { }
 
-  getAuthResult() {
-    if (!this.authenticationProvider && isClient()) {
+  async getAuthResult() {
+    const authenticationProvider = await this.authenticationProviderFactory();
+    if (!authenticationProvider && isClient()) {
       throw new Error('AuthenticationProvider is not available on the client side.');
     }
-    if (!this.authenticationProvider) {
-      throw new Error('AuthenticationProvider is not initialized.');
+    if (!authenticationProvider) {
+      return {} as unknown as ReturnType<AuthenticationService['getAuthResult']>;
     }
-    return this.authenticationProvider.getAuthResult();
+    return authenticationProvider.getAuthResult();
   }
 
-  getProvidersMap() {
-    if (!this.authenticationProvider && isClient()) {
+  async getProvidersMap() {
+    const authenticationProvider = await this.authenticationProviderFactory();
+    if (!authenticationProvider && isClient()) {
       throw new Error('AuthenticationProvider is not available on the client side.');
     }
-    if (!this.authenticationProvider) {
-      throw new Error('AuthenticationProvider is not initialized.');
+    if (!authenticationProvider) {
+      return [] as unknown as ReturnType<AuthenticationService['getProvidersMap']>;
     }
-    return this.authenticationProvider.getProvidersMap();
+    return authenticationProvider.getProvidersMap();
   }
 
   static inject = [DI.AuthenticationProvider] as const;

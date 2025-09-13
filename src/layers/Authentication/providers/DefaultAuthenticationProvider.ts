@@ -6,9 +6,9 @@ import { Logger, LoggerService } from '@/layers/Logging';
 import { createLogger } from '@/layers/Logging/utils';
 
 import { AuthenticationProvider } from '../interfaces';
-import { verifyPassword } from '../utils';
+import { verifyPassword } from '../utils/crypto';
 
-export class DefaultAuthenticationProvider implements AuthenticationProvider {
+export default class DefaultAuthenticationProvider implements AuthenticationProvider {
   private readonly logger: Logger;
   constructor(
     private readonly loggerService: LoggerService,

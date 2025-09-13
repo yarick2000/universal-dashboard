@@ -24,10 +24,10 @@ export interface AuthenticationService {
    * Gets the authentication result.
    * @returns The authentication result.
    */
-  getAuthResult(): NextAuthResult;
+  getAuthResult(): Promise<NextAuthResult>;
   /**
    * Gets a map of available authentication providers.
    * @returns An array of objects containing the id and name of each provider.
    */
-  getProvidersMap(): { id: string; name: string }[];
+  getProvidersMap(): Promise<{ id: string; name: string }[]>;
 }

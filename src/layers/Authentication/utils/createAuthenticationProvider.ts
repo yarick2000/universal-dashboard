@@ -1,21 +1,24 @@
 import { DI } from '@/enums';
 import { SupabaseDataClient } from '@/layers/Data';
 import { LoggerService } from '@/layers/Logging';
-import { isClient } from '@/utils';
+import { isClient, isServer } from '@/utils';
 
 import { AuthenticationProvider } from '../interfaces';
-import { DefaultAuthenticationProvider } from '../providers';
 
 export function createAuthenticationProvider(
   loggerService: LoggerService,
   supabaseDataClient: SupabaseDataClient,
 
-): AuthenticationProvider | null {
-  if (isClient()) {
-    return null;
-  }
-  const provider = new DefaultAuthenticationProvider(loggerService, supabaseDataClient);
-  return provider;
+): () => Promise<AuthenticationProvider | null | undefined> {
+  return async () => {
+    if (isClient()) {
+      return null;
+    } else if (isServer() && process.env.NEXT_RUNTIME === 'nodejs') {
+      const providerModule = await import('../providers/DefaultAuthenticationProvider');
+      const provider = new providerModule.default(loggerService, supabaseDataClient);
+      return provider;
+    }
+  };
 }
 
 createAuthenticationProvider.inject = [DI.LoggerService, DI.SupabaseDataClient] as const;
