@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 
+import { SignIn } from '@/components/SigninButton';
+
 import { ClientTestErrorButton } from './components/ClientTestErrorButton';
 import { ServerTestErrorButton } from './components/ServerTestErrorButton';
 
@@ -78,6 +80,7 @@ export default async function Home(props: {
           </a>
           <ClientTestErrorButton />
           <ServerTestErrorButton />
+          <SignIn />
         </div>
       </main>
       <footer className="row-start-3 flex flex-wrap items-center justify-center gap-[24px]">

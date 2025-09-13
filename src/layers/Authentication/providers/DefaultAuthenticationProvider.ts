@@ -6,7 +6,6 @@ import { Logger, LoggerService } from '@/layers/Logging';
 import { createLogger } from '@/layers/Logging/utils';
 
 import { AuthenticationProvider } from '../interfaces';
-import { verifyPassword } from '../utils/crypto';
 
 export default class DefaultAuthenticationProvider implements AuthenticationProvider {
   private readonly logger: Logger;
@@ -47,7 +46,7 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           return session;
         },
       },
-      pages: { signIn: '/auth/signin' },
+      // pages: { signIn: '/auth/signin' },
     });
   }
 
@@ -65,25 +64,17 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           }
           const email = credentials.email as string;
           const password = credentials.password as string;
-          const result = await this.dataClient?.from('users').select('*').eq('email', email).single();
-          const { data: user, error } = result || {};
-          if (error || !user) {
-            if (error) {
-              await this.logger.error(`Error fetching user by email: ${error.message}`);
+          const token = await this.dataClient?.auth.signInWithPassword({
+            email, password,
+          });
+          if (token?.error || !token?.data?.user) {
+            if (token?.error) {
+              await this.logger.error(`Supabase sign-in error: ${token.error.message}`);
             }
-            if (!user) {
-              await this.logger.warn(`No user found with email: ${email}`);
-            }
-            return null;
-          }
-          const passwordsMatch = verifyPassword(password, user.password);
-          if (!passwordsMatch) {
-            await this.logger.warn(`Invalid password for email: ${email}`);
-            return null;
           }
           return {
-            id: user.id,
-            email: user.email,
+            id: token?.data?.user?.id,
+            email: token?.data?.user?.email,
           };
         },
       }),
