@@ -2,6 +2,22 @@ import { render, screen } from '@testing-library/react';
 
 import Home from './page';
 
+// Mock the auth module
+jest.mock('@/auth', () => ({
+  auth: jest.fn().mockResolvedValue({
+    user: {
+      name: 'John Doe',
+      email: 'john@example.com',
+    },
+  }),
+  signIn: jest.fn(),
+  signOut: jest.fn(),
+  handlers: {
+    GET: jest.fn(),
+    POST: jest.fn(),
+  },
+}));
+
 // Mock Next.js Image component
 jest.mock('next/image', () => {
   return function MockImage({
@@ -57,11 +73,14 @@ describe('Home Page', () => {
     it('should render the main container with correct CSS classes', () => {
       const container = screen.getByRole('main').parentElement;
       expect(container).toHaveClass(
-        'font-sans',
         'grid',
         'grid-rows-[20px_1fr_20px]',
         'place-items-center',
-        'min-h-screen',
+        'gap-16',
+        'p-8',
+        'pb-20',
+        'font-sans',
+        'sm:p-20',
       );
     });
 
