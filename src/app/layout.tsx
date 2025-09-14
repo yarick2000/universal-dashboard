@@ -1,12 +1,15 @@
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { useLocale } from 'next-intl';
 import { Suspense } from 'react';
 
 import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService } from '@/index';
 import { AppHeader } from '@/shadcn/components/AppHeader';
 
+
+import { ThemeProvider } from '../shadcn/components/ThemeProvider';
 
 import type { Metadata } from 'next';
 
@@ -34,18 +37,25 @@ export default function RootLayout({
 }>) {
   const analyticsFeature = featureService.getFeature('analytics');
   const speedInsightsFeature = featureService.getFeature('speedInsights');
+  const locale = useLocale();
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Suspense fallback={<div>Loading...</div>}>
-          <WithApplicationCleanup>
-            <div className="min-h-screen">
-              <AppHeader />
-              {children}</div>
-          </WithApplicationCleanup>
-        </Suspense>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Suspense fallback={<div>Loading...</div>}>
+            <WithApplicationCleanup>
+              <div className="min-h-screen">
+                <AppHeader />
+                {children}
+              </div>
+            </WithApplicationCleanup>
+          </Suspense>
+        </ThemeProvider>
         {analyticsFeature.enabled && <Analytics />}
         {speedInsightsFeature.enabled && <SpeedInsights />}
       </body>
