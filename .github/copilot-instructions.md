@@ -1,26 +1,6 @@
 # Project Description
 This project is a NextJS based web application designed to create custom universal dashboards with various widgets created by AI agents. It allows users to select and configure widgets to display information in a personalized dashboard or create custom widgets by providing prompts for AI agents, which will generate the widget content in a runtime. The information about the user's preferences and configurations is stored in a database for future reference and customization. Generated widgets can be saved, reused or shared with others, providing a flexible and dynamic user experience.
 
-## Project Structure
-- `/src`: Contains the source code for the application.
-  - `/components`: Reusable React components.
-  - `/app`: Next.js application structure.
-    - `/api`: API routes for server-side logic.
-  - `/dashboards`: Dashboards related components and logic.
-  - `/widgets`: Widget components and logic.
-  - `/agents`: AI agent components and logic.
-  - `/styles`: Global styles and theme configurations.
-  - `/utils`: Utility functions and helpers.
-  - `/config`: Configuration files for the application.
-  - `/enums`: Enumeration types used throughout the application.
-  - `/layers`: Layered architecture functions and components.
-  - `/tools`: Tools and utilities for development and debugging.
-  - `/types`: Global TypeScript type definitions.
-  - `/workers`: Web workers for background processing.
-- `/public`: Static assets like images and icons.
-- `/log` : Log files for debugging and monitoring.
-- `/locales`: Localization files for internationalization.
-
 ## Libraries and Frameworks
 - [Node.js](https://nodejs.org/): JavaScript runtime for server-side development.
 - [Next.js](https://nextjs.org/): React framework for server-side rendering and static site generation.
@@ -67,6 +47,8 @@ This project is a NextJS based web application designed to create custom univers
 │   │   ├── [locale]     # Locale-specific routes
 │   │   ├── 404          # 404 error page
 │   │   ├── 500          # 500 error page
+│   │   ├── global.css   # Global CSS
+│   │   ├── layout.tsx   # Root layout
 │   ├─ components        # Reusable components
 │   ├─ config            # Application configuration
 │   ├─ enums             # Enumeration types
