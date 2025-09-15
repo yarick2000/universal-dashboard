@@ -30,43 +30,55 @@ This project is a NextJS based web application designed to create custom univers
 
 ## Directory Structure
 ```
-├── .husky               # Git hooks
-├── .vscode              # VSCode settings
-├── .ssh-keys            # SSH keys for authentication
-├── .github              # GitHub-related files
-├── .swc                 # SWC auto-generation files - do not edit
-├── locales              # Localization files
-├── log                  # Log files
-├── node_modules         # Node.js modules
-├── public               # Static assets
-├── src                  # Source files
-│   ├─ agents            # AI agents
-│   ├── app              # Next.js app directory
-│   │   ├── api          # API routes
-│   │   ├── actions      # Server actions
-│   │   ├── [locale]     # Locale-specific routes
-│   │   ├── 404          # 404 error page
-│   │   ├── 500          # 500 error page
-│   │   ├── global.css   # Global CSS
-│   │   ├── layout.tsx   # Root layout
-│   ├─ components        # Reusable components
-│   ├─ config            # Application configuration
-│   ├─ enums             # Enumeration types
-│   ├─ layers            # Layered architecture components
-│   ├─ tools             # Development tools and utilities
-│   ├─ types             # TypeScript type definitions
-│   ├─ utils             # Utility functions
-│   ├─ workers           # Web Workers
-│   ├─ dashboards        # Dashboard components
-│   ├─ widgets           # Reusable widgets
-│   ├─ stores            # State management
-│   ├─ styles            # Global styles
-│   ├─ di.ts             # Dependency injection setup
-│   ├─ index.ts          # Dependency injection initialization
-│   ├─ instrumentation.ts # Server-side instrumentation setup
-│   ├─ instrumentation-client.ts # Client-side instrumentation setup  
-│   ├─ middleware.ts     # Next.js middleware           
-│   └─ trace.ts          # Vercel server container tracing setup           
+├── .husky                  # Git hooks
+├── .vscode                 # VSCode settings
+├── .ssh-keys               # SSH keys for authentication
+├── .github                 # GitHub-related files
+├── .swc                    # SWC auto-generation files - do not edit
+├── locales                 # Localization files
+├── log                     # Log files
+├── node_modules            # Node.js modules
+├── public                  # Static assets
+├── src                     # Source files
+│   ├─ agents               # AI agents
+│   ├── app                 # Next.js app directory
+│   │   ├── api             # API routes
+│   │   ├── actions         # Server actions
+│   │   ├── [locale]        # Locale-specific routes
+│   │   │   ├── components  # Route-specific components
+│   │   │   ├── layout.tsx  # Locale-specific layout
+│   │   │   └── page.tsx    # Home page
+│   │   ├── 404             # 404 error page
+│   │   ├── 500             # 500 error page
+│   │   ├── global.css      # Global CSS
+│   │   ├── layout.tsx      # Root layout
+│   │   └── favicon.ico     # Favicon
+│   ├─ components           # Reusable components
+│   ├─ config               # Application configuration
+│   ├─ enums                # Enumeration types
+│   ├─ layers               # Layered architecture implementation
+│   │   ├─ Authentication    # Authentication layer
+│   │   ├─ Configuration     # Configuration layer
+│   │   ├─ Data              # Data layer
+│   │   ├─ Feature           # Feature layer
+│   │   ├─ Internationalization  # Internationalization layer
+│   │   ├─ Logging          # Logging layer
+│   ├─ shadcn               # Shadcn/ui components
+│   ├─ tailwind             # Tailwind CSS plugins and utils
+│   ├─ tools                # Development tools and utilities
+│   ├─ types                # TypeScript type definitions
+│   ├─ utils                # Utility functions
+│   ├─ workers              # Web Workers
+│   ├─ dashboards           # Dashboard components
+│   ├─ widgets              # Reusable widgets
+│   ├─ stores               # State management
+│   ├─ styles               # Global styles
+│   ├─ di.ts                # Dependency injection setup
+│   ├─ index.ts             # Dependency injection initialization
+│   ├─ instrumentation.ts   # Server-side instrumentation setup
+│   ├─ instrumentation-client.ts # Client-side instrumentation setup
+│   ├─ middleware.ts        # Next.js middleware
+│   └─ trace.ts             # Vercel server container tracing setup
 ├── .env.development.local   # Automatically generated environment variables for development - do not edit
 ├── .env.production.local    # Automatically generated environment variables for production - do not edit
 ├── .editorconfig            # Editor configuration

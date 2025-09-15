@@ -1,11 +1,15 @@
 {
   "application": {
-    "title": "Universal Dashboard!"
+    "title": "Universal Dashboard"
   },
   "components": {
     "loginControls": {
       "login": "Log In",
       "signup": "Sign Up"
+    },
+    "searchInput": {
+      "placeholder": "Search documentation...",
+      "shortcutHint": "K"
     }
   }
 }
