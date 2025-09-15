@@ -9,6 +9,10 @@
     },
     "searchInput": {
       "placeholder": "Search documentation..."
+    },
+    "headerMenu": {
+      "docs": "Docs",
+      "help": "Help"
     }
   }
 }

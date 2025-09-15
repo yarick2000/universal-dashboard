@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { SearchInputProps as SearchInputUIProps } from '@/shadcn/components/SearchInput';
 
@@ -23,6 +23,19 @@ export function useSearchInput(props: UseSearchInputProps): SearchInputUIProps {
     const value = inputEl?.value?.trim() || '';
     lastSubmitted.current = value;
     // Future: dispatch search request
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        const searchInput = document.querySelector<HTMLInputElement>('[data-element-search-input]');
+        searchInput?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return {
