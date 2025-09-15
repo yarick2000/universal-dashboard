@@ -1,4 +1,4 @@
-import { recordClientSideLogs } from '@/app/actions';
+import { recordClientSideLogsAction } from '@/app/actions';
 
 import { LoggerAdapter } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
@@ -42,6 +42,6 @@ export class WorkerLoggerAdapter implements LoggerAdapter {
   }
 
   private handleWorkerMessage(event: MessageEvent<LogMessage<unknown>[]>): void {
-    void recordClientSideLogs(event.data);
+    void recordClientSideLogsAction(event.data);
   }
 }

@@ -3,7 +3,7 @@
 import { Command, Home, Search } from 'lucide-react';
 import { useEffect } from 'react';
 
-import { ThemeSwitcher } from '@/shadcn/components/ThemeSwitcher';
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/shadcn/ui/Button';
 import { Input } from '@/shadcn/ui/Input';
 import {
@@ -12,6 +12,8 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from '@/shadcn/ui/NavigationMenu';
+
+import { LoginControls } from '../LoginControls';
 
 import type React from 'react';
 
@@ -123,12 +125,7 @@ export function AppHeader() {
           </form>
 
           {/* Login controls */}
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              Sign In
-            </Button>
-            <Button size="sm">Sign Up</Button>
-          </div>
+          <LoginControls />
 
           {/* Theme switcher */}
           <ThemeSwitcher />

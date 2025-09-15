@@ -1,5 +1,11 @@
 {
   "application": {
     "title": "Universal Dashboard!"
+  },
+  "components": {
+    "loginControls": {
+      "login": "Log In",
+      "signup": "Sign Up"
+    }
   }
 }
