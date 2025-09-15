@@ -23,7 +23,7 @@ export const SearchInput = forwardRef<HTMLFormElement, SearchInputProps>(
             className="h-9 w-64 pr-12 pl-8"
             data-element-search-input
           />
-          <div className="absolute right-2.5 flex items-center gap-1" data-element-shortcut-hint>
+          <div className="absolute right-2.5 flex items-center gap-1" data-element-shortcut-hint-container>
             <kbd
               className={[
                 'pointer-events-none inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5',
@@ -32,7 +32,7 @@ export const SearchInput = forwardRef<HTMLFormElement, SearchInputProps>(
               data-element-keyboard-key
             >
               <Command className="h-3 w-3" data-element-command-icon />
-              {shortcutHint && <span>{shortcutHint || 'S'}</span>}
+              <span data-element-shortcut-hint>{shortcutHint || 'S'}</span>
             </kbd>
           </div>
         </div>

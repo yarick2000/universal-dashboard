@@ -8,8 +8,7 @@
       "signup": "Sign Up"
     },
     "searchInput": {
-      "placeholder": "Search documentation...",
-      "shortcutHint": "K"
+      "placeholder": "Search documentation..."
     }
   }
 }

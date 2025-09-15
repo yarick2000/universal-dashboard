@@ -1,11 +1,11 @@
 'use client';
 
-import { Command, Home, Search } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { useEffect } from 'react';
 
+import { SearchInput } from '@/components/SearchInput';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { Button } from '@/shadcn/ui/Button';
-import { Input } from '@/shadcn/ui/Input';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,7 +15,6 @@ import {
 
 import { LoginControls } from '../LoginControls';
 
-import type React from 'react';
 
 export function AppHeader() {
 
@@ -34,11 +33,6 @@ export function AppHeader() {
 
   const handleHomeClick = () => {
     window.location.href = '/';
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement search functionality
   };
 
   return (
@@ -102,27 +96,7 @@ export function AppHeader() {
         {/* Right aligned controls */}
         <div className="flex flex-1 items-center justify-end gap-2">
           {/* Search documentation */}
-          <form onSubmit={handleSearchSubmit} className="relative">
-            <div className="relative flex items-center">
-              <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="search-docs"
-                type="search"
-                placeholder="Search documentation..."
-                className="h-9 w-64 pr-12 pl-8"
-              />
-              <div className="absolute right-2.5 flex items-center gap-1">
-                <kbd
-                  className={[
-                    'pointer-events-none inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5',
-                    'font-mono text-[10px] font-medium text-muted-foreground opacity-100 select-none',
-                  ].join(' ')}
-                >
-                  <Command className="h-3 w-3" />S
-                </kbd>
-              </div>
-            </div>
-          </form>
+          <SearchInput />
 
           {/* Login controls */}
           <LoginControls />
