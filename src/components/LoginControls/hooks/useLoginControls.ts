@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 
-import { signInAction } from '@/app/actions';
+import { signInAction } from '@/app/actions/authentication';
 import { LoginControlsProps } from '@/shadcn/components/LoginControls';
 
 export function useLoginControls(props: React.ComponentProps<'div'>) : LoginControlsProps {

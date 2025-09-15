@@ -1,4 +1,4 @@
-import { recordClientSideLogsAction } from '@/app/actions';
+import { recordClientSideLogsAction } from '@/app/actions/logging';
 
 import { LoggerAdapter } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';
