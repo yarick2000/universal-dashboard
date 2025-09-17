@@ -12,7 +12,7 @@ export type HeaderMenuProps = Omit<
   React.ComponentProps<typeof NavigationMenu>,
   'children'
 > & {
-  menuItems: { name: string; label: string; href: string; active: boolean }[];
+  menuItems: { name: string; label: string; href: string; isActive: boolean }[];
   onMenuItemClick?: (name: string, href: string) => void;
 };
 
@@ -29,7 +29,7 @@ export const HeaderMenu = forwardRef<
               data-name={item.name}
               href={item.href}
               onClick={() => onMenuItemClick?.(item.name, item.href)}
-              active={item.active}
+              active={item.isActive}
               className={[
                 'group inline-flex h-9 w-max items-center justify-center rounded-md bg-background',
                 'px-4 py-2 text-sm font-medium transition-colors',

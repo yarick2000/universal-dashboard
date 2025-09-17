@@ -21,6 +21,7 @@ export function useHeaderMenu(props: UseHeaderMenuProps): HeaderMenuProps {
     const defaultItems: { name: string; label: string; href: string }[] = [
       { name: 'docs', label: t('docs'), href: `/${locale}/docs` },
       { name: 'help', label: t('help'), href: `/${locale}/help` },
+      { name: 'blog', label: t('blog'), href: `/${locale}/blog` },
     ];
     return items ?? defaultItems;
   }, [items, locale, t]);
@@ -28,7 +29,7 @@ export function useHeaderMenu(props: UseHeaderMenuProps): HeaderMenuProps {
   const menuItems = useMemo(() => {
     return itemsToRender.map((item) => ({
       ...item,
-      active: pathname === item.href,
+      isActive: pathname === item.href,
     }));
   }, [itemsToRender, pathname]);
 

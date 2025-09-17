@@ -11,8 +11,10 @@
       "placeholder": "Search documentation..."
     },
     "headerMenu": {
+      "home": "Home",
       "docs": "Docs",
-      "help": "Help"
+      "help": "Help",
+      "blog": "Blog"
     }
   }
 }

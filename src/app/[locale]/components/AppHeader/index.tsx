@@ -1,21 +1,13 @@
 'use client';
 
-import { Home } from 'lucide-react';
-
+import { HamburgerMenu } from '@/components/HamburgerMenu';
+import { HeaderMenu } from '@/components/HeaderMenu';
+import { HomeButton } from '@/components/HomeButton';
+import { LoginControls } from '@/components/LoginControls';
 import { SearchInput } from '@/components/SearchInput';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { Button } from '@/shadcn/ui/Button';
-
-import { HeaderMenu } from '../HeaderMenu';
-import { LoginControls } from '../LoginControls';
-
 
 export function AppHeader() {
-
-  const handleHomeClick = () => {
-    window.location.href = '/';
-  };
-
   return (
     <header
       className={[
@@ -25,17 +17,14 @@ export function AppHeader() {
     >
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {/* Left aligned controls */}
-        <div className="flex items-center gap-4">
-          {/* Home icon button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleHomeClick}
-            className="h-9 w-9"
-            aria-label="Navigate to home page"
-          >
-            <Home className="h-4 w-4" />
-          </Button>
+
+        {/* Hamburger menu */}
+        <div className="items-center gap-4 md:hidden">
+          <HamburgerMenu />
+        </div>
+        <div className="hidden items-center gap-4 md:flex">
+          {/* Home button */}
+          <HomeButton />
 
           {/* Navigation menu */}
           <HeaderMenu />
@@ -44,7 +33,7 @@ export function AppHeader() {
         {/* Right aligned controls */}
         <div className="flex flex-1 items-center justify-end gap-2">
           {/* Search documentation */}
-          <SearchInput />
+          <SearchInput className="ice-[search-input]:w-36 sm:ice-[search-input]:w-64" />
 
           {/* Login controls */}
           <LoginControls />

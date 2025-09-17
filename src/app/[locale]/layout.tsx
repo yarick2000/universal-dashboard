@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 
-import { AppHeader } from '@/components/AppHeader';
+import { AppHeader } from '@/app/[locale]/components/AppHeader';
 import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService, i18nService } from '@/index';
 
