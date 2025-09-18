@@ -9,7 +9,6 @@ export type UseHeaderMenuProps = Omit<HeaderMenuProps, 'menuItems' | 'onMenuItem
   items?: { name: string; label: string; href: string }[];
 };
 
-
 export function useHeaderMenu(props: UseHeaderMenuProps): HeaderMenuProps {
   const { items, ...rest } = props;
   const pathname = usePathname();

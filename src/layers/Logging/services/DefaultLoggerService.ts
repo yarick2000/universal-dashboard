@@ -47,7 +47,6 @@ export class DefaultLoggerService implements LoggerService {
     await this.processLogCall('warn', message, args);
   }
 
-
   async info<T>(message: string, args: T): Promise<void> {
     await this.processLogCall('info', message, args);
   }
@@ -55,7 +54,6 @@ export class DefaultLoggerService implements LoggerService {
   async debug<T>(message: string, args: T): Promise<void> {
     await this.processLogCall('debug', message, args);
   }
-
 
   async trace<T>(message: string, args: T): Promise<void> {
     await this.processLogCall('trace', message, args);

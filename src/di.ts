@@ -11,8 +11,6 @@ import { createLocalizationDataAdapter } from '@/layers/Internationalization/uti
 import { DefaultLoggerService } from '@/layers/Logging/services';
 import { createLoggerAdapters, createLoggerInfoProviders } from '@/layers/Logging/utils';
 
-
-
 const injector = createInjector()
   .provideFactory(DI.LocalApiDataClient, createLocalApiDataClient, Scope.Singleton)
   .provideFactory(DI.SupabaseDataClient, createSupabaseDataClient, Scope.Singleton)

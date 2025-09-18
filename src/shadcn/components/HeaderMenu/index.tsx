@@ -7,7 +7,6 @@ import {
   NavigationMenuList,
 } from '../../ui/NavigationMenu';
 
-
 export type HeaderMenuProps = Omit<
   React.ComponentProps<typeof NavigationMenu>,
   'children'

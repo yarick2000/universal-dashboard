@@ -2,6 +2,7 @@ import { ClientConfig } from '@/layers/Configuration';
 
 const config: ClientConfig = {
   i18n: {
+    cookieName: 'locale',
     defaultLocale: 'en',
     locales: ['en', 'fr'],
   },

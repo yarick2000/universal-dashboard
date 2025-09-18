@@ -4,7 +4,6 @@ import { createLogger } from '@/layers/Logging/utils';
 
 import { LocalizationDataAdapter } from '../interfaces';
 
-
 export class LocalApiLocalizationDataAdapter implements LocalizationDataAdapter {
   private readonly logger: Logger;
   constructor(

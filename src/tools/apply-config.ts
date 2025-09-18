@@ -105,7 +105,6 @@ async function main() {
     help: { type: Boolean, alias: 'h', description: 'Display this help message', optional: true },
   } as const;
 
-
   let options: CommandLineOptions;
   try {
     // parse command line arguments

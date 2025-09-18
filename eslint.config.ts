@@ -42,6 +42,7 @@ const sharedRules = {
   '@stylistic/semi': ['error', 'always'], // Require semicolons
   '@stylistic/quotes': ['error', 'single'], // Require single quotes
   'no-console': 'warn',
+  'no-multiple-empty-lines': ['error', { 'maxBOF': 0, 'maxEOF': 1, 'max': 1 }], // allow no empty lines at the beginning and end of file
   // JSX-specific rules
   '@stylistic/jsx-quotes': ['error', 'prefer-double'], // Use double quotes in JSX
 

@@ -1,5 +1,4 @@
-import { fileURLToPath , baseName } from './path';
-
+import { fileURLToPath, baseName } from './path';
 
 describe('fileURLToPath', () => {
   const originalPlatform = process.platform;

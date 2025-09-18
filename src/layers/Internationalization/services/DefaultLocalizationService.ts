@@ -19,6 +19,10 @@ export class DefaultLocalizationService implements LocalizationService {
     this.logger = createLogger(this.loggingService, import.meta.url);
   }
 
+  getCookieName(): string {
+    return this.configService.get('i18n.cookieName');
+  }
+
   getDefaultLocale(): string {
     return this.configService.get('i18n.defaultLocale');
   }

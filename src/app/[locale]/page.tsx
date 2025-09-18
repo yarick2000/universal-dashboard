@@ -1,11 +1,8 @@
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-
-
 import { ClientTestErrorButton } from './components/ClientTestErrorButton';
 import { ServerTestErrorButton } from './components/ServerTestErrorButton';
-
 
 export default async function Home(props: {
   params: Promise<{ locale: string }>;

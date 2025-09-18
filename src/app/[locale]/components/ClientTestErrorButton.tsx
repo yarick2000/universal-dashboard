@@ -1,6 +1,5 @@
 'use client';
 
-
 export function ClientTestErrorButton() {
   const handleClick = () => {
     throw new Error('This link is intentionally broken to test error handling.');

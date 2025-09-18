@@ -4,6 +4,7 @@ export interface LocalizationService {
     locale: string
   ): Promise<T>;
   getSupportedLocales(): string[];
+  getCookieName(): string;
 }
 
 export interface LocalizationDataAdapter {

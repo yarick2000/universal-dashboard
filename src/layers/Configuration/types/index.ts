@@ -24,6 +24,7 @@ type Feature<N extends FeatureName, T extends FeatureBase> = {
 
 export type ClientConfig = {
   i18n: {
+    cookieName: string;
     defaultLocale: string;
     locales: string[];
   };

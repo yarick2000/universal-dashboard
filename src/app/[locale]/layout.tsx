@@ -9,7 +9,6 @@ import { AppHeader } from '@/app/[locale]/components/AppHeader';
 import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService, i18nService } from '@/index';
 
-
 import { ThemeProvider } from '../../shadcn/components/ThemeProvider';
 
 import type { Metadata } from 'next';
