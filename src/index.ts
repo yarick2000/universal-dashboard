@@ -16,6 +16,6 @@ export const loggerService: LoggerService = injector.resolve<DI.LoggerService>(
   DI.LoggerService,
 ) as LoggerService;
 export const i18nService: LocalizationService =
-	injector.resolve<DI.LocalizationService>(DI.LocalizationService);
+  injector.resolve<DI.LocalizationService>(DI.LocalizationService);
 export const authService: AuthenticationService =
-	injector.resolve<DI.AuthenticationService>(DI.AuthenticationService);
+  injector.resolve<DI.AuthenticationService>(DI.AuthenticationService);

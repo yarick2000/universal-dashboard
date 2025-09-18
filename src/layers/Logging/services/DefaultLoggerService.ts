@@ -20,7 +20,7 @@ export class DefaultLoggerService implements LoggerService {
         await Promise.allSettled(
           this.adapters
             .filter(adapter => typeof adapter.initialize === 'function')
-            .map(adapter => withTryCatch(() => adapter.initialize?.())));
+            .map(adapter => Promise.resolve(withTryCatch(() => adapter.initialize?.()))));
         this.isInitialized = true;
       } catch (error) {
         this.isInitialized = false;
@@ -66,9 +66,9 @@ export class DefaultLoggerService implements LoggerService {
     if (this.isInitialized) {
       await Promise.allSettled(
         this.adapters.map(adapter =>
-          withTryCatch(() =>
+          Promise.resolve(withTryCatch(() =>
             adapter.log(logMessages),
-          ),
+          )),
         ),
       );
     }
@@ -78,7 +78,7 @@ export class DefaultLoggerService implements LoggerService {
     await Promise.allSettled(
       this.adapters
         .filter(adapter => typeof adapter.dispose === 'function')
-        .map(adapter => withTryCatch(() => adapter.dispose?.())));
+        .map(adapter => Promise.resolve(withTryCatch(() => adapter.dispose?.()))));
   }
 
   getAdapters(): LoggerAdapter[] {
@@ -90,11 +90,11 @@ export class DefaultLoggerService implements LoggerService {
     if (this.isInitialized) {
       await Promise.allSettled(
         this.adapters.map(adapter =>
-          withTryCatch(() =>
+          Promise.resolve(withTryCatch(() =>
             adapter.log(
               this.createMessage(logLevel, message, args),
             ),
-          ),
+          )),
         ),
       );
     }

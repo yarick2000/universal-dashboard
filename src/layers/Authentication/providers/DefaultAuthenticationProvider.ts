@@ -31,6 +31,12 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
 
   getAuthResult(): NextAuthResult {
     return nextAuth({
+      debug: process.env.NODE_ENV !== 'production',
+      logger: {
+        error:  (code, ...message) => {
+          void this.logger.error(`NextAuth error: ${code}`, ...message);
+        },
+      },
       providers: this.getProviders(),
       callbacks: {
         jwt({ token, user }) {
@@ -69,7 +75,7 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           });
           if (token?.error || !token?.data?.user) {
             if (token?.error) {
-              await this.logger.error(`Supabase sign-in error: ${token.error.message}`);
+              await this.logger.error(`Supabase sign-in error: ${token.error.message}`, token.error);
             }
           }
           return {
