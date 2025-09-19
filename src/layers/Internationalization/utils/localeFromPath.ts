@@ -1,4 +1,4 @@
-export function localeFromPath(path: string): string | null {
+export function localeFromPath(path: string, locales: string[]): string | null {
   const locale = path.split('/')[1];
-  return locale || null;
+  return locales.includes(locale) ? locale : null;
 }

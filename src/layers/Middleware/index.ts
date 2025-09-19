@@ -3,7 +3,7 @@
 
 import { NextResponse } from 'next/server';
 
-import { ChainableMiddleware, MiddlewareFactory as MiddlewareFactory } from '@/middleware/types';
+import { ChainableMiddleware, MiddlewareFactory as MiddlewareFactory } from '@/layers/Middleware/types';
 
 /**
  * Helper to compose multiple MiddlewareFactory instances together.

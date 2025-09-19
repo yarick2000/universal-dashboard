@@ -15,6 +15,18 @@
       "docs": "Docs",
       "help": "Help",
       "blog": "Blog"
+    },
+    "loginForm": {
+      "title": "Welcome back",
+      "description": "Enter your email and password to sign in",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPasswordText": "Forgot your password?",
+      "signUpText": "Don't have an account? Sign up",
+      "loginButtonText": "Log In",
+      "cancelButtonText": "Cancel"
     }
   }
 }

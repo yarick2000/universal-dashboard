@@ -30,7 +30,7 @@ export function getLocaleFromRequest(request: NextRequest): string {
   // Path detection second
   if (!locale) {
     const pathname = request.nextUrl.pathname;
-    locale = localeFromPath(pathname);
+    locale = localeFromPath(pathname, locales);
   }
 
   // Browser / user agent locales 3rd

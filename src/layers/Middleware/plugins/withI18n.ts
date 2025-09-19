@@ -49,13 +49,17 @@ export const withI18n: MiddlewareFactory = () => {
         return Promise.resolve(NextResponse.redirect(new URL(path, request.url), 302));
       }
       else {
+        const localeCookieName = i18nService.getCookieName();
         const handleI18nRouting = createMiddleware({
           // TODO: set locale based on cookie
           // A list of all locales that are supported
           locales: supportedLocales,
           // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
           defaultLocale: i18nService.getDefaultLocale(),
-          localeDetection: false,
+          localeDetection: true,
+          localeCookie: {
+            name: localeCookieName,
+          },
         });
         return Promise.resolve(handleI18nRouting(request));
       }

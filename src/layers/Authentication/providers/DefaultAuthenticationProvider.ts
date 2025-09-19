@@ -42,12 +42,16 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
         jwt({ token, user }) {
           if (user) {
             token.id = user.id;
+            token.email = user.email;
+            token.role = (user as { role?: string }).role;
           }
           return token;
         },
         session({ session, token }) {
           if (token && session.user) {
             session.user.id = token.id as string;
+            session.user.email = token.email as string;
+            (session.user as { role?: string }).role = token.role as string;
           }
           return session;
         },
@@ -60,13 +64,13 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
     return [
       CredentialsProvider({
         credentials: {
-          email: { label: 'Email', type: 'text' },
-          password: { label: 'Password', type: 'password' },
+          email: { label: 'Email', type: 'text', placeholder: 'Enter your email' },
+          password: { label: 'Password', type: 'password', placeholder: 'Enter your password' },
         },
         authorize: async (credentials) => {
           if (!credentials?.email || !credentials?.password) {
             await this.logger.warn('Missing email or password in credentials.');
-            return null;
+            throw new Error('Missing email or password');
           }
           const email = credentials.email as string;
           const password = credentials.password as string;
@@ -76,11 +80,13 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           if (token?.error || !token?.data?.user) {
             if (token?.error) {
               await this.logger.error(`Supabase sign-in error: ${token.error.message}`, token.error);
+              throw new Error(`Sign-in failed: ${token.error.message}`);
             }
           }
           return {
             id: token?.data?.user?.id,
             email: token?.data?.user?.email,
+            role: token?.data?.user?.role,
           };
         },
       }),

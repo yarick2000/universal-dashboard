@@ -1,4 +1,4 @@
-import { chainMiddleware, withI18n } from '@/middleware/index.ts';
+import { chainMiddleware, withI18n } from '@/layers/Middleware';
 
 export const config = {
   matcher: [
