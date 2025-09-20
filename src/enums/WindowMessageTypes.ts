@@ -1,0 +1,6 @@
+/**
+ * Enum for window message types used in the application.
+ */
+export enum WindowMessageTypes {
+  ShowLoginForm = 'UD:SHOW_LOGIN_FORM',
+};

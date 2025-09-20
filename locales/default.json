@@ -17,14 +17,15 @@
       "blog": "Blog"
     },
     "loginForm": {
-      "title": "Welcome back",
+      "title": "Login to Your Account",
       "description": "Enter your email and password to sign in",
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
       "passwordLabel": "Password",
       "passwordPlaceholder": "••••••••",
       "forgotPasswordText": "Forgot your password?",
-      "signUpText": "Don't have an account? Sign up",
+      "signUpText": "Sign up",
+      "signUpPrompt": "Don't have an account?",
       "loginButtonText": "Log In",
       "cancelButtonText": "Cancel"
     }

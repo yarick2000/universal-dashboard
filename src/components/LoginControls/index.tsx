@@ -1,10 +1,10 @@
 import { GenericComponent as genericComponent } from '@/components/GenericComponent';
 import { LoginControlsProps, LoginControls as LoginControlsUI } from '@/shadcn/components/LoginControls';
 
-import { useLoginControls } from './hooks/useLoginControls';
+import { useLoginControls, UseLoginControlsProps } from './hooks/useLoginControls';
 
-export function LoginControls(props: React.ComponentProps<'div'>) {
-  return genericComponent<LoginControlsProps, React.ComponentProps<'div'>>({
+export function LoginControls(props: UseLoginControlsProps) {
+  return genericComponent<LoginControlsProps, UseLoginControlsProps>({
     logic: useLoginControls,
     view: LoginControlsUI,
     ...props,

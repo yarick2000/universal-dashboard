@@ -8,8 +8,9 @@ import { Suspense } from 'react';
 import { AppHeader } from '@/app/[locale]/components/AppHeader';
 import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService, i18nService } from '@/index';
+import { ThemeProvider } from '@/shadcn/components/ThemeProvider';
 
-import { ThemeProvider } from '../../shadcn/components/ThemeProvider';
+import { LoginForm } from './components/LoginForm';
 
 import type { Metadata } from 'next';
 
@@ -63,6 +64,7 @@ export default async function LocalizedRootLayout(props: {
                 <div className="min-h-screen">
                   <AppHeader />
                   {children}
+                  <LoginForm />
                 </div>
               </WithApplicationCleanup>
             </Suspense>
