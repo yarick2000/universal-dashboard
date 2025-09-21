@@ -1,6 +1,6 @@
 'use client';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { LoginForm as LoginFormComponent } from '@/components/LoginForm';
 import { WindowMessageTypes } from '@/enums';
@@ -10,6 +10,12 @@ import { DialogWrapper } from '@/shadcn/components/DialogWrapper';
 export function LoginForm() {
   const t = useTranslations('components.loginForm');
   const [isOpen, setIsOpen] = useState(false);
+  const onLogin = useCallback(async () => {
+    await Promise.resolve(setIsOpen(false));
+  }, []);
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
   useWindowMessage(
     [WindowMessageTypes.ShowLoginForm, WindowMessageTypes.HideLoginForm],
     ({type}: {type: WindowMessageTypes}) => {
@@ -26,7 +32,7 @@ export function LoginForm() {
       description={t('description')}
       onClose={() => setIsOpen(false)}
     >
-      <LoginFormComponent />
+      <LoginFormComponent onLogin={onLogin} onCancel={onClose} />
     </DialogWrapper>
   );
 }

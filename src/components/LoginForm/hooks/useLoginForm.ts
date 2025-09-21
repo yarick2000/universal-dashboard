@@ -3,12 +3,10 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
 import { authenticateAction } from '@/app/actions/authentication';
-import { WindowMessageTypes } from '@/enums';
 import { loggerService } from '@/index';
 import { AuthenticationResponseCodes } from '@/layers/Authentication';
 import { createLogger } from '@/layers/Logging/utils';
 import { LoginFormProps } from '@/shadcn/components/LoginForm';
-import { post } from '@/utils/message';
 
 export type UseLoginFormProps = Omit<
   LoginFormProps,
@@ -39,16 +37,14 @@ export function useLoginForm(props: UseLoginFormProps): LoginFormProps {
   } = props;
   const { update: updateSession} = useSession();
   const logger = createLogger(loggerService, import.meta.url);
-  const [ passwordErrorMessage, setPasswordErrorMessage ] = useState<string | undefined>(undefined);
-  const [ emailErrorMessage, setEmailErrorMessage ] = useState<string | undefined>(undefined);
-  const [ generalErrorMessage, setGeneralErrorMessage ] = useState<string | undefined>(undefined);
+  const [ errorMessage, setErrorMessage ] = useState<string | undefined>(undefined);
   const [ isLoggingIn, setIsLoggingIn ] = useState<boolean>(false);
+  const [ emailValue, setEmailValue ] = useState<string>('');
+  const [ passwordValue, setPasswordValue ] = useState<string>('');
   const t = useTranslations('components.loginForm');
 
   const resetErrors = useCallback(() => {
-    setEmailErrorMessage(undefined);
-    setPasswordErrorMessage(undefined);
-    setGeneralErrorMessage(undefined);
+    setErrorMessage(undefined);
   }, []);
 
   const onFormSubmitEvent = useCallback((e: React.FormEvent<HTMLFormElement>) => {
@@ -61,31 +57,32 @@ export function useLoginForm(props: UseLoginFormProps): LoginFormProps {
   const onLoginEvent = useCallback(async(data: FormData) => {
     const email = data.get('email') as string;
     const password = data.get('password') as string;
+    setEmailValue(email);
+    setPasswordValue(password);
     try {
       const { success, code } = await authenticateAction(email, password);
       if (success) {
         resetErrors();
         await updateSession();
-        post(WindowMessageTypes.HideLoginForm);
         if (onLogin) {
           await onLogin(data);
         }
       } else {
         switch (code) {
           case AuthenticationResponseCodes.UserNotFound:
-            setEmailErrorMessage(t('errors.userNotFound'));
+            setErrorMessage(t('errors.userNotFound'));
             break;
           case AuthenticationResponseCodes.InvalidCredentials:
-            setPasswordErrorMessage(t('errors.invalidCredentials'));
+            setErrorMessage(t('errors.invalidCredentials'));
             break;
           default:
-            setGeneralErrorMessage(t('errors.generalErrorMessage'));
+            setErrorMessage(t('errors.generalErrorMessage'));
             break;
         }
       }
     } catch (error) {
       await logger.error('Failed to login:', error);
-      setGeneralErrorMessage(t('errors.generalErrorMessage'));
+      setErrorMessage(t('errors.generalErrorMessage'));
     } finally {
       setIsLoggingIn(false);
     }
@@ -116,8 +113,10 @@ export function useLoginForm(props: UseLoginFormProps): LoginFormProps {
     ...rest,
     emailLabel: t('emailLabel'),
     emailPlaceholder: t('emailPlaceholder'),
+    emailValue,
     passwordLabel: t('passwordLabel'),
     passwordPlaceholder: t('passwordPlaceholder'),
+    passwordValue,
     forgotPasswordText: t('forgotPasswordText'),
     signUpText: t('signUpText'),
     signUpPrompt: t('signUpPrompt'),
@@ -126,9 +125,7 @@ export function useLoginForm(props: UseLoginFormProps): LoginFormProps {
     signupLink: signupLink ?? '#',
     forgotPasswordLink: forgotPasswordLink ?? '#',
     isLoggingIn,
-    generalErrorMessage,
-    passwordErrorMessage,
-    emailErrorMessage,
+    errorMessage,
     onFormSubmit: onFormSubmitEvent,
     onLogin: onLoginEvent,
     onCancel: onCancelEvent,

@@ -6,8 +6,10 @@ import { cn } from '../../utils';
 export type LoginFormProps = React.ComponentProps<'div'> & {
   emailLabel: string;
   emailPlaceholder: string;
+  emailValue?: string;
   passwordLabel: string;
   passwordPlaceholder: string;
+  passwordValue?: string;
   forgotPasswordText: string;
   signUpText: string;
   signUpPrompt?: string;
@@ -15,9 +17,7 @@ export type LoginFormProps = React.ComponentProps<'div'> & {
   cancelButtonText: string;
   signupLink?: string;
   forgotPasswordLink?: string;
-  generalErrorMessage?: string;
-  passwordErrorMessage?: string;
-  emailErrorMessage?: string;
+  errorMessage?: string;
   isLoggingIn?: boolean;
   onLogin?: (data: FormData) => Promise<void>;
   onFormSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -28,13 +28,13 @@ export type LoginFormProps = React.ComponentProps<'div'> & {
 
 export function LoginForm({
   className,
-  generalErrorMessage,
   emailLabel,
   emailPlaceholder,
-  emailErrorMessage,
+  emailValue,
   passwordLabel,
   passwordPlaceholder,
-  passwordErrorMessage,
+  passwordValue,
+  errorMessage,
   forgotPasswordText,
   signUpText,
   signUpPrompt,
@@ -51,10 +51,10 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   return (<>
-    {generalErrorMessage && (
+    {errorMessage && (
       <div className="px-1 pb-2">
         <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-          {generalErrorMessage}
+          {errorMessage}
         </p>
       </div>
     )}
@@ -68,10 +68,10 @@ export function LoginForm({
               type="email"
               placeholder={emailPlaceholder}
               disabled={isLoggingIn}
+              defaultValue={emailValue}
               required
               data-element-email-input
             />
-            {emailErrorMessage && <p className="mt-1 text-sm text-red-600">{emailErrorMessage}</p>}
           </div>
           <div className="grid gap-3">
             <div className="flex items-center">
@@ -90,16 +90,23 @@ export function LoginForm({
               type="password"
               placeholder={passwordPlaceholder}
               disabled={isLoggingIn}
+              defaultValue={passwordValue}
               required
               data-element-password-input
             />
-            {passwordErrorMessage && <p className="mt-1 text-sm text-red-600">{passwordErrorMessage}</p>}
+            {/* {errorMessage && <p className="mt-1 text-sm text-red-600">{errorMessage}</p>} */}
           </div>
           <div className="flex flex-row gap-3">
             <Button type="submit" className="w-full" disabled={isLoggingIn} data-element-login-button>
               {loginButtonText}
             </Button>
-            <Button onClick={onCancel} variant="outline" className="w-full" data-element-cancel-button>
+            <Button
+              type="button"
+              onClick={onCancel}
+              variant="outline"
+              className="w-full"
+              data-element-cancel-button
+            >
               {cancelButtonText}
             </Button>
           </div>
