@@ -1,11 +1,11 @@
 'use client';
-
 import { HamburgerMenu } from '@/components/HamburgerMenu';
 import { HeaderMenu } from '@/components/HeaderMenu';
 import { HomeButton } from '@/components/HomeButton';
 import { LoginControls } from '@/components/LoginControls';
 import { SearchInput } from '@/components/SearchInput';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { WithAnonymous } from '@/layers/Authentication/components/WithAnonymous';
 
 export function AppHeader() {
   return (
@@ -36,7 +36,7 @@ export function AppHeader() {
           <SearchInput className="ice-[search-input]:w-36 sm:ice-[search-input]:w-64" />
 
           {/* Login controls */}
-          <LoginControls />
+          <WithAnonymous><LoginControls /></WithAnonymous>
 
           {/* Theme switcher */}
           <ThemeSwitcher />

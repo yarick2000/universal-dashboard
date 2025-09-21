@@ -27,7 +27,12 @@
       "signUpText": "Sign up",
       "signUpPrompt": "Don't have an account?",
       "loginButtonText": "Log In",
-      "cancelButtonText": "Cancel"
+      "cancelButtonText": "Cancel",
+      "errors": {
+        "generalErrorMessage": "An error occurred during login. Please try again.",
+        "userNotFound": "No account found with this email.",
+        "invalidCredentials": "Invalid email or password."
+      }
     }
   }
 }

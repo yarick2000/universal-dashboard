@@ -1,5 +1,3 @@
-import { useCallback, useRef } from 'react';
-
 import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
 import { Label } from '../../ui/Label';
@@ -17,10 +15,12 @@ export type LoginFormProps = React.ComponentProps<'div'> & {
   cancelButtonText: string;
   signupLink?: string;
   forgotPasswordLink?: string;
-  errorMessage?: string;
+  generalErrorMessage?: string;
   passwordErrorMessage?: string;
   emailErrorMessage?: string;
-  onLogin?: (email: string, password: string) => void;
+  isLoggingIn?: boolean;
+  onLogin?: (data: FormData) => Promise<void>;
+  onFormSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onCancel?: () => void;
   onForgotPassword?: () => void;
   onSignUp?: () => void;
@@ -28,10 +28,13 @@ export type LoginFormProps = React.ComponentProps<'div'> & {
 
 export function LoginForm({
   className,
+  generalErrorMessage,
   emailLabel,
   emailPlaceholder,
+  emailErrorMessage,
   passwordLabel,
   passwordPlaceholder,
+  passwordErrorMessage,
   forgotPasswordText,
   signUpText,
   signUpPrompt,
@@ -39,36 +42,36 @@ export function LoginForm({
   cancelButtonText,
   signupLink,
   forgotPasswordLink,
+  isLoggingIn,
+  onFormSubmit,
   onLogin,
   onCancel,
   onForgotPassword,
   onSignUp,
   ...props
 }: LoginFormProps) {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const onSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    const email = emailRef.current?.value as string;
-    const password = passwordRef.current?.value as string;
-    if (onLogin) {
-      onLogin(email, password);
-    }
-  }, [onLogin]);
-  return (
+  return (<>
+    {generalErrorMessage && (
+      <div className="px-1 pb-2">
+        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+          {generalErrorMessage}
+        </p>
+      </div>
+    )}
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <form onSubmit={onSubmit} data-element-form>
+      <form onSubmit={onFormSubmit} action={onLogin} data-element-form>
         <div className="flex flex-col gap-6">
           <div className="grid gap-3">
             <Label htmlFor="email" data-element-email-label>{emailLabel}</Label>
             <Input
-              ref={emailRef}
-              id="email"
+              name="email"
               type="email"
               placeholder={emailPlaceholder}
+              disabled={isLoggingIn}
               required
               data-element-email-input
             />
+            {emailErrorMessage && <p className="mt-1 text-sm text-red-600">{emailErrorMessage}</p>}
           </div>
           <div className="grid gap-3">
             <div className="flex items-center">
@@ -83,16 +86,17 @@ export function LoginForm({
               </a>
             </div>
             <Input
-              ref={passwordRef}
-              id="password"
+              name="password"
               type="password"
               placeholder={passwordPlaceholder}
+              disabled={isLoggingIn}
               required
               data-element-password-input
             />
+            {passwordErrorMessage && <p className="mt-1 text-sm text-red-600">{passwordErrorMessage}</p>}
           </div>
           <div className="flex flex-row gap-3">
-            <Button type="submit" className="w-full" data-element-login-button>
+            <Button type="submit" className="w-full" disabled={isLoggingIn} data-element-login-button>
               {loginButtonText}
             </Button>
             <Button onClick={onCancel} variant="outline" className="w-full" data-element-cancel-button>
@@ -114,5 +118,5 @@ export function LoginForm({
         </div>
       </form>
     </div>
-  );
+  </>);
 }

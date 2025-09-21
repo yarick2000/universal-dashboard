@@ -1,11 +1,13 @@
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { AppHeader } from '@/app/[locale]/components/AppHeader';
+import { auth } from '@/auth';
 import { WithApplicationCleanup } from '@/components/WithApplicationCleanup';
 import { featureService, i18nService } from '@/index';
 import { ThemeProvider } from '@/shadcn/components/ThemeProvider';
@@ -40,6 +42,7 @@ export default async function LocalizedRootLayout(props: {
   const params = await props.params;
   const { children } = props;
   const { locale } = params;
+  const session = await auth();
   const messages = await i18nService.getMessages(locale);
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const analyticsFeature = featureService.getFeature('analytics');
@@ -62,9 +65,11 @@ export default async function LocalizedRootLayout(props: {
             <Suspense fallback={<div>Loading...</div>}>
               <WithApplicationCleanup>
                 <div className="min-h-screen">
-                  <AppHeader />
-                  {children}
-                  <LoginForm />
+                  <SessionProvider session={session}>
+                    <AppHeader />
+                    {children}
+                    <LoginForm />
+                  </SessionProvider>
                 </div>
               </WithApplicationCleanup>
             </Suspense>

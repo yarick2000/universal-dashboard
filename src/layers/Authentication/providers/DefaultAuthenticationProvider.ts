@@ -33,7 +33,7 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
     return nextAuth({
       debug: process.env.NODE_ENV !== 'production',
       logger: {
-        error:  (code, ...message) => {
+        error: (code, ...message) => {
           void this.logger.error(`NextAuth error: ${code}`, ...message);
         },
       },
@@ -46,6 +46,15 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
             token.role = (user as { role?: string }).role;
           }
           return token;
+        },
+        redirect({ url, baseUrl }) {
+          // Allows relative callback URLs
+          if (url.startsWith('/')) return `${baseUrl}${url}`;
+
+          // Allows callback URLs on the same origin
+          if (new URL(url).origin === baseUrl) return url;
+
+          return baseUrl;
         },
         session({ session, token }) {
           if (token && session.user) {
@@ -70,7 +79,7 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
         authorize: async (credentials) => {
           if (!credentials?.email || !credentials?.password) {
             await this.logger.warn('Missing email or password in credentials.');
-            throw new Error('Missing email or password');
+            return null;
           }
           const email = credentials.email as string;
           const password = credentials.password as string;
@@ -80,7 +89,7 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           if (token?.error || !token?.data?.user) {
             if (token?.error) {
               await this.logger.error(`Supabase sign-in error: ${token.error.message}`, token.error);
-              throw new Error(`Sign-in failed: ${token.error.message}`);
+              return null;
             }
           }
           return {

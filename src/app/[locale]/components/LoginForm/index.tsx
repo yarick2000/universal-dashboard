@@ -10,9 +10,15 @@ import { DialogWrapper } from '@/shadcn/components/DialogWrapper';
 export function LoginForm() {
   const t = useTranslations('components.loginForm');
   const [isOpen, setIsOpen] = useState(false);
-  useWindowMessage([WindowMessageTypes.ShowLoginForm], () => {
-    setIsOpen(true);
-  });
+  useWindowMessage(
+    [WindowMessageTypes.ShowLoginForm, WindowMessageTypes.HideLoginForm],
+    ({type}: {type: WindowMessageTypes}) => {
+      if (type === WindowMessageTypes.ShowLoginForm) {
+        setIsOpen(true);
+      } else if (type === WindowMessageTypes.HideLoginForm) {
+        setIsOpen(false);
+      }
+    });
   return (
     <DialogWrapper
       isOpen={isOpen}
