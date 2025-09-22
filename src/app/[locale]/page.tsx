@@ -1,14 +1,26 @@
+import { Metadata, ResolvingMetadata } from 'next';
 import Image from 'next/image';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
+
+import { seoService } from '@/index';
+import { getLocalizations } from '@/layers/Internationalization/utils/server/getLocalizations';
+import { GenerateMetadataProps } from '@/layers/SEO';
 
 import { ClientTestErrorButton } from './components/ClientTestErrorButton';
 import { ServerTestErrorButton } from './components/ServerTestErrorButton';
+
+export async function generateMetadata(
+  { params, searchParams }: GenerateMetadataProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  return await seoService.generateMetadata('home', params, searchParams, parent);
+}
 
 export default async function Home(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
-  const t = await getTranslations('application');
+  const t = await getLocalizations('application');
   setRequestLocale(locale);
   // Testing new ESLint rules
 

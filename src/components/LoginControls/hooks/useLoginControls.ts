@@ -1,9 +1,10 @@
 import { useRouter } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 
 // import { signInAction } from '@/app/actions/authentication';
 import { WindowMessageTypes } from '@/enums';
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { LoginControlsProps } from '@/shadcn/components/LoginControls';
 import { post } from '@/utils/message';
 
@@ -11,7 +12,7 @@ export type UseLoginControlsProps = Omit<LoginControlsProps, | 'loginText' | 'si
 
 export function useLoginControls(props: UseLoginControlsProps) : LoginControlsProps {
   const { onLogin, onSignup } = props;
-  const t = useTranslations('components.loginControls');
+  const t = useLocalizations('components.loginControls');
   const locale = useLocale();
   const router = useRouter();
   const onLoginEvent = useCallback(() => {

@@ -5,6 +5,7 @@ import { ConfigService } from '@/layers/Configuration';
 import { FeatureService } from '@/layers/Feature';
 import { LocalizationService } from '@/layers/Internationalization';
 import { LoggerService } from '@/layers/Logging';
+import { SEOService } from '@/layers/SEO';
 
 export const configService: ConfigService = injector.resolve<DI.ConfigService>(
   DI.ConfigService,
@@ -19,3 +20,4 @@ export const i18nService: LocalizationService =
   injector.resolve<DI.LocalizationService>(DI.LocalizationService);
 export const authService: AuthenticationService =
   injector.resolve<DI.AuthenticationService>(DI.AuthenticationService);
+export const seoService: SEOService = injector.resolve<DI.SEOService>(DI.SEOService);

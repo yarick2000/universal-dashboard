@@ -153,6 +153,7 @@ async function main() {
     finalConfig += `\nSERVER_CONFIG=${JSON.stringify(serverConfigWithoutEnv)}`;
   }
   if (clientConfig) {
+    if (serverConfig) finalConfig += '\n'; // separate server and client config blocks
     const {envVariables, ...clientConfigWithoutEnv} = clientConfig;
     finalConfig += parseEnvVariable(envVariables);
     finalConfig += `\nNEXT_PUBLIC_CONFIG=${JSON.stringify(clientConfigWithoutEnv)}`;

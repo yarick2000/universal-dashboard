@@ -1,10 +1,10 @@
 import { useSession } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
 import { authenticateAction } from '@/app/actions/authentication';
 import { loggerService } from '@/index';
 import { AuthenticationResponseCodes } from '@/layers/Authentication';
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { createLogger } from '@/layers/Logging/utils';
 import { LoginFormProps } from '@/shadcn/components/LoginForm';
 
@@ -41,7 +41,7 @@ export function useLoginForm(props: UseLoginFormProps): LoginFormProps {
   const [ isLoggingIn, setIsLoggingIn ] = useState<boolean>(false);
   const [ emailValue, setEmailValue ] = useState<string>('');
   const [ passwordValue, setPasswordValue ] = useState<string>('');
-  const t = useTranslations('components.loginForm');
+  const t = useLocalizations('components.loginForm');
 
   const resetErrors = useCallback(() => {
     setErrorMessage(undefined);

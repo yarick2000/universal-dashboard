@@ -1,14 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import createMiddleware from 'next-intl/middleware';
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 
 import { i18nService } from '@/index';
 import { getLocaleFromRequest } from '@/layers/Internationalization/utils/server';
-import { replaceFirst } from '@/utils/string';
+import { replaceFirst } from '@/utils';
 
 import type { MiddlewareFactory } from '../types';
 
-export const withI18n: MiddlewareFactory = () => {
-  return async (request: NextRequest) => {
+export const withI18n: MiddlewareFactory = (next) => {
+  return async (request: NextRequest, event: NextFetchEvent) => {
     const pathname = request.nextUrl.pathname;
     const supportedLocales = i18nService.getSupportedLocales();
     const locale = getLocaleFromRequest(request);
@@ -47,22 +46,10 @@ export const withI18n: MiddlewareFactory = () => {
           }
         }
         return Promise.resolve(NextResponse.redirect(new URL(path, request.url), 302));
-      }
-      else {
-        const localeCookieName = i18nService.getCookieName();
-        const handleI18nRouting = createMiddleware({
-          // TODO: set locale based on cookie
-          // A list of all locales that are supported
-          locales: supportedLocales,
-          // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
-          defaultLocale: i18nService.getDefaultLocale(),
-          localeDetection: true,
-          localeCookie: {
-            name: localeCookieName,
-          },
-        });
-        return Promise.resolve(handleI18nRouting(request));
+      } else {
+        return await next(request, event);
       }
     };
   };
 };
+

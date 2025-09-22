@@ -1,28 +1,14 @@
-import { SessionProvider } from 'next-auth/react';
 import { setRequestLocale } from 'next-intl/server';
 
-import { AppHeader } from '@/app/[locale]/components/AppHeader';
-import { auth } from '@/auth';
 import { featureService, i18nService } from '@/index';
 import { fontClasses } from '@/utils/fonts';
 
+import { DomainNotFound as DomainNotFoundComponent } from '../components/DomainNotFound';
 import { Layout } from '../components/Layout';
 
-import { LoginForm } from './components/LoginForm';
-
-import '../globals.css';
-
-export default async function LocalizedRootLayout(props: {
-  children: React.ReactNode;
-  params: Promise<{
-    locale: string;
-  }>;
-}) {
-  const params = await props.params;
-  const { children } = props;
-  const { locale } = params;
-  const session = await auth();
-  const messages = await i18nService.getMessages(locale);
+export default function DomainNotFound() {
+  const locale = i18nService.getDefaultLocale();
+  const messages = i18nService.getDefaultMessages();
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const analyticsFeature = featureService.getFeature('analytics');
   const speedInsightsFeature = featureService.getFeature('speedInsights');
@@ -36,11 +22,7 @@ export default async function LocalizedRootLayout(props: {
       enableAnalytics={analyticsFeature.enabled}
       enableSpeedInsights={speedInsightsFeature.enabled}
     >
-      <SessionProvider session={session}>
-        <AppHeader />
-        {children}
-        <LoginForm />
-      </SessionProvider>
+      <DomainNotFoundComponent />
     </Layout>
   );
 }

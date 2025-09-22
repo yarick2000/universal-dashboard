@@ -31,6 +31,10 @@ export class DefaultLocalizationService implements LocalizationService {
     return this.configService.get('i18n.locales');
   }
 
+  getDefaultMessages<T extends { [key: string]: unknown; }>(): T {
+    return localMessages as unknown as T;
+  }
+
   async getMessages<T extends { [key: string]: unknown }>(locale: string): Promise<T> {
     if (isServer()) {
       // using default messages from default.json as a fallback

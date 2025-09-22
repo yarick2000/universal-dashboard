@@ -1,7 +1,8 @@
 import { usePathname, useRouter } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { HeaderMenuProps } from '@/shadcn/components/HeaderMenu';
 
 export type UseHeaderMenuProps = Omit<HeaderMenuProps, 'menuItems' | 'onMenuItemClick'> & {
@@ -14,7 +15,7 @@ export function useHeaderMenu(props: UseHeaderMenuProps): HeaderMenuProps {
   const pathname = usePathname();
   const router = useRouter();
   const locale = useLocale();
-  const t = useTranslations('components.headerMenu');
+  const t = useLocalizations('components.headerMenu');
 
   const itemsToRender = useMemo(() => {
     const defaultItems: { name: string; label: string; href: string }[] = [

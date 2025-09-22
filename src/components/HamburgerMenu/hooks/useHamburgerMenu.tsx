@@ -1,8 +1,9 @@
 import { Home } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { HamburgerMenuProps } from '@/shadcn/components/HamburgerMenu';
 import { HamburgerMenuItem } from '@/shadcn/components/HamburgerMenu/types';
 
@@ -19,7 +20,7 @@ export function useHamburgerMenu(props: UseHamburgerMenuProps): HamburgerMenuPro
   const pathname = usePathname();
   const router = useRouter();
   const locale = useLocale();
-  const t = useTranslations('components.headerMenu');
+  const t = useLocalizations('components.headerMenu');
 
   const itemsToRender = useMemo(() => {
     const defaultItems: HamburgerMenuItem[] = [

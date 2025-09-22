@@ -7,12 +7,16 @@ export type FeatureName =
   | 'analytics'
   | 'speedInsights';
 
+export type ClientEnvironmentVariable = 'NEXT_PUBLIC_BASE_URL';
+
 export type ServerEnvironmentVariable =
   | 'AUTH_SECRET'
   | 'AUTH_SALT'
   | 'NEXT_SERVER_ACTIONS_ENCRYPTION_KEY'
   | 'SUPABASE_URL'
-  | 'SUPABASE_KEY';
+  | 'SUPABASE_KEY'
+  | 'GOOGLE_RECAPTCHA_SECRET'
+  | 'GOOGLE_RECAPTCHA_SITE_KEY';
 
 export type FeatureBase = {
   enabled: boolean;
@@ -29,7 +33,7 @@ export type ClientConfig = {
     locales: string[];
   };
   features: Feature<'consoleLogging', ConsoleLoggingFeature> & Feature<'workerLogging', WorkerLoggingFeature>;
-  envVariables?: Record<string, string>;
+  envVariables?: Record<ClientEnvironmentVariable, string>;
 };
 
 export type ServerConfig = {

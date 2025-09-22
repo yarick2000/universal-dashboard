@@ -10,5 +10,6 @@ export enum DI {
   LocalizationDataAdapter = 'LocalizationDataAdapter',
   AuthenticationProvider = 'AuthenticationProvider',
   AuthenticationService = 'AuthenticationService',
+  SEOService = 'SEOService',
   // Add more identifiers as needed
 };

@@ -3,6 +3,7 @@ export interface LocalizationService {
   getMessages<T extends { [key: string]: unknown }>(
     locale: string
   ): Promise<T>;
+  getDefaultMessages<T extends { [key: string]: unknown }>(): T;
   getSupportedLocales(): string[];
   getCookieName(): string;
 }

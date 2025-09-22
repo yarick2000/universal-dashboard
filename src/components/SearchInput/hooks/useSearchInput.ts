@@ -1,6 +1,6 @@
-import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { SearchInputProps as SearchInputUIProps } from '@/shadcn/components/SearchInput';
 
 export type UseSearchInputProps = React.ComponentProps<'form'> & {
@@ -15,7 +15,7 @@ export type UseSearchInputProps = React.ComponentProps<'form'> & {
 export function useSearchInput(props: UseSearchInputProps): SearchInputUIProps {
   const { initialQuery = '', placeholder, shortcutHint, ...rest } = props;
   const lastSubmitted = useRef<string>(initialQuery);
-  const t = useTranslations('components.searchInput');
+  const t = useLocalizations('components.searchInput');
 
   const onSearch: SearchInputUIProps['onSearch'] = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

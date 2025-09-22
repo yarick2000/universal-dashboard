@@ -18,6 +18,9 @@ const config: ClientConfig = {
       idleTimeSec: 10,
     },
   },
+  envVariables: {
+    NEXT_PUBLIC_BASE_URL: 'https://universal-dashboard-tawny.vercel.app',
+  },
 };
 
 export default config;

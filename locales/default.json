@@ -34,5 +34,15 @@
         "invalidCredentials": "Invalid email or password."
       }
     }
+  },
+  "SEO": {
+    "defaultTitle": "Universal Dashboard",
+    "defaultDescription": "The best dashboard for your applications.",
+    "routes": {
+      "home": {
+        "title": "Welcome to Universal Dashboard",
+        "description": "Your one-stop solution for managing all your applications."
+      }
+    }
   }
 }

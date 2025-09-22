@@ -1,14 +1,14 @@
 'use client';
-import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
 import { LoginForm as LoginFormComponent } from '@/components/LoginForm';
 import { WindowMessageTypes } from '@/enums';
 import { useWindowMessage } from '@/hooks/useWindowMessage';
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { DialogWrapper } from '@/shadcn/components/DialogWrapper';
 
 export function LoginForm() {
-  const t = useTranslations('components.loginForm');
+  const t = useLocalizations('components.loginForm');
   const [isOpen, setIsOpen] = useState(false);
   const onLogin = useCallback(async () => {
     await Promise.resolve(setIsOpen(false));
