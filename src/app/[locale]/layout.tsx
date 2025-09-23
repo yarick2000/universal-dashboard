@@ -9,6 +9,7 @@ import { fontClasses } from '@/utils/fonts';
 import { Layout } from '../components/Layout';
 
 import { LoginForm } from './components/LoginForm';
+import { SignupForm } from './components/SignupForm';
 
 import '../globals.css';
 
@@ -40,6 +41,7 @@ export default async function LocalizedRootLayout(props: {
         <AppHeader />
         {children}
         <LoginForm />
+        <SignupForm />
       </SessionProvider>
     </Layout>
   );

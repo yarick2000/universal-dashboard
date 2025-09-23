@@ -50,15 +50,18 @@ export function LoginForm({
   onSignUp,
   ...props
 }: LoginFormProps) {
-  return (<>
-    {errorMessage && (
-      <div className="px-1 pb-2">
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-          {errorMessage}
-        </p>
-      </div>
-    )}
+  return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
+      {errorMessage && (
+        <div className="px-1 pb-2" data-element-error-message-container>
+          <p
+            className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+            data-element-error-message
+          >
+            {errorMessage}
+          </p>
+        </div>
+      )}
       <form onSubmit={onFormSubmit} action={onLogin} data-element-form>
         <div className="flex flex-col gap-6">
           <div className="grid gap-3">
@@ -125,5 +128,5 @@ export function LoginForm({
         </div>
       </form>
     </div>
-  </>);
+  );
 }

@@ -1,5 +1,3 @@
-import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 
 // import { signInAction } from '@/app/actions/authentication';
@@ -13,8 +11,6 @@ export type UseLoginControlsProps = Omit<LoginControlsProps, | 'loginText' | 'si
 export function useLoginControls(props: UseLoginControlsProps) : LoginControlsProps {
   const { onLogin, onSignup } = props;
   const t = useLocalizations('components.loginControls');
-  const locale = useLocale();
-  const router = useRouter();
   const onLoginEvent = useCallback(() => {
     // Handle login logic
     if (onLogin) {
@@ -31,8 +27,8 @@ export function useLoginControls(props: UseLoginControlsProps) : LoginControlsPr
       return;
     }
     // Navigate to signup page
-    router.push(`${locale}/auth/signup`);
-  }, [locale, onSignup, router]);
+    post(WindowMessageTypes.ShowSignupForm);
+  }, [onSignup]);
   return {
     ...props,
     onLogin: onLoginEvent,

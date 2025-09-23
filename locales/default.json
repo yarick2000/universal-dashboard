@@ -33,6 +33,22 @@
         "userNotFound": "No account found with this email.",
         "invalidCredentials": "Invalid email or password."
       }
+    },
+    "signupForm": {
+      "title": "Create a New Account",
+      "description": "Fill in the details below to sign up",
+      "firstNameLabel": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastNameLabel": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "createAccountButtonText": "Create Account",
+      "verificationLabel": "Check that you are human"
     }
   },
   "SEO": {
