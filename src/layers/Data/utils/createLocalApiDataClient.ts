@@ -12,7 +12,7 @@ export function createLocalApiDataClient() {
     get: async <T>(endpoint: string) => {
       const response = await fetch(`/api/${endpoint}`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
+        throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`, { cause: response });
       }
       return await response.json() as T;
     },
@@ -25,7 +25,7 @@ export function createLocalApiDataClient() {
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error(`Failed to post ${endpoint}: ${response.statusText}`);
+        throw new Error(`Failed to post ${endpoint}: ${response.statusText}`, { cause: response });
       }
       return await response.json() as T;
     },
@@ -38,7 +38,7 @@ export function createLocalApiDataClient() {
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error(`Failed to put ${endpoint}: ${response.statusText}`);
+        throw new Error(`Failed to put ${endpoint}: ${response.statusText}`, { cause: response });
       }
       return await response.json() as T;
     },
@@ -47,7 +47,7 @@ export function createLocalApiDataClient() {
         method: 'DELETE',
       });
       if (!response.ok) {
-        throw new Error(`Failed to delete ${endpoint}: ${response.statusText}`);
+        throw new Error(`Failed to delete ${endpoint}: ${response.statusText}`, { cause: response });
       }
       return await response.json() as T;
     },

@@ -6,6 +6,7 @@ import { auth } from '@/auth';
 import { featureService, i18nService } from '@/index';
 import { fontClasses } from '@/utils/fonts';
 
+import { GoogleRecaptchaProvider } from '../../components/GoogleRecaptchaV3';
 import { Layout } from '../components/Layout';
 
 import { LoginForm } from './components/LoginForm';
@@ -38,10 +39,12 @@ export default async function LocalizedRootLayout(props: {
       enableSpeedInsights={speedInsightsFeature.enabled}
     >
       <SessionProvider session={session}>
-        <AppHeader />
-        {children}
-        <LoginForm />
-        <SignupForm />
+        <GoogleRecaptchaProvider defaultAction="global">
+          <AppHeader />
+          {children}
+          <LoginForm />
+          <SignupForm />
+        </GoogleRecaptchaProvider>
       </SessionProvider>
     </Layout>
   );

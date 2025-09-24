@@ -7,7 +7,9 @@ export type FeatureName =
   | 'analytics'
   | 'speedInsights';
 
-export type ClientEnvironmentVariable = 'NEXT_PUBLIC_BASE_URL';
+export type ClientEnvironmentVariable =
+  | 'NEXT_PUBLIC_BASE_URL'
+  | 'NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY';
 
 export type ServerEnvironmentVariable =
   | 'AUTH_SECRET'
@@ -16,7 +18,7 @@ export type ServerEnvironmentVariable =
   | 'SUPABASE_URL'
   | 'SUPABASE_KEY'
   | 'GOOGLE_RECAPTCHA_SECRET'
-  | 'GOOGLE_RECAPTCHA_SITE_KEY';
+  | 'GOOGLE_RECAPTCHA_MIN_SCORE';
 
 export type FeatureBase = {
   enabled: boolean;

@@ -4,3 +4,4 @@ export * from './exception';
 export * from './dateTime';
 export * from './path';
 export * from './string';
+export * from './di';

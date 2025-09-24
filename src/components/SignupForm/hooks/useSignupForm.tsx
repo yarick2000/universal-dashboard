@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
+import GoogleRecaptcha, { useRecaptcha } from '@/components/GoogleRecaptchaV3';
 import { SignupForm as SignupFormUI } from '@/shadcn/components/SignupForm';
 
 // Re-export prop type inferred from UI component for consistency.
@@ -42,11 +43,30 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  // reCAPTCHA token state
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const { getToken } = useRecaptcha(); // for fallback fetch during submit
 
-  const onFormSubmit: SignupFormProps['onFormSubmit'] = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: implement signup submit logic
-  }, []);
+  const onFormSubmit: SignupFormProps['onFormSubmit'] = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      void (async () => {
+        let token = recaptchaToken;
+        if (!token) {
+          try {
+            token = await getToken('signup');
+            setRecaptchaToken(token);
+          } catch {
+            // TODO: handle reCAPTCHA failure (e.g., show an error message)
+            return;
+          }
+        }
+        // TODO: implement signup submit logic
+      })();
+    },
+    [getToken, recaptchaToken],
+  );
 
   // Empty handlers that still update local state to keep fields controlled if needed
   const onFirstNameChange = useCallback((value: string) => {
@@ -91,6 +111,7 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     confirmPasswordError: undefined,
     createAccountButtonText: t('createAccountButtonText'),
     verificationLabel: t('verificationLabel'),
+    captchaComponent: <GoogleRecaptcha onToken={setRecaptchaToken} action="signup" />, // Could integrate reCAPTCHA here
     onFormSubmit,
     onFirstNameChange,
     onLastNameChange,

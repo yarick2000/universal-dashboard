@@ -27,6 +27,7 @@ type SignupFormProps = React.ComponentProps<'div'> & {
   confirmPasswordPlaceholder?: string;
   createAccountButtonText?: string;
   verificationLabel?: string;
+  captchaComponent?: React.ReactNode;
   onFormSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onFirstNameChange?: (value: string) => void;
   onLastNameChange?: (value: string) => void;
@@ -60,6 +61,7 @@ export function SignupForm({
   confirmPasswordPlaceholder,
   createAccountButtonText,
   verificationLabel,
+  captchaComponent,
   onFormSubmit,
   onFirstNameChange,
   onLastNameChange,
@@ -145,18 +147,19 @@ export function SignupForm({
         </div>
 
         {/* Captcha placeholder */}
-        <div className="space-y-2">
-          <Label>{verificationLabel}</Label>
-          <div className="rounded-md border-2 border-dashed border-gray-300 p-8 text-center text-gray-500">
-            <p className="text-sm">Captcha Component Placeholder</p>
-            <p className="mt-1 text-xs text-gray-400">Captcha verification will be implemented here</p>
+        {captchaComponent && (
+          <div className="space-y-2">
+            <Label>{verificationLabel}</Label>
+            <div className="rounded-md border-2 border-dashed border-gray-300 p-8 text-center text-gray-500">
+              {captchaComponent}
+            </div>
           </div>
-        </div>
+        )}
 
         <Button type="submit" className="w-full">
           {createAccountButtonText}
         </Button>
       </form>
-    </div>
+    </div >
   );
 }

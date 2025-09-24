@@ -16,7 +16,8 @@
     "test:debug": "cross-env NODE_ENV=development && jest --runInBand --detectOpenHandles --forceExit",
     "cache:clear": "rimraf .next/cache",
     "tools:apply-config": "npx tsx src/tools/apply-config",
-    "tools:supabase-types": "npx tsx src/tools/supabase-types"
+    "tools:supabase-types": "npx tsx src/tools/supabase-types",
+    "tools:local-proxy": "npx tsx src/tools/local-proxy"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

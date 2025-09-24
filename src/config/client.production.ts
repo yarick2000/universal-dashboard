@@ -20,6 +20,7 @@ const config: ClientConfig = {
   },
   envVariables: {
     NEXT_PUBLIC_BASE_URL: 'https://universal-dashboard-tawny.vercel.app',
+    NEXT_PUBLIC_GOOGLE_RECAPTCHA_SITE_KEY: 'REPLACE_WITH_YOUR_SITE_KEY',
   },
 };
 
