@@ -1,7 +1,7 @@
 import { DI } from '@/enums';
 import { ApiDataClient, SupabaseDataClient } from '@/layers/Data';
 import { LoggerService } from '@/layers/Logging';
-import { isServer } from '@/utils';
+import { isServer } from '@/utils/system';
 
 import { LocalApiLocalizationDataAdapter, SupabaseLocalizationDataAdapter } from '../adapters';
 import { LocalizationDataAdapter } from '../interfaces';

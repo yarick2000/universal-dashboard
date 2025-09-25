@@ -38,10 +38,7 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
 
   useEffect(() => {
     if (!siteKey) {
-      void logger.warn(
-        '[GoogleRecaptchaProvider] Missing site key.' +
-          'environment.',
-      );
+      void logger.warn('[GoogleRecaptchaProvider] Missing site key.');
     }
   }, [siteKey, logger]);
 

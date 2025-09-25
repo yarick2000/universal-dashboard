@@ -18,7 +18,9 @@ export type ServerEnvironmentVariable =
   | 'SUPABASE_URL'
   | 'SUPABASE_KEY'
   | 'GOOGLE_RECAPTCHA_SECRET'
-  | 'GOOGLE_RECAPTCHA_MIN_SCORE';
+  | 'GOOGLE_RECAPTCHA_MIN_SCORE'
+  | 'GOOGLE_RECAPTCHA_API_URL'
+  | 'GOOGLE_API_KEY';
 
 export type FeatureBase = {
   enabled: boolean;

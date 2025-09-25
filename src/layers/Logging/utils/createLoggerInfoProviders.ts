@@ -1,4 +1,4 @@
-import { isClient } from '@/utils';
+import { isClient } from '@/utils/system';
 
 import { LoggerInfoProvider } from '../interfaces';
 

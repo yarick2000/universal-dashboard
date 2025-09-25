@@ -3,10 +3,10 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { AppHeader } from '@/app/[locale]/components/AppHeader';
 import { auth } from '@/auth';
+import { GoogleRecaptchaProvider } from '@/components/GoogleRecaptchaV3';
 import { featureService, i18nService } from '@/index';
 import { fontClasses } from '@/utils/fonts';
 
-import { GoogleRecaptchaProvider } from '../../components/GoogleRecaptchaV3';
 import { Layout } from '../components/Layout';
 
 import { LoginForm } from './components/LoginForm';

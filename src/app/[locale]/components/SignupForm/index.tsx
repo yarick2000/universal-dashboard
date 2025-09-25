@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { SignupForm as SignupFormComponent } from '@/components/SignupForm';
 import { WindowMessageTypes } from '@/enums';
@@ -10,6 +10,10 @@ import { DialogWrapper } from '@/shadcn/components/DialogWrapper';
 export function SignupForm() {
   const t = useLocalizations('components.signupForm');
   const [isOpen, setIsOpen] = useState(false);
+
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   useWindowMessage(
     [WindowMessageTypes.ShowSignupForm, WindowMessageTypes.HideSignupForm],
@@ -27,9 +31,9 @@ export function SignupForm() {
       isOpen={isOpen}
       title={t('title')}
       description={t('description')}
-      onClose={() => setIsOpen(false)}
+      onClose={onClose}
     >
-      <SignupFormComponent />
+      <SignupFormComponent onCancel={onClose} />
     </DialogWrapper>
   );
 }

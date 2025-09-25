@@ -1,8 +1,12 @@
-import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import GoogleRecaptcha, { useRecaptcha } from '@/components/GoogleRecaptchaV3';
+import { GoogleRecaptchaToken, useRecaptcha } from '@/components/GoogleRecaptchaV3';
+import { verifyRecaptchaToken } from '@/components/GoogleRecaptchaV3/actions';
+import { loggerService } from '@/index';
+import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
+import { createLogger } from '@/layers/Logging/utils';
 import { SignupForm as SignupFormUI } from '@/shadcn/components/SignupForm';
+import { retryAsync } from '@/utils/execution';
 
 // Re-export prop type inferred from UI component for consistency.
 export type SignupFormProps = React.ComponentProps<typeof SignupFormUI>;
@@ -31,11 +35,13 @@ export type UseSignupFormProps = Omit<SignupFormProps,
   | 'confirmPasswordPlaceholder'
   | 'createAccountButtonText'
   | 'verificationLabel'
+  | 'cancelButtonText'
 >;
 
 export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   const { ...rest } = props;
-  const t = useTranslations('components.signupForm');
+  const t = useLocalizations('components.signupForm');
+  const logger = createLogger(loggerService, import.meta.url);
 
   // Local state (could be lifted later or replaced with form library)
   const [firstName, setFirstName] = useState('');
@@ -43,52 +49,109 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [generalError, setGeneralError] = useState<string | undefined>(undefined);
   // reCAPTCHA token state
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const { getToken } = useRecaptcha(); // for fallback fetch during submit
 
-  const onFormSubmit: SignupFormProps['onFormSubmit'] = useCallback(
+  const onSignupEvent = useCallback(async(data: FormData) => {
+    // const firstNameValue = data.get('firstName') as string;
+    // const lastNameValue = data.get('lastName') as string;
+    const emailValue = data.get('email') as string;
+    // const passwordValue = data.get('password') as string;
+    // const confirmPasswordValue = data.get('confirmPassword') as string;
+    const recaptchaTokenValue = data.get('recaptchaToken') as string;
+    // setFirstName(firstNameValue);
+    // setLastName(lastNameValue);
+    // setEmail(emailValue);
+    // setPassword(passwordValue);
+    // setConfirmPassword(confirmPasswordValue);
+    try {
+      const {
+        success,
+        code,
+        reason,
+      } = await verifyRecaptchaToken(recaptchaTokenValue, 'signup');
+      if (!success) {
+        await logger.warn(`reCAPTCHA verification failed during signup for ${emailValue}.`, {
+          code,
+          reason,
+        });
+        setRecaptchaToken(null);
+        setGeneralError(t('errors.recaptchaFailed'));
+      }
+    } catch (error) {
+      await logger.error('Error during reCAPTCHA verification in signup', { error });
+      setRecaptchaToken(null);
+    }
+  }, [logger, t]);
+
+  const onFormSubmitEvent: SignupFormProps['onFormSubmit'] = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
+      // If we already have a token, allow natural submission (server action runs)
+      if (recaptchaToken) return;
+      // Otherwise block submission and obtain token
       e.preventDefault();
+      setGeneralError(undefined);
 
       void (async () => {
-        let token = recaptchaToken;
-        if (!token) {
-          try {
+        let token: string | null = null;
+        try {
+          await retryAsync(async () => {
             token = await getToken('signup');
-            setRecaptchaToken(token);
-          } catch {
-            // TODO: handle reCAPTCHA failure (e.g., show an error message)
+          });
+          if (!token) {
+            await logger.warn('Received empty reCAPTCHA token');
+            setGeneralError(t('errors.generalErrorMessage'));
             return;
           }
+          setRecaptchaToken(token);
+          // Submit form programmatically (bypasses React onSubmit -> avoids loop)
+          // Hidden input will be rendered on next paint with the token value.
+          setTimeout(() => {
+            if (formRef.current) formRef.current.requestSubmit();
+          }, 0);
+        } catch (error) {
+          await logger.error('Failed to get reCAPTCHA token', error);
+          setGeneralError(t('errors.generalErrorMessage'));
         }
-        // TODO: implement signup submit logic
       })();
     },
-    [getToken, recaptchaToken],
+    [getToken, logger, recaptchaToken, t],
   );
 
   // Empty handlers that still update local state to keep fields controlled if needed
-  const onFirstNameChange = useCallback((value: string) => {
+  const onFirstNameChangeEvent = useCallback((value: string) => {
     setFirstName(value);
-    // TODO: side-effect for first name change
   }, []);
-  const onLastNameChange = useCallback((value: string) => {
+  const onLastNameChangeEvent = useCallback((value: string) => {
     setLastName(value);
   }, []);
-  const onEmailChange = useCallback((value: string) => {
+  const onEmailChangeEvent = useCallback((value: string) => {
     setEmail(value);
   }, []);
-  const onPasswordChange = useCallback((value: string) => {
+  const onPasswordChangeEvent = useCallback((value: string) => {
     setPassword(value);
   }, []);
-  const onConfirmPasswordChange = useCallback((value: string) => {
+  const onConfirmPasswordChangeEvent = useCallback((value: string) => {
     setConfirmPassword(value);
+  }, []);
+
+  // Ensure reCAPTCHA badge is always visible when this component is mounted
+  useEffect(() => {
+    const badges = document.querySelectorAll('.grecaptcha-badge');
+    // hide or show badge based on isOpen (using parent element since it's also added by reCAPTCHA and has no any classes)
+    badges.forEach(b => b.parentElement?.classList.remove('hidden'));
+    return () => {
+      badges.forEach(b => b.parentElement?.classList.add('hidden'));
+    };
   }, []);
 
   return {
     ...rest,
-    generalError: undefined,
+    generalError,
+    formRef,
     firstName,
     firstNameLabel: t('firstNameLabel'),
     firstNamePlaceholder: t('firstNamePlaceholder'),
@@ -111,12 +174,14 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     confirmPasswordError: undefined,
     createAccountButtonText: t('createAccountButtonText'),
     verificationLabel: t('verificationLabel'),
-    captchaComponent: <GoogleRecaptcha onToken={setRecaptchaToken} action="signup" />, // Could integrate reCAPTCHA here
-    onFormSubmit,
-    onFirstNameChange,
-    onLastNameChange,
-    onEmailChange,
-    onPasswordChange,
-    onConfirmPasswordChange,
+    cancelButtonText: t('cancelButtonText'),
+    captchaComponent: <GoogleRecaptchaToken token={recaptchaToken} name="recaptchaToken" />,
+    onSignup: onSignupEvent,
+    onFormSubmit: onFormSubmitEvent,
+    onFirstNameChange: onFirstNameChangeEvent,
+    onLastNameChange: onLastNameChangeEvent,
+    onEmailChange: onEmailChangeEvent,
+    onPasswordChange: onPasswordChangeEvent,
+    onConfirmPasswordChange: onConfirmPasswordChangeEvent,
   };
 }

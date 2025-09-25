@@ -4,7 +4,7 @@ import { DI } from '@/enums';
 import { ConfigService } from '@/layers/Configuration';
 import { Logger, LoggerService } from '@/layers/Logging';
 import { createLogger } from '@/layers/Logging/utils';
-import { isServer } from '@/utils';
+import { isServer } from '@/utils/system';
 import localMessages from '@root/locales/default.json';
 
 import { LocalizationDataAdapter, LocalizationService } from '../interfaces';

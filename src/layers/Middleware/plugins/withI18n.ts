@@ -2,7 +2,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 
 import { i18nService } from '@/index';
 import { getLocaleFromRequest } from '@/layers/Internationalization/utils/server';
-import { replaceFirst } from '@/utils';
+import { replaceFirst } from '@/utils/string';
 
 import type { MiddlewareFactory } from '../types';
 

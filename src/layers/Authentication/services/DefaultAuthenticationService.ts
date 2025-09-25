@@ -1,5 +1,5 @@
 import { DI } from '@/enums';
-import { isClient } from '@/utils';
+import { isClient } from '@/utils/system';
 
 import { AuthenticationProvider, AuthenticationService } from '../interfaces';
 

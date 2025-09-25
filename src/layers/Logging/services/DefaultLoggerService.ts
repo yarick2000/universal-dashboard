@@ -1,5 +1,6 @@
 import { DI } from '@/enums';
-import { isClient, withTryCatch } from '@/utils';
+import { withTryCatch } from '@/utils/exception';
+import { isClient } from '@/utils/system';
 
 import { LoggerAdapter, LoggerInfoProvider, LoggerService } from '../interfaces';
 import { LogLevel, LogMessage } from '../types';

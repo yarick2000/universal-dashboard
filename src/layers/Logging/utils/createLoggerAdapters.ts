@@ -1,7 +1,7 @@
 import { DI } from '@/enums';
 import { SupabaseDataClient } from '@/layers/Data';
 import { FeatureService } from '@/layers/Feature';
-import { isClient, isServer } from '@/utils';
+import { isClient, isServer } from '@/utils/system';
 
 import { LoggerAdapter } from '../interfaces';
 

@@ -1,4 +1,4 @@
-import { baseName, fileURLToPath } from '@/utils';
+import { baseName, fileURLToPath } from '@/utils/path';
 
 import { Logger, LoggerService } from '../interfaces';
 

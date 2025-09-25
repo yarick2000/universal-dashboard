@@ -13,16 +13,17 @@ export function LoginForm() {
   const onLogin = useCallback(async () => {
     await Promise.resolve(setIsOpen(false));
   }, []);
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+  const onClose = useCallback(() => setIsOpen(false), []);
   useWindowMessage(
     [WindowMessageTypes.ShowLoginForm, WindowMessageTypes.HideLoginForm],
     ({type}: {type: WindowMessageTypes}) => {
-      if (type === WindowMessageTypes.ShowLoginForm) {
-        setIsOpen(true);
-      } else if (type === WindowMessageTypes.HideLoginForm) {
-        setIsOpen(false);
+      switch (type) {
+        case WindowMessageTypes.ShowLoginForm:
+          setIsOpen(true);
+          break;
+        case WindowMessageTypes.HideLoginForm:
+          setIsOpen(false);
+          break;
       }
     });
   return (

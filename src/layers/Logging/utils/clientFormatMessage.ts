@@ -1,4 +1,4 @@
-import { getDateTimeString } from '@/utils';
+import { getDateTimeString } from '@/utils/dateTime';
 
 export function clientFormatMessage(message: string, args: unknown): string {
   const dateStr = typeof args == 'object' &&

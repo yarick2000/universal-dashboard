@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-import { getDateTimeString } from '@/utils';
+import { getDateTimeString } from '@/utils/dateTime';
 
 function getDateStr(args: unknown): string {
   return typeof args == 'object' &&

@@ -48,7 +48,15 @@
       "confirmPasswordLabel": "Confirm Password",
       "confirmPasswordPlaceholder": "••••••••",
       "createAccountButtonText": "Create Account",
-      "verificationLabel": "Check that you are human"
+      "verificationLabel": "Check that you are human",
+      "cancelButtonText": "Cancel",
+      "errors": {
+        "generalErrorMessage": "An error occurred during signup. Please try again.",
+        "emailInUse": "This email is already associated with an account.",
+        "weakPassword": "The password is too weak. Please choose a stronger password.",
+        "passwordsDoNotMatch": "Passwords do not match. Please re-enter.",
+        "recaptchaFailed": "Recaptcha verification failed. Please try again."
+      }
     }
   },
   "SEO": {

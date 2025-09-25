@@ -39,6 +39,7 @@ export function Layout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* TODO: Add customized loading indicator */}
             <Suspense fallback={<div>Loading...</div>}>
               <WithApplicationCleanup>
                 <div className="min-h-screen">
