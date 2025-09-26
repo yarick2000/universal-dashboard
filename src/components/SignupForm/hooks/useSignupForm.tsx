@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { GoogleRecaptchaToken, useRecaptcha } from '@/components/GoogleRecaptchaV3';
 import { verifyRecaptchaToken } from '@/components/GoogleRecaptchaV3/actions';
@@ -136,16 +136,6 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   }, []);
   const onConfirmPasswordChangeEvent = useCallback((value: string) => {
     setConfirmPassword(value);
-  }, []);
-
-  // Ensure reCAPTCHA badge is always visible when this component is mounted
-  useEffect(() => {
-    const badges = document.querySelectorAll('.grecaptcha-badge');
-    // hide or show badge based on isOpen (using parent element since it's also added by reCAPTCHA and has no any classes)
-    badges.forEach(b => b.parentElement?.classList.remove('hidden'));
-    return () => {
-      badges.forEach(b => b.parentElement?.classList.add('hidden'));
-    };
   }, []);
 
   return {

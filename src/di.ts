@@ -4,7 +4,11 @@ import { DI } from '@/enums';
 import { DefaultAuthenticationService } from '@/layers/Authentication/services';
 import { createAuthenticationProvider } from '@/layers/Authentication/utils';
 import { createDefaultConfigService } from '@/layers/Configuration/utils';
-import { createLocalApiDataClient, createSupabaseDataClient } from '@/layers/Data/utils';
+import {
+  createLocalApiDataClient,
+  createRemoteApiDataClient,
+  createSupabaseDataClient,
+} from '@/layers/Data/utils';
 import { DefaultFeatureService } from '@/layers/Feature/services';
 import { DefaultLocalizationService } from '@/layers/Internationalization/services';
 import { createLocalizationDataAdapter } from '@/layers/Internationalization/utils';
@@ -14,6 +18,7 @@ import { DefaultSeoService } from '@/layers/SEO/services';
 
 const injector = createInjector()
   .provideFactory(DI.LocalApiDataClient, createLocalApiDataClient, Scope.Singleton)
+  .provideFactory(DI.RemoteApiDataClient, createRemoteApiDataClient, Scope.Singleton)
   .provideFactory(DI.SupabaseDataClient, createSupabaseDataClient, Scope.Singleton)
   .provideFactory(DI.ConfigService, createDefaultConfigService, Scope.Singleton)
   .provideClass(DI.FeatureService, DefaultFeatureService, Scope.Singleton)

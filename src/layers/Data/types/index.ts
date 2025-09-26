@@ -4,3 +4,4 @@ import { Database } from './SupabaseDatabaseTypes';
 
 // Supabase client type alias
 export type SupabaseDataClient = SupabaseClient<Database> | null;
+export * from './ApiDataClientTypes';

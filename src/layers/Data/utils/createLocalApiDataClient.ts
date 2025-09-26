@@ -2,6 +2,26 @@ import { isServer } from '@/utils/system';
 
 import { ApiDataClient } from '../interfaces';
 
+/**
+ * Creates a local API data client for making HTTP requests to the application's API endpoints.
+ *
+ * This function returns a REST API client that provides methods for GET, POST, PUT, and DELETE
+ * operations. The client is only available on the client side - it returns null when called
+ * on the server side.
+ *
+ * @returns {ApiDataClient | null} A REST API client with HTTP methods, or null if called on server side
+ *
+ * @example
+ * ```typescript
+ * const client = createLocalApiDataClient();
+ * if (client) {
+ *   const data = await client.get<User>('users/123');
+ *   await client.post<User, CreateUserData>('users', { name: 'John' });
+ * }
+ * ```
+ *
+ * @throws {Error} Throws an error if any HTTP request fails (non-2xx status codes)
+ */
 export function createLocalApiDataClient() {
   // No localREST API client on the server side
   if (isServer()) {

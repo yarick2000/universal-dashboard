@@ -2,6 +2,7 @@ export enum DI {
   ConfigService = 'ConfigService',
   FeatureService = 'FeatureService',
   LocalApiDataClient = 'LocalApiDataClient',
+  RemoteApiDataClient = 'RemoteApiDataClient',
   LoggerFactory = 'LoggerFactory',
   LoggerService = 'LoggerService',
   LoggerInfoProviderFactory = 'LoggerInfoProviderFactory',

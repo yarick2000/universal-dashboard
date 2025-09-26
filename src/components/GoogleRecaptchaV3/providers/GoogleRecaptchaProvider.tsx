@@ -11,17 +11,15 @@ import { GoogleRecaptchaContext } from './GoogleRecaptchaContext';
 
 declare global {
   var grecaptcha: {
-    enterprise: {
-      ready: (cb: () => void) => void;
-      execute: (siteKey: string, options: { action?: string }) => Promise<string>;
-    };
+    ready: (cb: () => void) => void;
+    execute: (siteKey: string, options: { action?: string }) => Promise<string>;
   } | undefined;
 }
 
 const DEFAULT_ACTION = 'general';
 
 function buildScriptSrc(siteKey: string, language?: string) {
-  const base = `https://www.google.com/recaptcha/enterprise.js?render=${encodeURIComponent(siteKey)}`;
+  const base = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
   return language ? `${base}&hl=${encodeURIComponent(language)}` : base;
 }
 
@@ -47,7 +45,7 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
     if (!autoInjectScript || scriptInjectedRef.current || !siteKey) return;
 
     const existing = document.querySelector<HTMLScriptElement>(
-      `script[src^="https://www.google.com/recaptcha/enterprise.js?render=${siteKey}"]`,
+      `script[src^="https://www.google.com/recaptcha/api.js?render=${siteKey}"]`,
     );
     if (existing) {
       scriptInjectedRef.current = true;
@@ -59,8 +57,8 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      if (window.grecaptcha?.enterprise) {
-        window.grecaptcha.enterprise.ready(() => setIsReady(true));
+      if (window.grecaptcha) {
+        window.grecaptcha.ready(() => setIsReady(true));
       }
     };
     script.onerror = async () => {
@@ -73,8 +71,8 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
   // If script already present (e.g., injected elsewhere), wait for readiness
   useEffect(() => {
     if (!siteKey) return;
-    if (window.grecaptcha?.enterprise && !isReady) {
-      window.grecaptcha.enterprise.ready(() => setIsReady(true));
+    if (window.grecaptcha && !isReady) {
+      window.grecaptcha.ready(() => setIsReady(true));
     }
   }, [isReady, siteKey]);
 
@@ -86,8 +84,8 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
       if (!window.grecaptcha) {
         throw new Error('grecaptcha not available yet.');
       }
-      await new Promise<void>((resolve) => window.grecaptcha!.enterprise.ready(() => resolve()));
-      return window.grecaptcha.enterprise.execute(siteKey, { action: action || defaultAction });
+      await new Promise<void>((resolve) => window.grecaptcha!.ready(() => resolve()));
+      return window.grecaptcha.execute(siteKey, { action: action || defaultAction });
     },
     [siteKey, defaultAction],
   );
