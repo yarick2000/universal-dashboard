@@ -9,4 +9,7 @@ export const GoogleRecaptchaContext = createContext<GoogleRecaptchaContextValue>
   getToken: () => {
     throw new Error('GoogleRecaptchaProvider is not mounted or not ready yet.');
   },
+  getRecaptchaComponent: () => {
+    throw new Error('GoogleRecaptchaProvider is not mounted or not ready yet.');
+  },
 });

@@ -1,6 +1,7 @@
 export interface GoogleRecaptchaContextValue {
   isReady: boolean;
   getToken: (action?: string) => Promise<string>;
+  getRecaptchaComponent: (token: string | null, name?: string) => React.ReactNode;
 }
 
 export interface GoogleRecaptchaProviderProps {

@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import { GoogleRecaptchaToken, useRecaptcha } from '@/components/GoogleRecaptchaV3';
+import { useRecaptcha } from '@/components/GoogleRecaptchaV3';
 import { verifyRecaptchaToken } from '@/components/GoogleRecaptchaV3/actions';
 import { loggerService } from '@/index';
 import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
@@ -53,7 +53,7 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   // reCAPTCHA token state
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const { getToken } = useRecaptcha(); // for fallback fetch during submit
+  const { getToken, getRecaptchaComponent } = useRecaptcha(); // for fallback fetch during submit
 
   const onSignupEvent = useCallback(async(data: FormData) => {
     // const firstNameValue = data.get('firstName') as string;
@@ -165,7 +165,7 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     createAccountButtonText: t('createAccountButtonText'),
     verificationLabel: t('verificationLabel'),
     cancelButtonText: t('cancelButtonText'),
-    captchaComponent: <GoogleRecaptchaToken token={recaptchaToken} name="recaptchaToken" />,
+    captchaComponent: getRecaptchaComponent(recaptchaToken, 'recaptchaToken'),
     onSignup: onSignupEvent,
     onFormSubmit: onFormSubmitEvent,
     onFirstNameChange: onFirstNameChangeEvent,

@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { loggerService } from '@/index';
 import { createLogger } from '@/layers/Logging/utils';
 
+import { GoogleRecaptchaToken } from '../components/GoogleRecaptchaToken';
 import { GoogleRecaptchaProviderProps } from '../interfaces';
 
 import { GoogleRecaptchaContext } from './GoogleRecaptchaContext';
@@ -90,11 +91,16 @@ export const GoogleRecaptchaProvider: React.FC<GoogleRecaptchaProviderProps> = (
     [siteKey, defaultAction],
   );
 
+  const getRecaptchaComponent = useCallback((token: string | null, name?: string) => {
+    return (<GoogleRecaptchaToken name={name || 'recaptchaToken'} token={token} />);
+  }, []);
+
   return (
     <GoogleRecaptchaContext.Provider
       value={{
         isReady,
         getToken,
+        getRecaptchaComponent,
       }}
     >
       {children}
