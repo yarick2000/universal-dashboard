@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 
-import { signIn, providersMap } from '@/auth';
+import { signIn } from '@/auth';
+import { authService } from '@/index';
 
 const SIGNIN_ERROR_URL = '/error';
 
@@ -9,6 +10,7 @@ export default async function SignInPage(props: {
   searchParams: Promise<{ callbackUrl: string | undefined }>
 }) {
   const { callbackUrl } = await props.searchParams;
+  const providersMap = await authService.getProvidersMap();
   return (
     <div className="flex flex-col gap-2">
       <form

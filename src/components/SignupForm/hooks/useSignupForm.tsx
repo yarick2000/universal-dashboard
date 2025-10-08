@@ -38,6 +38,9 @@ export type UseSignupFormProps = Omit<SignupFormProps,
   | 'cancelButtonText'
 >;
 
+// Password complexity: min 10 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>/`~]).{10,}$/;
+
 export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   const { ...rest } = props;
   const t = useLocalizations('components.signupForm');
@@ -49,32 +52,32 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  // Error states
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>(undefined);
+  const [passwordError, setPasswordError] = useState<string | undefined>(undefined);
   const [generalError, setGeneralError] = useState<string | undefined>(undefined);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
   // reCAPTCHA token state
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const { getToken, getRecaptchaComponent } = useRecaptcha(); // for fallback fetch during submit
 
-  const onSignupEvent = useCallback(async(data: FormData) => {
-    // const firstNameValue = data.get('firstName') as string;
-    // const lastNameValue = data.get('lastName') as string;
-    const emailValue = data.get('email') as string;
-    // const passwordValue = data.get('password') as string;
-    // const confirmPasswordValue = data.get('confirmPassword') as string;
-    const recaptchaTokenValue = data.get('recaptchaToken') as string;
-    // setFirstName(firstNameValue);
-    // setLastName(lastNameValue);
-    // setEmail(emailValue);
-    // setPassword(passwordValue);
-    // setConfirmPassword(confirmPasswordValue);
+  const resetErrors = useCallback(() => {
+    setGeneralError(undefined);
+    setEmailError(undefined);
+    setPasswordError(undefined);
+    setConfirmPasswordError(undefined);
+  }, []);
+
+  const handleRecaptchaVerification = useCallback(async (token: string, email: string) => {
     try {
       const {
         success,
         code,
         reason,
-      } = await verifyRecaptchaToken(recaptchaTokenValue, 'signup');
+      } = await verifyRecaptchaToken(token, 'signup');
       if (!success) {
-        await logger.warn(`reCAPTCHA verification failed during signup for ${emailValue}.`, {
+        await logger.warn(`reCAPTCHA verification failed during signup for ${email}.`, {
           code,
           reason,
         });
@@ -87,13 +90,29 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     }
   }, [logger, t]);
 
+  const onSignupEvent = useCallback(async (data: FormData) => {
+    const firstNameValue = data.get('firstName') as string;
+    const lastNameValue = data.get('lastName') as string;
+    const emailValue = data.get('email') as string;
+    const passwordValue = data.get('password') as string;
+    const confirmPasswordValue = data.get('confirmPassword') as string;
+    const recaptchaTokenValue = data.get('recaptchaToken') as string;
+    setFirstName(firstNameValue);
+    setLastName(lastNameValue);
+    setEmail(emailValue);
+    setPassword(passwordValue);
+    setConfirmPassword(confirmPasswordValue);
+    await handleRecaptchaVerification(recaptchaTokenValue, emailValue);
+  }, [handleRecaptchaVerification]);
+
   const onFormSubmitEvent: SignupFormProps['onFormSubmit'] = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       // If we already have a token, allow natural submission (server action runs)
       if (recaptchaToken) return;
       // Otherwise block submission and obtain token
       e.preventDefault();
-      setGeneralError(undefined);
+
+      resetErrors();
 
       void (async () => {
         let token: string | null = null;
@@ -118,7 +137,7 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
         }
       })();
     },
-    [getToken, logger, recaptchaToken, t],
+    [getToken, logger, recaptchaToken, resetErrors, t],
   );
 
   // Empty handlers that still update local state to keep fields controlled if needed
@@ -133,10 +152,20 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
   }, []);
   const onPasswordChangeEvent = useCallback((value: string) => {
     setPassword(value);
-  }, []);
+    if (value && !PASSWORD_REGEX.test(value)) {
+      setPasswordError(t('errors.passwordComplexity'));
+    } else {
+      setPasswordError(undefined);
+    }
+  }, [t]);
   const onConfirmPasswordChangeEvent = useCallback((value: string) => {
     setConfirmPassword(value);
-  }, []);
+    if (password && value !== password) {
+      setConfirmPasswordError(t('errors.passwordsDoNotMatch'));
+    } else {
+      setConfirmPasswordError(undefined);
+    }
+  }, [password, t]);
 
   return {
     ...rest,
@@ -153,15 +182,15 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     email,
     emailLabel: t('emailLabel'),
     emailPlaceholder: t('emailPlaceholder'),
-    emailError: undefined,
+    emailError,
     password,
     passwordLabel: t('passwordLabel'),
     passwordPlaceholder: t('passwordPlaceholder'),
-    passwordError: undefined,
+    passwordError,
     confirmPassword,
     confirmPasswordLabel: t('confirmPasswordLabel'),
     confirmPasswordPlaceholder: t('confirmPasswordPlaceholder'),
-    confirmPasswordError: undefined,
+    confirmPasswordError,
     createAccountButtonText: t('createAccountButtonText'),
     verificationLabel: t('verificationLabel'),
     cancelButtonText: t('cancelButtonText'),

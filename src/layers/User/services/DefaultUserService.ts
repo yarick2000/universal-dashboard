@@ -1,0 +1,41 @@
+import { DI } from '@/enums';
+import { SupabaseDataClient } from '@/layers/Data';
+import { Logger, LoggerService } from '@/layers/Logging';
+import { createLogger } from '@/layers/Logging/utils';
+
+import { UserService } from '../interfaces';
+
+export class DefaultUserService implements UserService {
+  private readonly logger: Logger;
+  constructor(
+    private readonly loggerService: LoggerService,
+    private readonly dataClient: SupabaseDataClient,
+  ) {
+    this.logger = createLogger(this.loggerService, DefaultUserService.name);
+    if (!dataClient) {
+      void this.logger.error('Data client is not initialized.');
+    }
+  }
+
+  async getUserIdByEmail(email: string): Promise<string | null> {
+    if (!this.dataClient) {
+      void this.logger.error('Data client is not initialized.');
+      return null;
+    }
+    try {
+      const result = await this.dataClient?.rpc('get_user_id_by_email', {
+        p_email: email,
+      });
+      if (result.error) {
+        await this.logger.error('Error getting user ID by email:', result.error);
+        return null;
+      }
+      return result.data as string | null;
+    } catch (error) {
+      await this.logger.error('Error getting user ID by email:', error);
+      return null;
+    }
+  }
+
+  static inject = [DI.LoggerService, DI.SupabaseDataClient] as const;
+}

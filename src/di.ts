@@ -15,6 +15,7 @@ import { createLocalizationDataAdapter } from '@/layers/Internationalization/uti
 import { DefaultLoggerService } from '@/layers/Logging/services';
 import { createLoggerAdapters, createLoggerInfoProviders } from '@/layers/Logging/utils';
 import { DefaultSeoService } from '@/layers/SEO/services';
+import { DefaultUserService } from '@/layers/User/services';
 
 const injector = createInjector()
   .provideFactory(DI.LocalApiDataClient, createLocalApiDataClient, Scope.Singleton)
@@ -29,6 +30,7 @@ const injector = createInjector()
   .provideClass(DI.LocalizationService, DefaultLocalizationService, Scope.Singleton)
   .provideFactory(DI.AuthenticationProvider, createAuthenticationProvider, Scope.Singleton)
   .provideClass(DI.AuthenticationService, DefaultAuthenticationService, Scope.Singleton)
+  .provideClass(DI.UserService, DefaultUserService, Scope.Singleton)
   .provideClass(DI.SEOService, DefaultSeoService, Scope.Singleton);
 
 export default injector;

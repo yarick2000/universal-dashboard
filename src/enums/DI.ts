@@ -12,5 +12,6 @@ export enum DI {
   AuthenticationProvider = 'AuthenticationProvider',
   AuthenticationService = 'AuthenticationService',
   SEOService = 'SEOService',
+  UserService = 'UserService',
   // Add more identifiers as needed
 };

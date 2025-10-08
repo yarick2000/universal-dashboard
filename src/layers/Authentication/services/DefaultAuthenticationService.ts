@@ -9,10 +9,7 @@ export class DefaultAuthenticationService implements AuthenticationService {
   ) { }
 
   async getAuthResult() {
-    const authenticationProvider = await this.authenticationProviderFactory();
-    if (!authenticationProvider && isClient()) {
-      throw new Error('AuthenticationProvider is not available on the client side.');
-    }
+    const authenticationProvider = await this.createProvider();
     if (!authenticationProvider) {
       return {} as unknown as ReturnType<AuthenticationService['getAuthResult']>;
     }
@@ -20,14 +17,19 @@ export class DefaultAuthenticationService implements AuthenticationService {
   }
 
   async getProvidersMap() {
-    const authenticationProvider = await this.authenticationProviderFactory();
-    if (!authenticationProvider && isClient()) {
-      throw new Error('AuthenticationProvider is not available on the client side.');
-    }
+    const authenticationProvider = await this.createProvider();
     if (!authenticationProvider) {
       return [] as unknown as ReturnType<AuthenticationService['getProvidersMap']>;
     }
     return authenticationProvider.getProvidersMap();
+  }
+
+  private async createProvider() {
+    const provider = await this.authenticationProviderFactory();
+    if (!provider && isClient()) {
+      throw new Error('AuthenticationProvider is not available on the client side.');
+    }
+    return provider;
   }
 
   static inject = [DI.AuthenticationProvider] as const;

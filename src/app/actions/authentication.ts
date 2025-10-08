@@ -3,11 +3,32 @@ import { AuthError } from 'next-auth';
 
 import { signIn } from '@/auth';
 import { loggerService } from '@/index';
-import { AuthenticationActionResult, AuthenticationResponseCodes } from '@/layers/Authentication';
+import {
+  AuthenticationActionResult,
+  AuthenticationResponseCodes,
+  SignupActionResult,
+  SignupResponseCodes,
+} from '@/layers/Authentication';
 import { createLogger } from '@/layers/Logging/utils';
 
 export async function signInAction(): Promise<void> {
   await signIn();
+}
+
+export async function signUpAction(
+  email: string,
+  firstName: string,
+  lastName: string,
+  password: string,
+): Promise<SignupActionResult> {
+  const logger = createLogger(loggerService, import.meta.url);
+  try {
+    // Proceed with signup
+    return { success: true, code: SignupResponseCodes.Success };
+  } catch (error) {
+    await logger.error('Error checking if account exists:', error);
+    return { success: false, code: SignupResponseCodes.UnknownError };
+  }
 }
 
 export async function authenticateAction(

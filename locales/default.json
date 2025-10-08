@@ -55,6 +55,7 @@
         "emailInUse": "This email is already associated with an account.",
         "weakPassword": "The password is too weak. Please choose a stronger password.",
         "passwordsDoNotMatch": "Passwords do not match. Please re-enter.",
+        "passwordComplexity": "Password must be at least 10 characters long and include letters, numbers, and special symbols.",
         "recaptchaFailed": "Recaptcha verification failed. Please try again."
       }
     }

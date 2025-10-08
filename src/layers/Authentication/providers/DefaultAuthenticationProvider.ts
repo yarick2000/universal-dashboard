@@ -14,6 +14,9 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
     private readonly dataClient: SupabaseDataClient,
   ) {
     this.logger = createLogger(this.loggerService, DefaultAuthenticationProvider.name);
+    if (!dataClient) {
+      void this.logger.error('Data client is not initialized.');
+    }
   }
 
   getProvidersMap() {
@@ -83,20 +86,25 @@ export default class DefaultAuthenticationProvider implements AuthenticationProv
           }
           const email = credentials.email as string;
           const password = credentials.password as string;
-          const token = await this.dataClient?.auth.signInWithPassword({
-            email, password,
-          });
-          if (token?.error || !token?.data?.user) {
-            if (token?.error) {
-              await this.logger.error(`Supabase sign-in error: ${token.error.message}`, token.error);
-              return null;
+          try {
+            const token = await this.dataClient?.auth.signInWithPassword({
+              email, password,
+            });
+            if (token?.error || !token?.data?.user) {
+              if (token?.error) {
+                await this.logger.error(`Supabase sign-in error: ${token.error.message}`, token.error);
+                return null;
+              }
             }
+            return {
+              id: token?.data?.user?.id,
+              email: token?.data?.user?.email,
+              role: token?.data?.user?.role,
+            };
+          } catch (error) {
+            await this.logger.error('Error during Supabase sign-in:', error);
+            return null;
           }
-          return {
-            id: token?.data?.user?.id,
-            email: token?.data?.user?.email,
-            role: token?.data?.user?.role,
-          };
         },
       }),
     ];
