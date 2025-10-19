@@ -6,6 +6,7 @@ import { verifyRecaptchaTokenAction } from '@/components/GoogleRecaptchaV3/actio
 import { loggerService } from '@/index';
 import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { createLogger } from '@/layers/Logging/utils';
+import { SignupResponseCodes } from '@/layers/User';
 import { SignupForm as SignupFormUI } from '@/shadcn/components/SignupForm';
 import { retryAsync } from '@/utils/execution';
 
@@ -99,15 +100,36 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     const firstNameValue = data.get('firstName') as string;
     const lastNameValue = data.get('lastName') as string;
     const passwordValue = data.get('password') as string;
-    const {
-      success, code, reason,
-    } = await signUpAction(
-      emailValue,
-      firstNameValue,
-      lastNameValue,
-      passwordValue,
-    );
-  }, []);
+    try {
+      const {
+        success, code,
+      } = await signUpAction(
+        emailValue,
+        firstNameValue,
+        lastNameValue,
+        passwordValue,
+      );
+      if (!success) {
+        switch (code) {
+          case SignupResponseCodes.InvalidEmail:
+            setEmailError(t('errors.invalidEmail'));
+            break;
+          case SignupResponseCodes.UserAlreadyExists:
+            setEmailError(t('errors.userAlreadyExists'));
+            break;
+          case SignupResponseCodes.WeakPassword:
+            setPasswordError(t('errors.weakPassword'));
+            break;
+          default:
+            setGeneralError(t('errors.generalErrorMessage'));
+        }
+      }
+      return success;
+    } catch (error) {
+      await logger.error('Error during signup', { error });
+      setGeneralError(t('errors.generalErrorMessage'));
+    }
+  }, [logger, t]);
 
   const updateFormData = useCallback((data: FormData) => {
     const firstNameValue = data.get('firstName') as string;
