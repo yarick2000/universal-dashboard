@@ -21,3 +21,4 @@ export const i18nService: LocalizationService =
 export const authService: AuthenticationService =
   injector.resolve<DI.AuthenticationService>(DI.AuthenticationService);
 export const seoService: SEOService = injector.resolve<DI.SEOService>(DI.SEOService);
+export const userService = injector.resolve<DI.UserService>(DI.UserService);

@@ -37,5 +37,21 @@ export class DefaultUserService implements UserService {
     }
   }
 
+  async signupUser(email: string, firstName: string, lastName: string, password: string): Promise<void> {
+    if (!this.dataClient) {
+      void this.logger.error('Data client is not initialized.');
+      throw new Error('Data client is not initialized.');
+    }
+    const { error } = await this.dataClient.auth.signUp({
+      email,
+      password,
+      options: { data: { first_name: firstName, last_name: lastName } },
+    });
+    if (error) {
+      await this.logger.error('Error signing up user:', error);
+      throw error;
+    }
+  }
+
   static inject = [DI.LoggerService, DI.SupabaseDataClient] as const;
 }

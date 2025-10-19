@@ -9,7 +9,7 @@ import { resolveToken } from '@/utils/di';
 import { GoogleRecaptchaVerificationResponseCodes } from '../enums';
 import { GoogleRecaptchaVerifyResponse } from '../interfaces';
 
-export async function verifyRecaptchaToken(token: string, expectedAction?: string) {
+export async function verifyRecaptchaTokenAction(token: string, expectedAction?: string) {
   const logger = createLogger(loggerService, import.meta.url);
   const apiClient = resolveToken<ApiDataClient>(injector, DI.RemoteApiDataClient);
   const secret = process.env.GOOGLE_RECAPTCHA_SECRET;

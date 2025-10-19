@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 
+import { signUpAction } from '@/app/actions/user';
 import { useRecaptcha } from '@/components/GoogleRecaptchaV3';
-import { verifyRecaptchaToken } from '@/components/GoogleRecaptchaV3/actions';
+import { verifyRecaptchaTokenAction } from '@/components/GoogleRecaptchaV3/actions';
 import { loggerService } from '@/index';
 import { useLocalizations } from '@/layers/Internationalization/hooks/useLocalizations';
 import { createLogger } from '@/layers/Logging/utils';
@@ -75,7 +76,7 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
         success,
         code,
         reason,
-      } = await verifyRecaptchaToken(token, 'signup');
+      } = await verifyRecaptchaTokenAction(token, 'signup');
       if (!success) {
         await logger.warn(`reCAPTCHA verification failed during signup for ${email}.`, {
           code,
@@ -84,26 +85,52 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
         setRecaptchaToken(null);
         setGeneralError(t('errors.recaptchaFailed'));
       }
+      return success;
     } catch (error) {
       await logger.error('Error during reCAPTCHA verification in signup', { error });
       setRecaptchaToken(null);
+      setGeneralError(t('errors.generalErrorMessage'));
+      return false;
     }
   }, [logger, t]);
 
-  const onSignupEvent = useCallback(async (data: FormData) => {
+  const handleSignup = useCallback(async (data: FormData) => {
+    const emailValue = data.get('email') as string;
+    const firstNameValue = data.get('firstName') as string;
+    const lastNameValue = data.get('lastName') as string;
+    const passwordValue = data.get('password') as string;
+    const {
+      success, code, reason,
+    } = await signUpAction(
+      emailValue,
+      firstNameValue,
+      lastNameValue,
+      passwordValue,
+    );
+  }, []);
+
+  const updateFormData = useCallback((data: FormData) => {
     const firstNameValue = data.get('firstName') as string;
     const lastNameValue = data.get('lastName') as string;
     const emailValue = data.get('email') as string;
     const passwordValue = data.get('password') as string;
     const confirmPasswordValue = data.get('confirmPassword') as string;
-    const recaptchaTokenValue = data.get('recaptchaToken') as string;
     setFirstName(firstNameValue);
     setLastName(lastNameValue);
     setEmail(emailValue);
     setPassword(passwordValue);
     setConfirmPassword(confirmPasswordValue);
-    await handleRecaptchaVerification(recaptchaTokenValue, emailValue);
-  }, [handleRecaptchaVerification]);
+  }, []);
+
+  const onSignupEvent = useCallback(async (data: FormData) => {
+    updateFormData(data);
+    const emailValue = data.get('email') as string;
+    const recaptchaTokenValue = data.get('recaptchaToken') as string;
+    const recaptchaSuccess = await handleRecaptchaVerification(recaptchaTokenValue, emailValue);
+    if (recaptchaSuccess) {
+      await handleSignup(data);
+    }
+  }, [handleRecaptchaVerification, handleSignup, updateFormData]);
 
   const onFormSubmitEvent: SignupFormProps['onFormSubmit'] = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -203,4 +230,4 @@ export function useSignupForm(props: UseSignupFormProps): SignupFormProps {
     onPasswordChange: onPasswordChangeEvent,
     onConfirmPasswordChange: onConfirmPasswordChangeEvent,
   };
-}
+};

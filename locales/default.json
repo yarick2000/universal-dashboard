@@ -56,7 +56,9 @@
         "weakPassword": "The password is too weak. Please choose a stronger password.",
         "passwordsDoNotMatch": "Passwords do not match. Please re-enter.",
         "passwordComplexity": "Password must be at least 10 characters long and include letters, numbers, and special symbols.",
-        "recaptchaFailed": "Recaptcha verification failed. Please try again."
+        "recaptchaFailed": "Recaptcha verification failed. Please try again.",
+        "invalidEmail": "The email address is not valid.",
+        "userAlreadyExists": "An account with this email already exists."
       }
     }
   },
