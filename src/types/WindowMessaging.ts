@@ -15,5 +15,5 @@ export type WindowMessageCallback<T> = (
   /** The message to handle. */
   message: WindowMessage<T>,
   /** A function to send a response message. */
-  send: (message: WindowMessage<T>) => void
+  send: (message: WindowMessage<T>) => void,
 ) => void;

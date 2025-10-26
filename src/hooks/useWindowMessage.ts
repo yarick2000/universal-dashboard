@@ -18,7 +18,7 @@ export function useWindowMessage<T>(
   origin?: string,
   validateType?: (
     types: WindowMessageTypes[],
-    event: MessageEvent<WindowMessage<T>>
+    event: MessageEvent<WindowMessage<T>>,
   ) => boolean,
 ) {
   useEffect(() => {
